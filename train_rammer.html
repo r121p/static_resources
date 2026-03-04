@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Locomotive - Three.js</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 50%, #228B22 100%);
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        🚂 Steam Locomotive<br>
+        Mouse: Rotate | Scroll: Zoom
+    </div>
+    <canvas id="glcanvas"></canvas>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0xE0F6FF, 20, 100);
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(15, 10, 20);
+        camera.lookAt(0, 3, 0);
+        
+        // Get canvas and create renderer with error handling
+        const canvas = document.getElementById('glcanvas');
+        let renderer;
+        try {
+            renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                antialias: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        } catch (e) {
+            console.error('WebGL not supported:', e);
+            document.body.innerHTML = '<div style="color:white; text-align:center; padding-top:20%;">WebGL not supported in your browser</div>';
+            throw e;
+        }
+        
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(20, 30, 10);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        scene.add(directionalLight);
+        
+        // Physics setup
+        const world = new CANNON.World();
+        world.gravity.set(0, -9.82, 0);
+        world.broadphase = new CANNON.NaiveBroadphase();
+        world.solver.iterations = 10;
+        
+        // Physics materials
+        const groundPhysMat = new CANNON.Material();
+        const boxPhysMat = new CANNON.Material();
+        const trainPhysMat = new CANNON.Material();
+        
+        const boxGroundContact = new CANNON.ContactMaterial(groundPhysMat, boxPhysMat, {
+            friction: 0.5,
+            restitution: 0.3
+        });
+        const trainBoxContact = new CANNON.ContactMaterial(trainPhysMat, boxPhysMat, {
+            friction: 0.3,
+            restitution: 0.5
+        });
+        world.addContactMaterial(boxGroundContact);
+        world.addContactMaterial(trainBoxContact);
+        
+        // Arrays to sync physics and visuals
+        const physicsBodies = [];
+        const visualMeshes = [];
+        
+        // Materials
+        const blackMetalMat = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 30 });
+        const redPaintMat = new THREE.MeshPhongMaterial({ color: 0x8B0000, shininess: 50 });
+        const goldMat = new THREE.MeshPhongMaterial({ color: 0xFFD700, shininess: 100 });
+        const steelMat = new THREE.MeshPhongMaterial({ color: 0x708090, shininess: 60 });
+        const whiteMat = new THREE.MeshPhongMaterial({ color: 0xF5F5F5 });
+        const darkGreyMat = new THREE.MeshPhongMaterial({ color: 0x333333 });
+        
+        // Locomotive Group
+        const locomotive = new THREE.Group();
+        scene.add(locomotive);
+        
+        // 1. Main Boiler (Cylinder)
+        const boilerGeo = new THREE.CylinderGeometry(2.5, 2.5, 12, 32);
+        const boiler = new THREE.Mesh(boilerGeo, blackMetalMat);
+        boiler.rotation.z = Math.PI / 2;
+        boiler.position.set(0, 4, 0);
+        boiler.castShadow = true;
+        locomotive.add(boiler);
+        
+        // 2. Smokestack (Cylinder)
+        const smokestackBaseGeo = new THREE.CylinderGeometry(0.8, 0.8, 4, 16);
+        const smokestackBase = new THREE.Mesh(smokestackBaseGeo, blackMetalMat);
+        smokestackBase.position.set(4, 6, 0);
+        smokestackBase.castShadow = true;
+        locomotive.add(smokestackBase);
+        
+        const smokestackTopGeo = new THREE.CylinderGeometry(1.2, 0.8, 1, 16);
+        const smokestackTop = new THREE.Mesh(smokestackTopGeo, blackMetalMat);
+        smokestackTop.position.set(4, 8.5, 0);
+        smokestackTop.castShadow = true;
+        locomotive.add(smokestackTop);
+        
+        // 3. Steam Dome (Sphere + Cylinder)
+        const domeBaseGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.5, 16);
+        const domeBase = new THREE.Mesh(domeBaseGeo, blackMetalMat);
+        domeBase.position.set(1, 6.5, 0);
+        locomotive.add(domeBase);
+        
+        const domeGeo = new THREE.SphereGeometry(1.2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const dome = new THREE.Mesh(domeGeo, blackMetalMat);
+        dome.position.set(1, 6.5, 0);
+        dome.castShadow = true;
+        locomotive.add(dome);
+        
+        // 4. Cabin (Box)
+        const cabinGeo = new THREE.BoxGeometry(5, 7, 5.5);
+        const cabin = new THREE.Mesh(cabinGeo, redPaintMat);
+        cabin.position.set(-6.5, 6.5, 0);
+        cabin.castShadow = true;
+        locomotive.add(cabin);
+        
+        // Cabin Roof
+        const roofGeo = new THREE.BoxGeometry(5.5, 0.5, 6);
+        const roof = new THREE.Mesh(roofGeo, blackMetalMat);
+        roof.position.set(-6.5, 10.25, 0);
+        roof.castShadow = true;
+        locomotive.add(roof);
+        
+        // Windows
+        const windowGeo = new THREE.BoxGeometry(0.2, 2, 1.5);
+        const windowLeft = new THREE.Mesh(windowGeo, darkGreyMat);
+        windowLeft.position.set(-4, 7, 2);
+        locomotive.add(windowLeft);
+        const windowRight = new THREE.Mesh(windowGeo, darkGreyMat);
+        windowRight.position.set(-4, 7, -2);
+        locomotive.add(windowRight);
+        
+        // 5. Cowcatcher (Triangular shape using Cone)
+        const cowcatcherGeo = new THREE.ConeGeometry(2.5, 4, 3);
+        const cowcatcher = new THREE.Mesh(cowcatcherGeo, redPaintMat);
+        cowcatcher.rotation.z = -Math.PI / 2;
+        cowcatcher.rotation.x = Math.PI;
+        cowcatcher.position.set(7, 1.5, 0);
+        cowcatcher.scale.set(1, 1, 1.5);
+        cowcatcher.castShadow = true;
+        locomotive.add(cowcatcher);
+        
+        // 6. Headlamp (Sphere)
+        const headlampGeo = new THREE.SphereGeometry(0.8, 16, 16);
+        const headlamp = new THREE.Mesh(headlampGeo, goldMat);
+        headlamp.position.set(6.2, 5.5, 0);
+        headlamp.castShadow = true;
+        locomotive.add(headlamp);
+        
+        // Lamp light
+        const lampLight = new THREE.PointLight(0xFFAA00, 1, 10);
+        lampLight.position.set(7, 5.5, 0);
+        locomotive.add(lampLight);
+        
+        // 7. Wheels
+        const wheelGroup = new THREE.Group();
+        locomotive.add(wheelGroup);
+        
+        function createWheel(x, z, radius) {
+            const wheelGeo = new THREE.CylinderGeometry(radius, radius, 0.4, 16);
+            const wheel = new THREE.Mesh(wheelGeo, redPaintMat);
+            wheel.rotation.x = Math.PI / 2;
+            wheel.position.set(x, radius, z);
+            wheel.castShadow = true;
+            
+            // Wheel rim
+            const rimGeo = new THREE.CylinderGeometry(radius * 0.8, radius * 0.8, 0.5, 16);
+            const rim = new THREE.Mesh(rimGeo, steelMat);
+            rim.rotation.x = Math.PI / 2;
+            rim.position.set(x, radius, z);
+            
+            // Center hub
+            const hubGeo = new THREE.CylinderGeometry(radius * 0.3, radius * 0.3, 0.6, 8);
+            const hub = new THREE.Mesh(hubGeo, goldMat);
+            hub.rotation.x = Math.PI / 2;
+            hub.position.set(x, radius, z);
+            
+            const wheelGroup = new THREE.Group();
+            wheelGroup.add(wheel);
+            wheelGroup.add(rim);
+            wheelGroup.add(hub);
+            return wheelGroup;
+        }
+        
+        // Driving wheels (large)
+        const wheelPositions = [-2, 1, 4];
+        wheelPositions.forEach(x => {
+            wheelGroup.add(createWheel(x, 2.2, 2));
+            wheelGroup.add(createWheel(x, -2.2, 2));
+        });
+        
+        // Pilot wheels (small, front)
+        wheelGroup.add(createWheel(6.5, 2.2, 1));
+        wheelGroup.add(createWheel(6.5, -2.2, 1));
+        
+        // 8. Connecting rod (simplified as a box)
+        const rodGeo = new THREE.BoxGeometry(7, 0.3, 0.2);
+        const rodLeft = new THREE.Mesh(rodGeo, steelMat);
+        rodLeft.position.set(1.5, 1.5, 2.5);
+        locomotive.add(rodLeft);
+        
+        const rodRight = new THREE.Mesh(rodGeo, steelMat);
+        rodRight.position.set(1.5, 1.5, -2.5);
+        locomotive.add(rodRight);
+        
+        // 9. Piston cylinder
+        const pistonGeo = new THREE.CylinderGeometry(0.6, 0.6, 4, 16);
+        const piston = new THREE.Mesh(pistonGeo, steelMat);
+        piston.rotation.z = Math.PI / 2;
+        piston.position.set(4, 3.5, 0);
+        locomotive.add(piston);
+        
+        // 10. Whistle (small cylinder)
+        const whistleGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.5, 8);
+        const whistle = new THREE.Mesh(whistleGeo, goldMat);
+        whistle.position.set(2, 6.5, 1.5);
+        locomotive.add(whistle);
+        
+        // 11. Bell
+        const bellGeo = new THREE.SphereGeometry(0.5, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+        const bell = new THREE.Mesh(bellGeo, goldMat);
+        bell.position.set(0, 6.5, 1.5);
+        bell.rotation.x = Math.PI;
+        locomotive.add(bell);
+        
+        // Ground plane
+        const groundGeo = new THREE.PlaneGeometry(100, 100);
+        const groundMat = new THREE.MeshPhongMaterial({ color: 0x3d5c3d });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = 0;
+        ground.receiveShadow = true;
+        scene.add(ground);
+        
+        // Ground physics body
+        const groundShape = new CANNON.Plane();
+        const groundBody = new CANNON.Body({ mass: 0, material: groundPhysMat });
+        groundBody.addShape(groundShape);
+        groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+        world.addBody(groundBody);
+        
+        // Stack of cubes in the middle of the track
+        const cubeSize = 1.5;
+        const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const cubeColors = [0xFF6B6B, 0x4ECDC4, 0x45B7D1, 0xFFA07A, 0x98D8C8];
+        const initialCubePositions = [];
+        
+        function createCube(x, y, z, color) {
+            // Visual mesh
+            const cubeMat = new THREE.MeshPhongMaterial({ color: color });
+            const cube = new THREE.Mesh(cubeGeo, cubeMat);
+            cube.position.set(x, y, z);
+            cube.castShadow = true;
+            cube.receiveShadow = true;
+            scene.add(cube);
+            visualMeshes.push(cube);
+            
+            // Physics body
+            const cubeShape = new CANNON.Box(new CANNON.Vec3(cubeSize/2, cubeSize/2, cubeSize/2));
+            const cubeBody = new CANNON.Body({
+                mass: 1,
+                material: boxPhysMat,
+                position: new CANNON.Vec3(x, y, z)
+            });
+            cubeBody.addShape(cubeShape);
+            cubeBody.linearDamping = 0.1;
+            cubeBody.angularDamping = 0.1;
+            world.addBody(cubeBody);
+            physicsBodies.push(cubeBody);
+            
+            return { mesh: cube, body: cubeBody };
+        }
+        
+        // Create a wide pyramid stack of cubes at x=0 (middle of track), 2x track width
+        const stackX = 0;
+        let cubeIndex = 0;
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4 - row; col++) {
+                for (let depth = 0; depth < 4; depth++) { // 4 cubes deep for wider spread
+                    const x = stackX + (col - (4 - row) / 2 + 0.5) * cubeSize * 0.9;
+                    const y = cubeSize / 2 + row * cubeSize;
+                    const z = (depth - 1.5) * cubeSize * 1.8; // Spread across wider area (2x track width)
+                    createCube(x, y, z, cubeColors[cubeIndex % cubeColors.length]);
+                    initialCubePositions.push({ x, y, z });
+                    cubeIndex++;
+                }
+            }
+        }
+        
+        // Railroad tracks
+        const trackGroup = new THREE.Group();
+        scene.add(trackGroup);
+        
+        // Rails
+        const railGeo = new THREE.BoxGeometry(100, 0.3, 0.2);
+        const railMat = new THREE.MeshPhongMaterial({ color: 0x666666 });
+        const rail1 = new THREE.Mesh(railGeo, railMat);
+        rail1.position.set(0, 0.15, 2.5);
+        trackGroup.add(rail1);
+        const rail2 = new THREE.Mesh(railGeo, railMat);
+        rail2.position.set(0, 0.15, -2.5);
+        trackGroup.add(rail2);
+        
+        // Ties
+        const tieGeo = new THREE.BoxGeometry(1, 0.2, 6);
+        const tieMat = new THREE.MeshPhongMaterial({ color: 0x4a3728 });
+        for (let i = -40; i < 40; i += 2) {
+            const tie = new THREE.Mesh(tieGeo, tieMat);
+            tie.position.set(i, 0.1, 0);
+            tie.receiveShadow = true;
+            trackGroup.add(tie);
+        }
+        
+        // Smoke particles
+        const smokeParticles = [];
+        const smokeGeo = new THREE.SphereGeometry(0.5, 8, 8);
+        const smokeMat = new THREE.MeshBasicMaterial({ 
+            color: 0x888888, 
+            transparent: true, 
+            opacity: 0.6 
+        });
+        
+        function createSmoke() {
+            const smoke = new THREE.Mesh(smokeGeo, smokeMat);
+            smoke.position.set(4, 9, 0);
+            smoke.scale.set(1, 1, 1);
+            smoke.userData = {
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.1,
+                    0.1 + Math.random() * 0.1,
+                    (Math.random() - 0.5) * 0.1
+                ),
+                life: 1.0
+            };
+            scene.add(smoke);
+            smokeParticles.push(smoke);
+        }
+        
+        // Mouse controls for camera orbit
+        let mouseX = 0;
+        let mouseY = 0;
+        let isMouseDown = false;
+        let cameraAngleX = 0;
+        let cameraAngleY = 0.3;
+        let cameraRadius = 25;
+        
+        document.addEventListener('mousedown', () => { isMouseDown = true; });
+        document.addEventListener('mouseup', () => { isMouseDown = false; });
+        
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+            
+            if (isMouseDown) {
+                cameraAngleX -= event.movementX * 0.01;
+                cameraAngleY = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, cameraAngleY - event.movementY * 0.01));
+            }
+        });
+        
+        // Zoom - adjust camera radius
+        document.addEventListener('wheel', (event) => {
+            cameraRadius += event.deltaY * 0.02;
+            cameraRadius = Math.max(10, Math.min(60, cameraRadius));
+        });
+        
+        // Animation loop
+        let frame = 0;
+        const trackStart = -40;
+        const trackEnd = 40;
+        const trainSpeed = 0.9;
+        
+        // Initialize train position at the back
+        locomotive.position.x = trackStart;
+        
+        // Train physics body (simplified box for collision)
+        const trainShape = new CANNON.Box(new CANNON.Vec3(6, 4, 3));
+        const trainBody = new CANNON.Body({
+            mass: 100,
+            material: trainPhysMat,
+            position: new CANNON.Vec3(trackStart, 4, 0),
+            type: CANNON.Body.KINEMATIC
+        });
+        trainBody.addShape(trainShape);
+        world.addBody(trainBody);
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            frame++;
+            
+            // Step physics world
+            world.step(1/60);
+            
+            // Update camera position based on orbit angles
+            camera.position.x = Math.sin(cameraAngleX) * Math.cos(cameraAngleY) * cameraRadius;
+            camera.position.y = Math.sin(cameraAngleY) * cameraRadius + 5;
+            camera.position.z = Math.cos(cameraAngleX) * Math.cos(cameraAngleY) * cameraRadius;
+            camera.lookAt(locomotive.position.x, 3, 0);
+            
+            // Move train forward along the track
+            locomotive.position.x += trainSpeed;
+            trainBody.position.x = locomotive.position.x;
+            
+            // Reset to beginning when reaching the end (also reset cubes)
+            if (locomotive.position.x > trackEnd) {
+                locomotive.position.x = trackStart;
+                trainBody.position.x = trackStart;
+                
+                // Reset all cubes to initial positions
+                for (let i = 0; i < physicsBodies.length; i++) {
+                    const initial = initialCubePositions[i];
+                    physicsBodies[i].position.set(initial.x, initial.y, initial.z);
+                    physicsBodies[i].velocity.set(0, 0, 0);
+                    physicsBodies[i].angularVelocity.set(0, 0, 0);
+                    physicsBodies[i].quaternion.set(0, 0, 0, 1);
+                }
+            }
+            
+            // Sync physics bodies with visual meshes
+            for (let i = 0; i < physicsBodies.length; i++) {
+                visualMeshes[i].position.copy(physicsBodies[i].position);
+                visualMeshes[i].quaternion.copy(physicsBodies[i].quaternion);
+            }
+            
+            // Bobbing motion - keep train wheels on track
+            locomotive.position.y = Math.sin(frame * 0.1) * 0.05;
+            
+            // Wheel rotation
+            wheelGroup.children.forEach(wheel => {
+                wheel.children.forEach(part => {
+                    part.rotation.y += 0.02;
+                });
+            });
+            
+            // Animate rods
+            rodLeft.position.y = 1.5 + Math.sin(frame * 0.05) * 0.1;
+            rodRight.position.y = 1.5 + Math.sin(frame * 0.05) * 0.1;
+            
+            // Smoke
+            if (frame % 10 === 0) {
+                createSmoke();
+            }
+            
+            for (let i = smokeParticles.length - 1; i >= 0; i--) {
+                const p = smokeParticles[i];
+                p.position.add(p.userData.velocity);
+                p.userData.life -= 0.01;
+                p.scale.multiplyScalar(1.02);
+                p.material.opacity = p.userData.life * 0.6;
+                
+                if (p.userData.life <= 0) {
+                    scene.remove(p);
+                    smokeParticles.splice(i, 1);
+                }
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        animate();
+    </script>
+</body>
+</html>
