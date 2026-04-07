@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" font-family="Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Start Node -->
+  <ellipse cx="100" cy="100" rx="60" ry="30" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="100" y="106" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">Start</text>
+  <line x1="160" y1="100" x2="220" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- ACT Module -->
+  <rect x="220" y="70" width="160" height="60" rx="10" fill="#e1bee7" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="300" y="106" text-anchor="middle" font-size="18" fill="#333" font-weight="bold">ACT</text>
+  <line x1="380" y1="100" x2="440" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Finished Node -->
+  <ellipse cx="500" cy="100" rx="60" ry="30" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+  <text x="500" y="106" text-anchor="middle" font-size="16" fill="#333" font-weight="bold">Finished</text>
+</svg>

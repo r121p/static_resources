@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 700" font-family="Arial, sans-serif" font-size="11">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Start Node -->
+  <ellipse cx="250" cy="35" rx="55" ry="22" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="250" y="39" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Start</text>
+  <line x1="250" y1="57" x2="250" y2="80" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Camera Captures Image -->
+  <rect x="150" y="80" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="102" text-anchor="middle" font-size="11" fill="#333">Camera Captures Image</text>
+  <line x1="250" y1="115" x2="250" y2="140" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Object Detection Model -->
+  <rect x="150" y="140" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="162" text-anchor="middle" font-size="11" fill="#333">Object Detection Model</text>
+  <line x1="250" y1="175" x2="250" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Object Detected? Decision -->
+  <polygon points="250,200 340,230 250,260 160,230" fill="#fff3e0" stroke="#e65100" stroke-width="2"/>
+  <text x="250" y="234" text-anchor="middle" font-size="11" fill="#333">Object Detected?</text>
+  
+  <!-- Yes path -->
+  <line x1="250" y1="260" x2="250" y2="290" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="260" y="278" font-size="10" fill="#2e7d32" font-weight="bold">Yes</text>
+  
+  <!-- Get 2D Bounding Box -->
+  <rect x="150" y="290" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="312" text-anchor="middle" font-size="11" fill="#333">Get 2D Bounding Box</text>
+  <line x1="250" y1="325" x2="250" y2="350" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Project to 3D Coordinates -->
+  <rect x="150" y="350" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="372" text-anchor="middle" font-size="11" fill="#333">Project to 3D Coordinates</text>
+  <line x1="250" y1="385" x2="250" y2="410" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Inverse Kinematics Calculation -->
+  <rect x="150" y="410" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="432" text-anchor="middle" font-size="11" fill="#333">Inverse Kinematics Calc</text>
+  <line x1="250" y1="445" x2="250" y2="470" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Calculate Joint Angles -->
+  <rect x="150" y="470" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="492" text-anchor="middle" font-size="11" fill="#333">Calculate Joint Angles</text>
+  <line x1="250" y1="505" x2="250" y2="530" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Send Commands to Robot -->
+  <rect x="150" y="530" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="552" text-anchor="middle" font-size="11" fill="#333">Send Commands to Robot</text>
+  <line x1="250" y1="565" x2="250" y2="590" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Robot Moves to Pick Object -->
+  <rect x="150" y="590" width="200" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="250" y="612" text-anchor="middle" font-size="11" fill="#333">Robot Moves to Pick Object</text>
+  <line x1="250" y1="625" x2="250" y2="650" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Pick Successful? Decision -->
+  <polygon points="250,650 340,680 250,710 160,680" fill="#fff3e0" stroke="#e65100" stroke-width="2"/>
+  <text x="250" y="684" text-anchor="middle" font-size="11" fill="#333">Pick Successful?</text>
+  
+  <!-- Yes path to Place -->
+  <line x1="340" y1="680" x2="400" y2="680" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="350" y="673" font-size="10" fill="#2e7d32" font-weight="bold">Yes</text>
+  
+  <!-- Place at Target Location -->
+  <rect x="400" y="662" width="90" height="35" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="445" y="684" text-anchor="middle" font-size="11" fill="#333">Place Object</text>
+  <line x1="445" y1="697" x2="445" y2="720" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Finished -->
+  <ellipse cx="445" cy="740" rx="55" ry="22" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+  <text x="445" y="744" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Finished</text>
+  
+  <!-- No path from Object Detected - loop back -->
+  <path d="M 160 230 L 80 230 L 80 97 L 150 97" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="70" y="165" font-size="10" fill="#c62828" font-weight="bold">No</text>
+  
+  <!-- No path from Pick Successful - loop back -->
+  <path d="M 160 680 L 50 680 L 50 97 L 150 97" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="40" y="390" font-size="10" fill="#c62828" font-weight="bold">No</text>
+</svg>

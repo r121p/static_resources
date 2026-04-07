@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 200" font-family="Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Button Press Start -->
+  <rect x="30" y="80" width="120" height="40" rx="20" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="90" y="104" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">🔘 Button Press</text>
+  <line x1="150" y1="100" x2="190" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- ACT Cup -->
+  <rect x="190" y="80" width="100" height="40" rx="6" fill="#e1bee7" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="240" y="95" text-anchor="middle" font-size="10" fill="#333">🧠 ACT</text>
+  <text x="240" y="109" text-anchor="middle" font-size="9" fill="#7b1fa2">Cup</text>
+  <line x1="290" y1="100" x2="330" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- ACT Fork/Spoon -->
+  <rect x="330" y="80" width="100" height="40" rx="6" fill="#e1bee7" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="380" y="95" text-anchor="middle" font-size="10" fill="#333">🧠 ACT</text>
+  <text x="380" y="109" text-anchor="middle" font-size="9" fill="#7b1fa2">Fork/Spoon</text>
+  <line x1="430" y1="100" x2="470" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- IK Cube -->
+  <rect x="470" y="80" width="100" height="40" rx="6" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+  <text x="520" y="95" text-anchor="middle" font-size="10" fill="#333">🎯 IK</text>
+  <text x="520" y="109" text-anchor="middle" font-size="9" fill="#f9a825">Cube</text>
+  <line x1="570" y1="100" x2="610" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Finished -->
+  <ellipse cx="660" cy="100" rx="55" ry="20" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+  <text x="660" y="104" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Finished</text>
+</svg>

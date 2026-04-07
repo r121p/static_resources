@@ -1,0 +1,2 @@
+file 'pick_place_success.mp4'
+file 'pick_place_fail.mp4'

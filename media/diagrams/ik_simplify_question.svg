@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Start Node -->
+  <ellipse cx="80" cy="200" rx="50" ry="25" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="80" y="205" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">Start</text>
+  <line x1="130" y1="200" x2="170" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Camera Captures Image -->
+  <rect x="170" y="185" width="100" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="220" y="205" text-anchor="middle" font-size="11" fill="#333">Camera</text>
+  <line x1="270" y1="200" x2="310" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Middle Section - Circled -->
+  <ellipse cx="450" cy="200" rx="130" ry="80" fill="none" stroke="#e65100" stroke-width="3" stroke-dasharray="8,4"/>
+  <text x="450" y="100" text-anchor="middle" font-size="16" fill="#e65100" font-weight="bold">Can we simplify</text>
+  <text x="450" y="120" text-anchor="middle" font-size="16" fill="#e65100" font-weight="bold">this to 1 module?</text>
+  
+  <!-- Object Detection -->
+  <rect x="310" y="185" width="90" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="355" y="205" text-anchor="middle" font-size="11" fill="#333">Object Detect</text>
+  <line x1="400" y1="200" x2="440" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- 3D Projection -->
+  <rect x="440" y="185" width="90" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="485" y="205" text-anchor="middle" font-size="11" fill="#333">3D Project</text>
+  <line x1="530" y1="200" x2="570" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- IK Calculation -->
+  <rect x="570" y="185" width="90" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="615" y="205" text-anchor="middle" font-size="11" fill="#333">IK Calc</text>
+  <line x1="660" y1="200" x2="700" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Robot Action -->
+  <rect x="700" y="185" width="90" height="30" rx="5" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  <text x="745" y="205" text-anchor="middle" font-size="11" fill="#333">Robot Move</text>
+</svg>

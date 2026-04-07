@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 350" font-family="Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Hand Gesture Start -->
+  <rect x="30" y="155" width="120" height="40" rx="20" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="90" y="179" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">🤚 Hand Gesture</text>
+  <line x1="150" y1="175" x2="190" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Gesture Recognition -->
+  <rect x="190" y="155" width="110" height="40" rx="6" fill="#ffe0b2" stroke="#e65100" stroke-width="2"/>
+  <text x="245" y="170" text-anchor="middle" font-size="10" fill="#333">Gesture</text>
+  <text x="245" y="184" text-anchor="middle" font-size="10" fill="#333">Recognition</text>
+  
+  <!-- Lines to different replays -->
+  <line x1="300" y1="175" x2="340" y2="80" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="300" y1="175" x2="340" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="300" y1="175" x2="340" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Replay Cup -->
+  <rect x="340" y="60" width="120" height="40" rx="6" fill="#b2dfdb" stroke="#00695c" stroke-width="2"/>
+  <text x="400" y="75" text-anchor="middle" font-size="10" fill="#333">🔄 Replay</text>
+  <text x="400" y="89" text-anchor="middle" font-size="9" fill="#00695c">Cup</text>
+  
+  <!-- Replay Fork/Spoon -->
+  <rect x="340" y="155" width="120" height="40" rx="6" fill="#b2dfdb" stroke="#00695c" stroke-width="2"/>
+  <text x="400" y="170" text-anchor="middle" font-size="10" fill="#333">🔄 Replay</text>
+  <text x="400" y="184" text-anchor="middle" font-size="9" fill="#00695c">Fork/Spoon</text>
+  
+  <!-- Replay Cube -->
+  <rect x="340" y="250" width="120" height="40" rx="6" fill="#b2dfdb" stroke="#00695c" stroke-width="2"/>
+  <text x="400" y="265" text-anchor="middle" font-size="10" fill="#333">🔄 Replay</text>
+  <text x="400" y="279" text-anchor="middle" font-size="9" fill="#00695c">Cube</text>
+  
+  <!-- Lines to Finished -->
+  <line x1="460" y1="80" x2="520" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="460" y1="175" x2="520" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="460" y1="270" x2="520" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Finished -->
+  <ellipse cx="570" cy="175" rx="55" ry="20" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+  <text x="570" y="179" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Finished</text>
+</svg>

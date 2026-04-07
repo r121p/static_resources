@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:00:03,000
+Success: Robot picks up item correctly
+
+2
+00:00:03,000 --> 00:00:06,000
+Object position is known and fixed
+
+3
+00:00:06,500 --> 00:00:09,500
+Failure: Object position is changed
+
+4
+00:00:09,500 --> 00:00:12,500
+Robot cannot adapt - picks empty space
