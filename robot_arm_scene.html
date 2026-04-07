@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Arm Pick & Place</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            user-select: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        #ik-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            user-select: none;
+            font-size: 12px;
+            line-height: 1.5;
+            min-width: 200px;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            max-width: 98vw;
+        }
+        button {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        #btn-pick-success { background: #4CAF50; color: white; }
+        #btn-pick-success:hover { background: #45a049; }
+        #btn-pick-fail { background: #f44336; color: white; }
+        #btn-pick-fail:hover { background: #da190b; }
+        #btn-pick-all { background: #2196F3; color: white; }
+        #btn-pick-all:hover { background: #1976D2; }
+        #btn-nudge-camera { background: #FF9800; color: white; }
+        #btn-nudge-camera:hover { background: #F57C00; }
+        #btn-change-bg { background: #9C27B0; color: white; }
+        #btn-change-bg:hover { background: #7B1FA2; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        #status {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: 300px;
+            text-align: center;
+        }
+        #record-toggle {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #4CAF50;
+            color: white;
+        }
+        #record-toggle.recording-off { background: #666; }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <strong>Controls (World Coordinates):</strong><br>
+        A/D - Move target X axis<br>
+        W/S - Move target Z axis<br>
+        Z - Move target up (Y+)<br>
+        X - Move target down (Y-)<br>
+        Mouse - Orbit/Zoom/Pan
+    </div>
+    <div id="ik-info">
+        <strong>Robot Arm Status:</strong><br>
+        <span id="target-pos">Target: (3, 5, 3)</span><br>
+        <span id="joint-angles">Joint angles: calculating...</span><br>
+        <span id="reach-status">Reach: OK</span>
+    </div>
+    <button id="record-toggle" class="recording-off">🎬 Record: OFF</button>
+    <div id="status">Ready - Use buttons to start pick & place</div>
+    <div id="controls">
+        <button id="btn-pick-success">Pick Cube (Success)</button>
+        <button id="btn-pick-fail">Pick Cube (Fail)</button>
+        <button id="btn-pick-all">Pick All Items</button>
+        <button id="btn-nudge-camera">📷 Nudge Camera</button>
+        <button id="btn-change-bg">🎨 Change Background</button>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(10, 10, 15);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 20, 10);
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+
+        // Ground
+        const groundGeometry = new THREE.PlaneGeometry(50, 50);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x3a7a3a, roughness: 0.8 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        const gridHelper = new THREE.GridHelper(50, 50, 0x000000, 0x444444);
+        gridHelper.material.opacity = 0.3;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
+
+        // Robot arm parameters
+        const LINK1_LENGTH = 4;
+        const LINK2_LENGTH = 3;
+        const BASE_HEIGHT = 1;
+
+        // Base pedestal
+        const pedestalGeometry = new THREE.CylinderGeometry(0.8, 1, BASE_HEIGHT, 16);
+        const pedestalMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
+        const pedestal = new THREE.Mesh(pedestalGeometry, pedestalMaterial);
+        pedestal.position.set(0, BASE_HEIGHT / 2, 0);
+        pedestal.castShadow = true;
+        scene.add(pedestal);
+
+        // Shoulder joint
+        const shoulderGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const jointMaterial = new THREE.MeshStandardMaterial({ color: 0x666666 });
+        const shoulderJoint = new THREE.Mesh(shoulderGeometry, jointMaterial);
+        shoulderJoint.castShadow = true;
+        scene.add(shoulderJoint);
+
+        // Upper arm
+        const upperArmGeometry = new THREE.CylinderGeometry(0.25, 0.25, LINK1_LENGTH, 8);
+        const armMaterial = new THREE.MeshStandardMaterial({ color: 0x2c5aa0 });
+        const upperArm = new THREE.Mesh(upperArmGeometry, armMaterial);
+        upperArm.castShadow = true;
+        scene.add(upperArm);
+
+        // Elbow joint
+        const elbowGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+        const elbowJoint = new THREE.Mesh(elbowGeometry, jointMaterial);
+        elbowJoint.castShadow = true;
+        scene.add(elbowJoint);
+
+        // Forearm
+        const forearmGeometry = new THREE.CylinderGeometry(0.2, 0.2, LINK2_LENGTH, 8);
+        const forearm = new THREE.Mesh(forearmGeometry, armMaterial);
+        forearm.castShadow = true;
+        scene.add(forearm);
+
+        // End effector (gripper)
+        const gripperGeometry = new THREE.BoxGeometry(0.6, 0.2, 0.6);
+        const gripperMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
+        const gripper = new THREE.Mesh(gripperGeometry, gripperMaterial);
+        gripper.castShadow = true;
+        scene.add(gripper);
+
+        // Gripper fingers
+        const fingerGeometry = new THREE.BoxGeometry(0.1, 0.4, 0.2);
+        const finger1 = new THREE.Mesh(fingerGeometry, gripperMaterial);
+        const finger2 = new THREE.Mesh(fingerGeometry, gripperMaterial);
+        finger1.position.set(-0.25, -0.3, 0);
+        finger2.position.set(0.25, -0.3, 0);
+        gripper.add(finger1);
+        gripper.add(finger2);
+
+        // Target indicator
+        const targetGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+        const targetMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true, opacity: 0.4 });
+        const targetIndicator = new THREE.Mesh(targetGeometry, targetMaterial);
+        scene.add(targetIndicator);
+
+        // ===== SCENE OBJECTS =====
+        
+        // CUBE
+        const cubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.castShadow = true;
+        scene.add(cube);
+        const CUBE_ORIGINAL_POS = new THREE.Vector3(4, 0.25, 4);
+        cube.position.copy(CUBE_ORIGINAL_POS);
+
+        // Ghost cube
+        const ghostCubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.2 });
+        const ghostCube = new THREE.Mesh(cubeGeometry, ghostCubeMaterial);
+        ghostCube.position.copy(CUBE_ORIGINAL_POS);
+        ghostCube.visible = false;
+        scene.add(ghostCube);
+
+        // CUPS (3 cups)
+        function createCup(color, x, z) {
+            const cupGroup = new THREE.Group();
+            
+            // Cup body (cylinder)
+            const cupBody = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.15, 0.5, 16),
+                new THREE.MeshStandardMaterial({ color: color })
+            );
+            cupBody.castShadow = true;
+            cupGroup.add(cupBody);
+            
+            // No handle - simple cup
+            
+            cupGroup.position.set(x, 0.25, z);
+            scene.add(cupGroup);
+            return { mesh: cupGroup, originalPos: new THREE.Vector3(x, 0.25, z), picked: false };
+        }
+
+        const cup1 = createCup(0xff4444, 3, 2);   // Red cup
+        const cup2 = createCup(0x44ff44, 5, 3);   // Green cup
+        const cup3 = createCup(0x4444ff, 4, 5);   // Blue cup
+
+        // SPOON
+        function createSpoon(x, z) {
+            const spoonGroup = new THREE.Group();
+            
+            // Spoon handle (lying flat along X axis)
+            const handle = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.025, 0.025, 0.5, 8),
+                new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.8, roughness: 0.2 })
+            );
+            handle.rotation.z = Math.PI / 2;
+            handle.castShadow = true;
+            spoonGroup.add(handle);
+            
+            // Spoon bowl (ellipsoid shape, concave up)
+            const bowl = new THREE.Mesh(
+                new THREE.SphereGeometry(0.1, 16, 8),
+                new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.8, roughness: 0.2 })
+            );
+            bowl.scale.set(1, 0.4, 0.7);
+            bowl.position.x = -0.3;
+            bowl.position.y = -0.02;
+            bowl.castShadow = true;
+            spoonGroup.add(bowl);
+            
+            spoonGroup.position.set(x, 0.06, z);
+            scene.add(spoonGroup);
+            return { mesh: spoonGroup, originalPos: new THREE.Vector3(x, 0.06, z), picked: false };
+        }
+
+        const spoon1 = createSpoon(3.5, 5.5);
+        const spoon2 = createSpoon(5.5, 2.5);
+
+        // FORKS
+        function createFork(x, z) {
+            const forkGroup = new THREE.Group();
+            
+            // Fork handle (lying flat along X axis)
+            const handle = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.025, 0.025, 0.4, 8),
+                new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.8, roughness: 0.2 })
+            );
+            handle.rotation.z = Math.PI / 2;
+            handle.castShadow = true;
+            forkGroup.add(handle);
+            
+            // Fork head
+            const head = new THREE.Mesh(
+                new THREE.BoxGeometry(0.02, 0.08, 0.1),
+                new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.8, roughness: 0.2 })
+            );
+            head.position.x = -0.25;
+            head.castShadow = true;
+            forkGroup.add(head);
+            
+            // Fork tines (prongs) - extending along X axis
+            for (let i = -1; i <= 1; i++) {
+                const tine = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.15, 0.02, 0.02),
+                    new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.8, roughness: 0.2 })
+                );
+                tine.position.set(-0.35, i * 0.035, 0);
+                tine.castShadow = true;
+                forkGroup.add(tine);
+            }
+            
+            forkGroup.position.set(x, 0.05, z);
+            scene.add(forkGroup);
+            return { mesh: forkGroup, originalPos: new THREE.Vector3(x, 0.05, z), picked: false };
+        }
+
+        const fork1 = createFork(2.5, 3.5);
+        const fork2 = createFork(5, 4.5);
+
+        // All pickable objects
+        const allObjects = [
+            { name: 'Cube', mesh: cube, originalPos: CUBE_ORIGINAL_POS.clone(), picked: false, isCube: true },
+            { name: 'Red Cup', mesh: cup1.mesh, originalPos: cup1.originalPos.clone(), picked: false },
+            { name: 'Green Cup', mesh: cup2.mesh, originalPos: cup2.originalPos.clone(), picked: false },
+            { name: 'Blue Cup', mesh: cup3.mesh, originalPos: cup3.originalPos.clone(), picked: false },
+            { name: 'Spoon 1', mesh: spoon1.mesh, originalPos: spoon1.originalPos.clone(), picked: false },
+            { name: 'Spoon 2', mesh: spoon2.mesh, originalPos: spoon2.originalPos.clone(), picked: false },
+            { name: 'Fork 1', mesh: fork1.mesh, originalPos: fork1.originalPos.clone(), picked: false },
+            { name: 'Fork 2', mesh: fork2.mesh, originalPos: fork2.originalPos.clone(), picked: false }
+        ];
+
+        // TRAY - destination
+        const trayGroup = new THREE.Group();
+        trayGroup.position.set(-4, 0, 4);
+        scene.add(trayGroup);
+
+        const trayBaseGeometry = new THREE.BoxGeometry(3, 0.1, 3);
+        const trayMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+        const trayBase = new THREE.Mesh(trayBaseGeometry, trayMaterial);
+        trayBase.position.y = 0.05;
+        trayBase.receiveShadow = true;
+        trayGroup.add(trayBase);
+
+        const wallThickness = 0.1;
+        const wallHeight = 0.4;
+        const traySize = 3;
+        
+        const wall1 = new THREE.Mesh(new THREE.BoxGeometry(traySize, wallHeight, wallThickness), trayMaterial);
+        wall1.position.set(0, wallHeight/2, -traySize/2 + wallThickness/2);
+        trayGroup.add(wall1);
+        
+        const wall2 = new THREE.Mesh(new THREE.BoxGeometry(traySize, wallHeight, wallThickness), trayMaterial);
+        wall2.position.set(0, wallHeight/2, traySize/2 - wallThickness/2);
+        trayGroup.add(wall2);
+        
+        const wall3 = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, wallHeight, traySize - 2*wallThickness), trayMaterial);
+        wall3.position.set(-traySize/2 + wallThickness/2, wallHeight/2, 0);
+        trayGroup.add(wall3);
+        
+        const wall4 = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, wallHeight, traySize - 2*wallThickness), trayMaterial);
+        wall4.position.set(traySize/2 - wallThickness/2, wallHeight/2, 0);
+        trayGroup.add(wall4);
+
+        // ===== CAMERA ON TRIPOD =====
+        const cameraRigPos = new THREE.Vector3(8, 0, 8);
+        const cameraRigGroup = new THREE.Group();
+        cameraRigGroup.position.copy(cameraRigPos);
+        scene.add(cameraRigGroup);
+        
+        // Tripod legs
+        const legMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const legLength = 2.5;
+        for (let i = 0; i < 3; i++) {
+            const angle = (i / 3) * Math.PI * 2;
+            const leg = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.03, 0.03, legLength, 8),
+                legMaterial
+            );
+            leg.position.set(
+                Math.cos(angle) * 0.5,
+                legLength / 2 * 0.6,
+                Math.sin(angle) * 0.5
+            );
+            leg.rotation.z = Math.cos(angle) * 0.3;
+            leg.rotation.x = -Math.sin(angle) * 0.3;
+            cameraRigGroup.add(leg);
+        }
+        
+        // Tripod head
+        const tripodHead = new THREE.Mesh(
+            new THREE.BoxGeometry(0.3, 0.1, 0.3),
+            new THREE.MeshStandardMaterial({ color: 0x444444 })
+        );
+        tripodHead.position.set(0, 1.5, 0);
+        cameraRigGroup.add(tripodHead);
+        
+        // Dummy camera body
+        const cameraBody = new THREE.Mesh(
+            new THREE.BoxGeometry(0.4, 0.3, 0.5),
+            new THREE.MeshStandardMaterial({ color: 0x222222 })
+        );
+        cameraBody.position.set(0, 1.7, 0);
+        cameraRigGroup.add(cameraBody);
+        
+        // Camera lens
+        const lens = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.08, 0.1, 0.2, 16),
+            new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9, roughness: 0.1 })
+        );
+        lens.rotation.x = Math.PI / 2;
+        lens.position.set(-0.3, 1.7, 0);
+        cameraRigGroup.add(lens);
+        
+        // FOV triangle (translucent)
+        const fovMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.DoubleSide
+        });
+        const fovGeometry = new THREE.BufferGeometry();
+        const fovVertices = new Float32Array([
+            -0.3, 1.7, 0,   // Camera lens (local to rig)
+            -8, 3, -4,      // Top of setup area (local to rig)
+            -8, 0, -4       // Bottom of setup area (local to rig)
+        ]);
+        fovGeometry.setAttribute('position', new THREE.BufferAttribute(fovVertices, 3));
+        fovGeometry.computeVertexNormals();
+        const fovTriangle = new THREE.Mesh(fovGeometry, fovMaterial);
+        cameraRigGroup.add(fovTriangle);
+        
+        // Target position
+        const targetPosition = new THREE.Vector3(4, 3, 4);
+        targetIndicator.position.copy(targetPosition);
+
+        // OrbitControls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.set(0, 3, 0);
+
+        // Camera rig nudge state
+        let cameraNudgeAngle = 0;
+        const originalRigPos = cameraRigPos.clone();
+        
+        // Background colors
+        const bgColors = [0x87CEEB, 0x222222, 0xFF6B6B, 0x4ECDC4, 0xFFE66D, 0x95E1D3];
+        let bgIndex = 0;
+
+        // Keyboard state
+        const keys = { w: false, a: false, s: false, d: false, z: false, x: false };
+        const moveSpeed = 0.1;
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (keys.hasOwnProperty(key)) keys[key] = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (keys.hasOwnProperty(key)) keys[key] = false;
+        });
+
+        // Animation state
+        let isAnimating = false;
+        let heldObject = null;
+        let animationPhase = 'idle';
+        let animationStartTime = 0;
+        let animationWaypoints = [];
+        let currentWaypointIndex = 0;
+        let failMode = false;
+        let pickAllMode = false;
+        let pickAllQueue = [];
+        let pickAllIndex = 0;
+
+        // Video recording state
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recordEnabled = false;
+
+        // Tray positions for placing items
+        const trayPositions = [
+            new THREE.Vector3(-4.5, 0.4, 3.5),
+            new THREE.Vector3(-3.5, 0.4, 3.5),
+            new THREE.Vector3(-4.5, 0.4, 4.5),
+            new THREE.Vector3(-3.5, 0.4, 4.5),
+            new THREE.Vector3(-4, 0.4, 4),
+            new THREE.Vector3(-4.3, 0.4, 3.7),
+            new THREE.Vector3(-3.7, 0.4, 3.7),
+            new THREE.Vector3(-4, 0.4, 4.3)
+        ];
+
+        // Inverse Kinematics Solver
+        function solveIK(target) {
+            const basePos = new THREE.Vector3(0, BASE_HEIGHT, 0);
+            const dx = target.x - basePos.x;
+            const dy = target.y - basePos.y;
+            const dz = target.z - basePos.z;
+            const horizontalDist = Math.sqrt(dx * dx + dz * dz);
+            const targetDist = Math.sqrt(horizontalDist * horizontalDist + dy * dy);
+            const maxReach = LINK1_LENGTH + LINK2_LENGTH;
+            const minReach = Math.abs(LINK1_LENGTH - LINK2_LENGTH);
+            
+            let reachable = true;
+            let actualTarget = target.clone();
+            
+            if (targetDist > maxReach) {
+                const scale = (maxReach * 0.99) / targetDist;
+                actualTarget.x = basePos.x + dx * scale;
+                actualTarget.y = basePos.y + dy * scale;
+                actualTarget.z = basePos.z + dz * scale;
+                reachable = false;
+            } else if (targetDist < minReach) {
+                const scale = (minReach * 1.01) / targetDist;
+                actualTarget.x = basePos.x + dx * scale;
+                actualTarget.y = basePos.y + dy * scale;
+                actualTarget.z = basePos.z + dz * scale;
+                reachable = false;
+            }
+            
+            const adx = actualTarget.x - basePos.x;
+            const ady = actualTarget.y - basePos.y;
+            const adz = actualTarget.z - basePos.z;
+            const aHorizontalDist = Math.sqrt(adx * adx + adz * adz);
+            const azimuth = Math.atan2(adx, adz);
+            const targetAngleFromHorizontal = Math.atan2(ady, aHorizontalDist);
+            const aTargetDist = Math.sqrt(aHorizontalDist * aHorizontalDist + ady * ady);
+            const cosShoulderOffset = (LINK1_LENGTH * LINK1_LENGTH + aTargetDist * aTargetDist - LINK2_LENGTH * LINK2_LENGTH) / (2 * LINK1_LENGTH * aTargetDist);
+            const shoulderOffset = Math.acos(Math.max(-1, Math.min(1, cosShoulderOffset)));
+            const upperArmAngleFromHorizontal = targetAngleFromHorizontal + shoulderOffset;
+            const elbowX_plane = LINK1_LENGTH * Math.cos(upperArmAngleFromHorizontal);
+            const elbowY_plane = LINK1_LENGTH * Math.sin(upperArmAngleFromHorizontal);
+            const elbowPos = new THREE.Vector3(
+                basePos.x + elbowX_plane * Math.sin(azimuth),
+                basePos.y + elbowY_plane,
+                basePos.z + elbowX_plane * Math.cos(azimuth)
+            );
+            
+            return { shoulderPos: basePos, elbowPos: elbowPos, endPos: actualTarget, azimuth, upperArmAngle: upperArmAngleFromHorizontal, reachable, actualTarget };
+        }
+
+        // Update robot arm
+        function updateRobotArm() {
+            const ik = solveIK(targetPosition);
+            shoulderJoint.position.copy(ik.shoulderPos);
+            elbowJoint.position.copy(ik.elbowPos);
+            gripper.position.copy(ik.endPos);
+            gripper.rotation.set(0, 0, 0);
+            
+            const upperArmDir = new THREE.Vector3().subVectors(ik.elbowPos, ik.shoulderPos).normalize();
+            const forearmDir = new THREE.Vector3().subVectors(ik.endPos, ik.elbowPos).normalize();
+            
+            upperArm.position.set((ik.shoulderPos.x + ik.elbowPos.x) / 2, (ik.shoulderPos.y + ik.elbowPos.y) / 2, (ik.shoulderPos.z + ik.elbowPos.z) / 2);
+            const upperArmQuat = new THREE.Quaternion();
+            upperArmQuat.setFromUnitVectors(new THREE.Vector3(0, 1, 0), upperArmDir);
+            upperArm.quaternion.copy(upperArmQuat);
+            
+            forearm.position.set((ik.elbowPos.x + ik.endPos.x) / 2, (ik.elbowPos.y + ik.endPos.y) / 2, (ik.elbowPos.z + ik.endPos.z) / 2);
+            const forearmQuat = new THREE.Quaternion();
+            forearmQuat.setFromUnitVectors(new THREE.Vector3(0, 1, 0), forearmDir);
+            forearm.quaternion.copy(forearmQuat);
+            
+            if (heldObject) {
+                heldObject.position.copy(gripper.position);
+                heldObject.position.y -= 0.5;
+                // Keep flat objects horizontal when held
+                if (heldObject === spoon1.mesh || heldObject === spoon2.mesh ||
+                    heldObject === fork1.mesh || heldObject === fork2.mesh) {
+                    heldObject.rotation.set(0, 0, 0);
+                }
+            }
+            
+            document.getElementById('target-pos').textContent = `Target: (${targetPosition.x.toFixed(1)}, ${targetPosition.y.toFixed(1)}, ${targetPosition.z.toFixed(1)})`;
+            document.getElementById('joint-angles').textContent = `Azimuth: ${(ik.azimuth * 180 / Math.PI).toFixed(0)}°, Arm: ${(ik.upperArmAngle * 180 / Math.PI).toFixed(0)}°`;
+            document.getElementById('reach-status').textContent = ik.reachable ? 'Reach: OK' : 'Reach: CLAMPED';
+            document.getElementById('reach-status').style.color = ik.reachable ? '#90EE90' : '#FFB6C1';
+            targetIndicator.position.copy(ik.actualTarget);
+        }
+
+        // Lerp
+        function lerpVector(v1, v2, t) {
+            return new THREE.Vector3(v1.x + (v2.x - v1.x) * t, v1.y + (v2.y - v1.y) * t, v1.z + (v2.z - v1.z) * t);
+        }
+
+        // Recording functions
+        function startRecording() {
+            recordedChunks = [];
+            const stream = renderer.domElement.captureStream(30);
+            let mimeType = 'video/webm';
+            if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) mimeType = 'video/webm;codecs=vp9';
+            else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) mimeType = 'video/webm;codecs=vp8';
+            
+            mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
+            mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+            mediaRecorder.start();
+            isRecording = true;
+        }
+
+        function stopRecordingAndDownload(filename) {
+            if (!isRecording || !mediaRecorder) return;
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 100);
+                isRecording = false;
+                mediaRecorder = null;
+            };
+            mediaRecorder.stop();
+        }
+
+        // Create waypoints for picking an object
+        function createPickWaypoints(objPos, trayPos, approachHeight = 1.5) {
+            const approach = new THREE.Vector3(objPos.x, approachHeight, objPos.z);
+            const pick = new THREE.Vector3(objPos.x, 0.6, objPos.z);
+            const trayApproach = new THREE.Vector3(trayPos.x, approachHeight, trayPos.z);
+            const place = new THREE.Vector3(trayPos.x, 0.5, trayPos.z);
+            
+            return [
+                { pos: approach, duration: 800, action: 'move' },
+                { pos: pick, duration: 600, action: 'pick' },
+                { pos: approach, duration: 600, action: 'move' },
+                { pos: trayApproach, duration: 1000, action: 'move' },
+                { pos: place, duration: 600, action: 'place' },
+                { pos: trayApproach, duration: 600, action: 'move' }
+            ];
+        }
+
+        // Start single pick and place
+        function startPickAndPlace(failScenario) {
+            if (isAnimating) return;
+            isAnimating = true;
+            failMode = failScenario;
+            pickAllMode = false;
+            currentWaypointIndex = 0;
+            animationStartTime = Date.now();
+            
+            cube.position.copy(CUBE_ORIGINAL_POS);
+            cube.rotation.set(0, 0, 0);
+            heldObject = null;
+            ghostCube.visible = failScenario;
+            
+            if (recordEnabled) startRecording();
+            
+            if (failMode) {
+                document.getElementById('status').textContent = 'Cube at correct position...';
+                setTimeout(() => {
+                    cube.position.x += 0.6;
+                    cube.position.z += 0.5;
+                    cube.rotation.y = 0.5;
+                    cube.rotation.x = 0.2;
+                    document.getElementById('status').textContent = 'Cube knocked off! Robot will try to pick at original location...';
+                }, 500);
+            } else {
+                document.getElementById('status').textContent = 'Picking up cube...';
+            }
+            
+            animationWaypoints = [
+                { pos: new THREE.Vector3(4, 2, 4), duration: 1000, action: 'move' },
+                { pos: new THREE.Vector3(4, 0.8, 4), duration: 800, action: 'pick' },
+                { pos: new THREE.Vector3(4, 2, 4), duration: 800, action: 'move' },
+                { pos: new THREE.Vector3(-4, 3, 4), duration: 1500, action: 'move' },
+                { pos: new THREE.Vector3(-4, 1, 4), duration: 800, action: 'place' },
+                { pos: new THREE.Vector3(-4, 3, 4), duration: 800, action: 'move' },
+                { pos: new THREE.Vector3(3, 5, 3), duration: 1000, action: 'done' }
+            ];
+            
+            document.getElementById('btn-pick-success').disabled = true;
+            document.getElementById('btn-pick-fail').disabled = true;
+            document.getElementById('btn-pick-all').disabled = true;
+        }
+
+        // Start pick all items
+        function startPickAll() {
+            if (isAnimating) return;
+            
+            // Reset all objects
+            allObjects.forEach(obj => {
+                obj.mesh.position.copy(obj.originalPos);
+                obj.mesh.rotation.set(0, 0, 0);
+                obj.picked = false;
+            });
+            
+            // Build queue of unpicked objects
+            pickAllQueue = allObjects.filter(obj => !obj.picked);
+            pickAllIndex = 0;
+            
+            if (pickAllQueue.length === 0) {
+                document.getElementById('status').textContent = 'All items already in tray!';
+                return;
+            }
+            
+            isAnimating = true;
+            pickAllMode = true;
+            failMode = false;
+            heldObject = null;
+            
+            if (recordEnabled) startRecording();
+            
+            document.getElementById('status').textContent = `Picking ${pickAllQueue[0].name} (1/${pickAllQueue.length})...`;
+            
+            // Start with first object
+            const firstObj = pickAllQueue[0];
+            animationWaypoints = createPickWaypoints(firstObj.originalPos, trayPositions[0]);
+            animationWaypoints[animationWaypoints.length - 1].action = 'next_or_done';
+            
+            currentWaypointIndex = 0;
+            animationStartTime = Date.now();
+            
+            document.getElementById('btn-pick-success').disabled = true;
+            document.getElementById('btn-pick-fail').disabled = true;
+            document.getElementById('btn-pick-all').disabled = true;
+        }
+
+        // Update animation
+        function updateAnimation() {
+            if (!isAnimating || currentWaypointIndex >= animationWaypoints.length) return;
+            
+            const now = Date.now();
+            const waypoint = animationWaypoints[currentWaypointIndex];
+            const elapsed = now - animationStartTime;
+            const progress = Math.min(elapsed / waypoint.duration, 1);
+            
+            let startPos;
+            if (currentWaypointIndex === 0) {
+                startPos = targetPosition.clone();
+            } else {
+                startPos = animationWaypoints[currentWaypointIndex - 1].pos;
+            }
+            
+            targetPosition.copy(lerpVector(startPos, waypoint.pos, progress));
+            
+            if (progress >= 1) {
+                switch (waypoint.action) {
+                    case 'pick':
+                        if (pickAllMode && pickAllIndex < pickAllQueue.length) {
+                            const obj = pickAllQueue[pickAllIndex];
+                            heldObject = obj.mesh;
+                            obj.picked = true;
+                            document.getElementById('status').textContent = `Picked ${obj.name}! Moving to tray...`;
+                        } else if (!failMode) {
+                            heldObject = cube;
+                            document.getElementById('status').textContent = 'Cube picked! Moving to tray...';
+                        } else {
+                            document.getElementById('status').textContent = 'Gripper closed but cube not found!';
+                        }
+                        break;
+                    case 'place':
+                        if (heldObject) {
+                            if (pickAllMode && pickAllIndex < pickAllQueue.length) {
+                                const trayPos = trayPositions[pickAllIndex % trayPositions.length];
+                                heldObject.position.set(trayPos.x, trayPos.y, trayPos.z);
+                                heldObject.rotation.set(0, 0, 0);
+                                document.getElementById('status').textContent = `Placed ${pickAllQueue[pickAllIndex].name} in tray!`;
+                            } else {
+                                heldObject.position.set(-4, 0.5, 4);
+                                heldObject.rotation.set(0, 0, 0);
+                                document.getElementById('status').textContent = 'Cube placed in tray!';
+                            }
+                            heldObject = null;
+                        } else {
+                            document.getElementById('status').textContent = 'Nothing to place - pick failed!';
+                        }
+                        break;
+                    case 'next_or_done':
+                        if (pickAllMode) {
+                            pickAllIndex++;
+                            if (pickAllIndex < pickAllQueue.length) {
+                                // Move to next object
+                                const nextObj = pickAllQueue[pickAllIndex];
+                                document.getElementById('status').textContent = `Picking ${nextObj.name} (${pickAllIndex + 1}/${pickAllQueue.length})...`;
+                                const nextWaypoints = createPickWaypoints(nextObj.originalPos, trayPositions[pickAllIndex % trayPositions.length]);
+                                nextWaypoints[nextWaypoints.length - 1].action = 'next_or_done';
+                                animationWaypoints = nextWaypoints;
+                                currentWaypointIndex = 0;
+                                animationStartTime = Date.now();
+                                return;
+                            } else {
+                                // All done
+                                isAnimating = false;
+                                if (recordEnabled && isRecording) {
+                                    stopRecordingAndDownload('pick_all_items.webm');
+                                }
+                                document.getElementById('status').textContent = 'All items picked and placed in tray!';
+                                document.getElementById('btn-pick-success').disabled = false;
+                                document.getElementById('btn-pick-fail').disabled = false;
+                                document.getElementById('btn-pick-all').disabled = false;
+                                return;
+                            }
+                        }
+                        break;
+                    case 'done':
+                        isAnimating = false;
+                        ghostCube.visible = false;
+                        if (recordEnabled && isRecording) {
+                            const filename = failMode ? 'pick_place_fail.webm' : 'pick_place_success.webm';
+                            stopRecordingAndDownload(filename);
+                        }
+                        if (failMode && !heldObject) {
+                            document.getElementById('status').textContent = 'Task failed - cube was knocked away!';
+                        } else {
+                            document.getElementById('status').textContent = 'Task completed!';
+                        }
+                        document.getElementById('btn-pick-success').disabled = false;
+                        document.getElementById('btn-pick-fail').disabled = false;
+                        document.getElementById('btn-pick-all').disabled = false;
+                        return;
+                }
+                
+                currentWaypointIndex++;
+                animationStartTime = now;
+            }
+        }
+
+        // Update target from keyboard
+        function updateTargetPosition() {
+            if (isAnimating) return;
+            if (keys.a) targetPosition.x -= moveSpeed;
+            if (keys.d) targetPosition.x += moveSpeed;
+            if (keys.w) targetPosition.z -= moveSpeed;
+            if (keys.s) targetPosition.z += moveSpeed;
+            if (keys.z) targetPosition.y += moveSpeed;
+            if (keys.x) targetPosition.y -= moveSpeed;
+            if (targetPosition.y < 0.5) targetPosition.y = 0.5;
+        }
+
+        // Button listeners
+        document.getElementById('btn-pick-success').addEventListener('click', () => startPickAndPlace(false));
+        document.getElementById('btn-pick-fail').addEventListener('click', () => startPickAndPlace(true));
+        document.getElementById('btn-pick-all').addEventListener('click', () => startPickAll());
+        
+        document.getElementById('record-toggle').addEventListener('click', () => {
+            recordEnabled = !recordEnabled;
+            const btn = document.getElementById('record-toggle');
+            if (recordEnabled) {
+                btn.textContent = '🎬 Record: ON';
+                btn.classList.remove('recording-off');
+            } else {
+                btn.textContent = '🎬 Record: OFF';
+                btn.classList.add('recording-off');
+            }
+        });
+        
+        // Nudge camera button - rotates the tripod camera angle
+        document.getElementById('btn-nudge-camera').addEventListener('click', () => {
+            if (recordEnabled) {
+                startRecording();
+                document.getElementById('status').textContent = 'Recording... will nudge camera in 1 second';
+                setTimeout(() => {
+                    cameraNudgeAngle += 0.05;
+                    cameraRigGroup.rotation.y = cameraNudgeAngle;
+                    document.getElementById('status').textContent = `Camera nudged! Rotation: ${(cameraNudgeAngle * 180 / Math.PI).toFixed(1)}° - ACT model may fail with this view!`;
+                    // Wait 2 more seconds then stop recording
+                    setTimeout(() => {
+                        stopRecordingAndDownload(`camera_nudge_${(cameraNudgeAngle * 180 / Math.PI).toFixed(1)}deg.webm`);
+                    }, 2000);
+                }, 1000);
+            } else {
+                cameraNudgeAngle += 0.05;
+                cameraRigGroup.rotation.y = cameraNudgeAngle;
+                document.getElementById('status').textContent = `Tripod camera angle nudged! Rotation: ${(cameraNudgeAngle * 180 / Math.PI).toFixed(1)}° - ACT model may fail with this view!`;
+            }
+        });
+        
+        // Change background button
+        document.getElementById('btn-change-bg').addEventListener('click', () => {
+            if (recordEnabled) {
+                startRecording();
+                document.getElementById('status').textContent = 'Recording... will change background in 1 second';
+                setTimeout(() => {
+                    bgIndex = (bgIndex + 1) % bgColors.length;
+                    scene.background = new THREE.Color(bgColors[bgIndex]);
+                    document.getElementById('status').textContent = `Background changed! ACT model trained on sky blue may not recognize objects now!`;
+                    // Wait 2 more seconds then stop recording
+                    setTimeout(() => {
+                        stopRecordingAndDownload(`background_${bgIndex}.webm`);
+                    }, 2000);
+                }, 1000);
+            } else {
+                bgIndex = (bgIndex + 1) % bgColors.length;
+                scene.background = new THREE.Color(bgColors[bgIndex]);
+                document.getElementById('status').textContent = `Background changed! ACT model trained on sky blue may not recognize objects now!`;
+            }
+        });
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            updateTargetPosition();
+            updateAnimation();
+            updateRobotArm();
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
