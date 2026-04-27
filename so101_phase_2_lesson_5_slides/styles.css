@@ -1,0 +1,69 @@
+.video-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-container video,
+.video-container img {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.two-column {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.two-column .column {
+  flex: 1;
+}
+
+.two-column img,
+.two-column video {
+  max-width: 100%;
+  height: auto;
+}
+
+.smaller-text {
+  font-size: 0.75em !important;
+}
+
+.smaller-text ul {
+  font-size: 0.85em;
+}
+
+.tiny-text {
+  font-size: 0.6em !important;
+}
+
+.tiny-text ul {
+  font-size: 0.9em;
+}
+
+.tiny-text .MathJax {
+  font-size: 0.85em !important;
+}
+
+.reveal .slide-content .mermaid {
+  max-height: 300px !important;
+  overflow: hidden !important;
+}
+
+.reveal .slide-content .mermaid svg {
+  max-height: 300px !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+.reveal .slide-content .mermaid .node rect {
+  max-width: 100%;
+}
+
+.iframe-demo {
+  width: 100%;
+  height: 500px;
+  border: 2px solid #333;
+  border-radius: 8px;
+}

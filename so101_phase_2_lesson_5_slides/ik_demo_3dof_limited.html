@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D IK — 3 DOF with Joint Angle Limits</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
+    color: #00d4ff;
+  }
+  p.instruction {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+  }
+  #canvas-container {
+    position: relative;
+    background: #16213e;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 10px;
+  }
+  canvas {
+    display: block;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: #0f3460;
+  }
+  #info {
+    margin-top: 0.6rem;
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    color: #ccc;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  #info .stat {
+    background: #16213e;
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
+    min-width: 85px;
+    text-align: center;
+  }
+  #info .stat span {
+    display: block;
+    font-size: 0.9rem;
+    color: #00d4ff;
+    font-weight: bold;
+  }
+  #info .stat.limited {
+    background: #4a1a1a;
+    color: #ff8888;
+  }
+  #info .stat.limited span {
+    color: #ff5555;
+  }
+  .legend {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    font-size: 0.72rem;
+    color: #aaa;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<h1>2D IK — 3 Joint, 3 Link with Angle Limits</h1>
+<p class="instruction">Drag the <strong>red circle</strong> (position) and <strong>green handle</strong> (orientation). Green arcs show allowed ranges.</p>
+
+<div id="canvas-container">
+  <canvas id="ikCanvas" width="700" height="460"></canvas>
+</div>
+
+<div id="info">
+  <div class="stat">θ₁<span id="theta1">0°</span></div>
+  <div class="stat">θ₂<span id="theta2">0°</span></div>
+  <div class="stat">θ₃<span id="theta3">0°</span></div>
+  <div class="stat" id="limit1" style="display:none">θ₁ LIMIT</div>
+  <div class="stat" id="limit2" style="display:none">θ₂ LIMIT</div>
+  <div class="stat" id="limit3" style="display:none">θ₃ LIMIT</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:#e94560"></div> Target</div>
+  <div class="legend-item"><div class="dot" style="background:#00ff88"></div> Orient handle</div>
+  <div class="legend-item"><div class="dot" style="background:#00d4ff"></div> Joints</div>
+  <div class="legend-item"><div class="dot" style="background:rgba(0,255,136,0.25)"></div> Allowed range</div>
+  <div class="legend-item"><div class="dot" style="background:#ff5555"></div> Blocked by limit</div>
+</div>
+
+<script>
+const canvas = document.getElementById('ikCanvas');
+const ctx = canvas.getContext('2d');
+
+const L1 = 130, L2 = 100, L3 = 80;
+let cx = canvas.width / 2;
+let cy = canvas.height / 2 + 60;
+
+let targetX = cx + L1 + L2 * 0.5;
+let targetY = cy - 80;
+let targetPhi = -Math.PI / 4;
+
+const limits = [
+  { min: -1.5, max: 1.5 },
+  { min: 0.3,  max: 2.5 },
+  { min: -1.0, max: 1.0 }
+];
+
+let dragMode = 'none';
+const posDragRadius = 16;
+const orientHandleLen = 35;
+const orientHitRadius = 14;
+
+function dist(x1, y1, x2, y2) {
+  return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
+}
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function solveIKNoLimits(tx, ty, phi) {
+  const x = tx - cx;
+  const y = cy - ty;
+  const wx = x - L3 * Math.cos(phi);
+  const wy = y - L3 * Math.sin(phi);
+  const d2 = wx*wx + wy*wy;
+  const maxReach = L1 + L2;
+  const minReach = Math.abs(L1 - L2);
+  let cxw = wx, cyw = wy;
+  const d = Math.sqrt(d2);
+  if (d > maxReach) { const s = maxReach/d; cxw = wx*s; cyw = wy*s; }
+  else if (d < minReach && d > 0) { const s = minReach/d; cxw = wx*s; cyw = wy*s; }
+  const wd2 = cxw*cxw + cyw*cyw;
+  const c2 = clamp((wd2 - L1*L1 - L2*L2) / (2 * L1 * L2), -1, 1);
+  const theta2 = Math.acos(c2);
+  const k1 = L1 + L2 * Math.cos(theta2);
+  const k2 = L2 * Math.sin(theta2);
+  const theta1 = Math.atan2(cyw, cxw) - Math.atan2(k2, k1);
+  let theta3 = phi - theta1 - theta2;
+  while (theta3 > Math.PI) theta3 -= 2*Math.PI;
+  while (theta3 < -Math.PI) theta3 += 2*Math.PI;
+  return { theta1, theta2, theta3 };
+}
+
+function computeFK(t1, t2, t3) {
+  const j1x = cx + L1 * Math.cos(t1);
+  const j1y = cy - L1 * Math.sin(t1);
+  const j2x = j1x + L2 * Math.cos(t1 + t2);
+  const j2y = j1y - L2 * Math.sin(t1 + t2);
+  const j3x = j2x + L3 * Math.cos(t1 + t2 + t3);
+  const j3y = j2y - L3 * Math.sin(t1 + t2 + t3);
+  return { j1x, j1y, j2x, j2y, j3x, j3y };
+}
+
+function solveIKWithLimits(tx, ty, phi) {
+  const sol = solveIKNoLimits(tx, ty, phi);
+  const t1c = clamp(sol.theta1, limits[0].min, limits[0].max);
+  const t2c = clamp(sol.theta2, limits[1].min, limits[1].max);
+  const t3c = clamp(sol.theta3, limits[2].min, limits[2].max);
+  const hit = [t1c !== sol.theta1, t2c !== sol.theta2, t3c !== sol.theta3];
+  const limited = hit[0] || hit[1] || hit[2];
+  const fk = computeFK(t1c, t2c, t3c);
+  const err = dist(fk.j3x, fk.j3y, tx, ty);
+  return { theta1: t1c, theta2: t2c, theta3: t3c, limited, err, ...fk, hit };
+}
+
+function drawSector(cx0, cy0, rIn, rOut, aMin, aMax, col) {
+  ctx.beginPath();
+  ctx.arc(cx0, cy0, rOut, -aMax, -aMin);
+  ctx.arc(cx0, cy0, rIn, -aMin, -aMax, true);
+  ctx.closePath();
+  ctx.fillStyle = col;
+  ctx.fill();
+}
+
+function getMousePos(evt) {
+  const rect = canvas.getBoundingClientRect();
+  const cX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+  const cY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+  return { x: cX - rect.left, y: cY - rect.top };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, L1+L2+L3, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const sol = solveIKWithLimits(targetX, targetY, targetPhi);
+
+  // Draw allowed sectors
+  drawSector(cx, cy, 20, 50, limits[0].min, limits[0].max, 'rgba(0,255,136,0.12)');
+  const absMin2 = sol.theta1 + limits[1].min;
+  const absMax2 = sol.theta1 + limits[1].max;
+  drawSector(sol.j1x, sol.j1y, 12, 38, absMin2, absMax2, 'rgba(0,255,136,0.10)');
+
+  // Links
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(sol.j1x, sol.j1y);
+  ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 5; ctx.stroke();
+
+  ctx.beginPath(); ctx.moveTo(sol.j1x, sol.j1y); ctx.lineTo(sol.j2x, sol.j2y);
+  ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 5; ctx.stroke();
+
+  ctx.beginPath(); ctx.moveTo(sol.j2x, sol.j2y); ctx.lineTo(sol.j3x, sol.j3y);
+  ctx.strokeStyle = '#ffaa00'; ctx.lineWidth = 5; ctx.stroke();
+
+  // Joints
+  [{x:cx,y:cy},{x:sol.j1x,y:sol.j1y},{x:sol.j2x,y:sol.j2y}].forEach(j=>{
+    ctx.beginPath(); ctx.arc(j.x, j.y, 6, 0, Math.PI*2);
+    ctx.fillStyle = '#00d4ff'; ctx.fill();
+  });
+
+  // Actual end effector
+  ctx.beginPath(); ctx.arc(sol.j3x, sol.j3y, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#00ff88'; ctx.fill();
+
+  const actPhi = sol.theta1 + sol.theta2 + sol.theta3;
+  ctx.beginPath();
+  ctx.moveTo(sol.j3x, sol.j3y);
+  ctx.lineTo(sol.j3x + 18*Math.cos(actPhi), sol.j3y - 18*Math.sin(actPhi));
+  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 2; ctx.stroke();
+
+  // Target
+  ctx.beginPath(); ctx.arc(targetX, targetY, posDragRadius, 0, Math.PI*2);
+  ctx.fillStyle = sol.limited ? '#ff5555' : '#e94560';
+  ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+
+  if (sol.limited) {
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(sol.j3x, sol.j3y); ctx.lineTo(targetX, targetY);
+    ctx.strokeStyle = '#ff5555'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#ff5555'; ctx.font = '12px sans-serif';
+    ctx.fillText(`Err: ${sol.err.toFixed(1)}`, (sol.j3x+targetX)/2+6, (sol.j3y+targetY)/2);
+  }
+
+  // Orientation handle
+  const ohX = targetX + orientHandleLen * Math.cos(targetPhi);
+  const ohY = targetY - orientHandleLen * Math.sin(targetPhi);
+  ctx.beginPath(); ctx.moveTo(targetX, targetY); ctx.lineTo(ohX, ohY);
+  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.beginPath(); ctx.arc(ohX, ohY, orientHitRadius, 0, Math.PI*2);
+  ctx.fillStyle = '#00ff88'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Update info
+  document.getElementById('theta1').textContent = (sol.theta1*180/Math.PI).toFixed(1)+'°';
+  document.getElementById('theta2').textContent = (sol.theta2*180/Math.PI).toFixed(1)+'°';
+  document.getElementById('theta3').textContent = (sol.theta3*180/Math.PI).toFixed(1)+'°';
+  const ids = ['limit1','limit2','limit3'];
+  ids.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if (sol.hit[i]) { el.style.display = 'block'; el.className = 'stat limited'; }
+    else { el.style.display = 'none'; el.className = 'stat'; }
+  });
+}
+
+function pickTarget(pos) {
+  const ohX = targetX + orientHandleLen * Math.cos(targetPhi);
+  const ohY = targetY - orientHandleLen * Math.sin(targetPhi);
+  if (dist(pos.x, pos.y, ohX, ohY) < orientHitRadius+8) return 'orient';
+  if (dist(pos.x, pos.y, targetX, targetY) < posDragRadius+10) return 'pos';
+  return 'none';
+}
+
+function onDown(e){ e.preventDefault(); dragMode = pickTarget(getMousePos(e)); }
+function onMove(e){
+  if (dragMode==='none') return;
+  e.preventDefault();
+  const p = getMousePos(e);
+  if (dragMode==='pos') { targetX=p.x; targetY=p.y; }
+  else if (dragMode==='orient') { targetPhi = Math.atan2(targetY-p.y, p.x-targetX); }
+  draw();
+}
+function onUp(){ dragMode='none'; }
+
+canvas.addEventListener('mousedown', onDown);
+window.addEventListener('mousemove', onMove);
+window.addEventListener('mouseup', onUp);
+canvas.addEventListener('touchstart', onDown, {passive:false});
+window.addEventListener('touchmove', onMove, {passive:false});
+window.addEventListener('touchend', onUp);
+
+draw();
+</script>
+</body>
+</html>

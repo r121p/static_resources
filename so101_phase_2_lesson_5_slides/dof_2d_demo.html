@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D — 3 Degrees of Freedom</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  h1 { font-size: 1.3rem; color: #00d4ff; margin-bottom: 1rem; }
+  .panels {
+    display: flex;
+    gap: 1rem;
+  }
+  .panel {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .panel h3 {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-bottom: 0.5rem;
+  }
+  canvas {
+    background: #0f3460;
+    border-radius: 6px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<h1>2D Space — 3 Degrees of Freedom</h1>
+
+<div class="panels">
+  <div class="panel">
+    <h3>Translation X (left ↔ right)</h3>
+    <canvas id="c1" width="220" height="220"></canvas>
+  </div>
+  <div class="panel">
+    <h3>Translation Y (up ↔ down)</h3>
+    <canvas id="c2" width="220" height="220"></canvas>
+  </div>
+  <div class="panel">
+    <h3>Rotation (↻ swing)</h3>
+    <canvas id="c3" width="220" height="220"></canvas>
+  </div>
+</div>
+
+<script>
+function drawArrow(ctx, x, y, angle, len, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-angle);
+  ctx.beginPath();
+  ctx.moveTo(-len/2, 0);
+  ctx.lineTo(len/2, 0);
+  ctx.lineTo(len/2 - 8, -5);
+  ctx.moveTo(len/2, 0);
+  ctx.lineTo(len/2 - 8, 5);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawGrid(ctx, w, h) {
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= w; i += 20) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+  }
+  for (let i = 0; i <= h; i += 20) {
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.beginPath(); ctx.moveTo(w/2, 0); ctx.lineTo(w/2, h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
+}
+
+function animate() {
+  const t = performance.now() / 1000;
+
+  // Panel 1: Translation X
+  const ctx1 = document.getElementById('c1').getContext('2d');
+  const w1 = 220, h1 = 220;
+  ctx1.clearRect(0, 0, w1, h1);
+  drawGrid(ctx1, w1, h1);
+  const x1 = w1/2 + Math.sin(t * 1.5) * 60;
+  drawArrow(ctx1, x1, h1/2, 0, 50, '#00d4ff');
+  ctx1.fillStyle = '#aaa'; ctx1.font = '12px sans-serif';
+  ctx1.fillText('x', x1 + 30, h1/2 + 5);
+
+  // Panel 2: Translation Y
+  const ctx2 = document.getElementById('c2').getContext('2d');
+  const w2 = 220, h2 = 220;
+  ctx2.clearRect(0, 0, w2, h2);
+  drawGrid(ctx2, w2, h2);
+  const y2 = h2/2 - Math.sin(t * 1.5) * 60;
+  drawArrow(ctx2, w2/2, y2, Math.PI/2, 50, '#00d4ff');
+  ctx2.fillStyle = '#aaa'; ctx2.font = '12px sans-serif';
+  ctx2.fillText('y', w2/2 + 8, y2 - 30);
+
+  // Panel 3: Rotation
+  const ctx3 = document.getElementById('c3').getContext('2d');
+  const w3 = 220, h3 = 220;
+  ctx3.clearRect(0, 0, w3, h3);
+  drawGrid(ctx3, w3, h3);
+  const angle3 = Math.sin(t * 1.5) * 1.2;
+  drawArrow(ctx3, w3/2, h3/2, angle3, 60, '#ffd700');
+  ctx3.beginPath(); ctx3.arc(w3/2, h3/2, 4, 0, Math.PI*2);
+  ctx3.fillStyle = '#00d4ff'; ctx3.fill();
+  ctx3.fillStyle = '#aaa'; ctx3.font = '12px sans-serif';
+  ctx3.fillText('φ', w3/2 + 40, h3/2 - 10);
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>

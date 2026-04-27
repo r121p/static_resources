@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Inverse Kinematics Demo — 3 DOF with Orientation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+    color: #00d4ff;
+  }
+  p.instruction {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 0.6rem;
+  }
+  #canvas-container {
+    position: relative;
+    background: #16213e;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 10px;
+  }
+  canvas {
+    display: block;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: #0f3460;
+  }
+  #info {
+    margin-top: 0.8rem;
+    display: flex;
+    gap: 1.2rem;
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+  #info .stat {
+    background: #16213e;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    min-width: 100px;
+    text-align: center;
+  }
+  #info .stat span {
+    display: block;
+    font-size: 1rem;
+    color: #00d4ff;
+    font-weight: bold;
+  }
+  .legend {
+    margin-top: 0.6rem;
+    display: flex;
+    gap: 1.2rem;
+    font-size: 0.75rem;
+    color: #aaa;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<h1>2D IK — 3 Joint, 3 Link with Target Orientation</h1>
+<p class="instruction">Drag the <strong>red circle</strong> to move position. Drag the <strong>green handle</strong> to rotate the target orientation.</p>
+
+<div id="canvas-container">
+  <canvas id="ikCanvas" width="700" height="480"></canvas>
+</div>
+
+<div id="info">
+  <div class="stat">θ₁<span id="theta1">0°</span></div>
+  <div class="stat">θ₂<span id="theta2">0°</span></div>
+  <div class="stat">θ₃<span id="theta3">0°</span></div>
+  <div class="stat">φ (target)<span id="phi">0°</span></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:#e94560"></div> Target pos</div>
+  <div class="legend-item"><div class="dot" style="background:#00ff88"></div> Orient handle</div>
+  <div class="legend-item"><div class="dot" style="background:#00d4ff"></div> Joints</div>
+  <div class="legend-item"><div class="dot" style="background:#ffd700"></div> Links</div>
+</div>
+
+<script>
+const canvas = document.getElementById('ikCanvas');
+const ctx = canvas.getContext('2d');
+
+// Arm parameters
+const L1 = 130;
+const L2 = 100;
+const L3 = 80;
+
+// Canvas center (base position)
+let cx = canvas.width / 2;
+let cy = canvas.height / 2 + 60;
+
+// Target position and orientation (radians)
+let targetX = cx + L1 + L2 * 0.5;
+let targetY = cy - 80;
+let targetPhi = -Math.PI / 4; // pointing down-right
+
+// Drag state: 'none', 'pos', 'orient'
+let dragMode = 'none';
+const posDragRadius = 16;
+const orientHandleLen = 35;
+const orientHitRadius = 14;
+
+function dist(x1, y1, x2, y2) {
+  return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
+}
+
+function solveIK(tx, ty, phi) {
+  // Standard coordinates relative to base
+  const x = tx - cx;
+  const y = cy - ty;
+
+  // Step 1: Compute wrist center by subtracting L3 at angle phi
+  const wx = x - L3 * Math.cos(phi);
+  const wy = y - L3 * Math.sin(phi);
+
+  const d2 = wx*wx + wy*wy;
+  const d = Math.sqrt(d2);
+  const maxReach = L1 + L2;
+  const minReach = Math.abs(L1 - L2);
+
+  // Clamp wrist center to reachable workspace if needed
+  let cxw = wx, cyw = wy;
+  if (d > maxReach) {
+    const scale = maxReach / d;
+    cxw = wx * scale;
+    cyw = wy * scale;
+  } else if (d < minReach && d > 0) {
+    const scale = minReach / d;
+    cxw = wx * scale;
+    cyw = wy * scale;
+  }
+
+  const wd2 = cxw*cxw + cyw*cyw;
+  const clampedCos2 = Math.max(-1, Math.min(1, (wd2 - L1*L1 - L2*L2) / (2 * L1 * L2)));
+  const theta2 = Math.acos(clampedCos2); // elbow up
+
+  const k1 = L1 + L2 * Math.cos(theta2);
+  const k2 = L2 * Math.sin(theta2);
+  const theta1 = Math.atan2(cyw, cxw) - Math.atan2(k2, k1);
+
+  // Step 2: theta3 from orientation constraint
+  // Absolute angle of link 3 = theta1 + theta2 + theta3 = phi
+  let theta3 = phi - theta1 - theta2;
+
+  // Normalize theta3 to [-PI, PI] for display
+  while (theta3 > Math.PI) theta3 -= 2*Math.PI;
+  while (theta3 < -Math.PI) theta3 += 2*Math.PI;
+
+  const j1x = cx + L1 * Math.cos(theta1);
+  const j1y = cy - L1 * Math.sin(theta1);
+  const j2x = j1x + L2 * Math.cos(theta1 + theta2);
+  const j2y = j1y - L2 * Math.sin(theta1 + theta2);
+  const j3x = j2x + L3 * Math.cos(theta1 + theta2 + theta3);
+  const j3y = j2y - L3 * Math.sin(theta1 + theta2 + theta3);
+
+  const reachable = d <= maxReach && d >= minReach;
+
+  return { theta1, theta2, theta3, j1x, j1y, j2x, j2y, j3x, j3y, reachable };
+}
+
+function getMousePos(evt) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+  const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+  return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Workspace circles (faint)
+  const maxR = L1 + L2 + L3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const sol = solveIK(targetX, targetY, targetPhi);
+
+  // Draw links
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(sol.j1x, sol.j1y);
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(sol.j1x, sol.j1y);
+  ctx.lineTo(sol.j2x, sol.j2y);
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(sol.j2x, sol.j2y);
+  ctx.lineTo(sol.j3x, sol.j3y);
+  ctx.strokeStyle = '#ffaa00';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  // Draw joints
+  const joints = [{x: cx, y: cy}, {x: sol.j1x, y: sol.j1y}, {x: sol.j2x, y: sol.j2y}];
+  joints.forEach(j => {
+    ctx.beginPath();
+    ctx.arc(j.x, j.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#00d4ff';
+    ctx.fill();
+  });
+
+  // End effector
+  ctx.beginPath();
+  ctx.arc(sol.j3x, sol.j3y, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#00ff88';
+  ctx.fill();
+
+  // Orientation line at tip
+  ctx.beginPath();
+  ctx.moveTo(sol.j3x, sol.j3y);
+  ctx.lineTo(sol.j3x + 20*Math.cos(targetPhi), sol.j3y - 20*Math.sin(targetPhi));
+  ctx.strokeStyle = '#00ff88';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Target position
+  ctx.beginPath();
+  ctx.arc(targetX, targetY, posDragRadius, 0, Math.PI * 2);
+  ctx.fillStyle = sol.reachable ? '#e94560' : '#ff5555';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Orientation handle
+  const ohX = targetX + orientHandleLen * Math.cos(targetPhi);
+  const ohY = targetY - orientHandleLen * Math.sin(targetPhi);
+
+  ctx.beginPath();
+  ctx.moveTo(targetX, targetY);
+  ctx.lineTo(ohX, ohY);
+  ctx.strokeStyle = '#00ff88';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(ohX, ohY, orientHitRadius, 0, Math.PI * 2);
+  ctx.fillStyle = '#00ff88';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // If unreachable, draw dashed line from base toward target
+  if (!sol.reachable) {
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(targetX, targetY);
+    ctx.strokeStyle = '#ff5555';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Update text
+  document.getElementById('theta1').textContent = (sol.theta1 * 180 / Math.PI).toFixed(1) + '°';
+  document.getElementById('theta2').textContent = (sol.theta2 * 180 / Math.PI).toFixed(1) + '°';
+  document.getElementById('theta3').textContent = (sol.theta3 * 180 / Math.PI).toFixed(1) + '°';
+  document.getElementById('phi').textContent = (targetPhi * 180 / Math.PI).toFixed(1) + '°';
+}
+
+function pickTarget(pos) {
+  const dPos = dist(pos.x, pos.y, targetX, targetY);
+  const ohX = targetX + orientHandleLen * Math.cos(targetPhi);
+  const ohY = targetY - orientHandleLen * Math.sin(targetPhi);
+  const dOrient = dist(pos.x, pos.y, ohX, ohY);
+
+  if (dOrient < orientHitRadius + 8) return 'orient';
+  if (dPos < posDragRadius + 10) return 'pos';
+  return 'none';
+}
+
+function onDown(e) {
+  e.preventDefault();
+  const pos = getMousePos(e);
+  dragMode = pickTarget(pos);
+}
+
+function onMove(e) {
+  if (dragMode === 'none') return;
+  e.preventDefault();
+  const pos = getMousePos(e);
+  if (dragMode === 'pos') {
+    targetX = pos.x;
+    targetY = pos.y;
+  } else if (dragMode === 'orient') {
+    targetPhi = Math.atan2(targetY - pos.y, pos.x - targetX);
+  }
+  draw();
+}
+
+function onUp() {
+  dragMode = 'none';
+}
+
+canvas.addEventListener('mousedown', onDown);
+window.addEventListener('mousemove', onMove);
+window.addEventListener('mouseup', onUp);
+
+canvas.addEventListener('touchstart', onDown, {passive: false});
+window.addEventListener('touchmove', onMove, {passive: false});
+window.addEventListener('touchend', onUp);
+
+draw();
+</script>
+</body>
+</html>

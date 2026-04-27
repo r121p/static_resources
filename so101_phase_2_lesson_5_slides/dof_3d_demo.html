@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D — 6 Degrees of Freedom</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  h1 { font-size: 1.3rem; color: #00d4ff; margin-bottom: 0.8rem; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(2, 200px);
+    gap: 0.8rem;
+  }
+  .cell {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .cell h3 {
+    font-size: 0.75rem;
+    color: #ccc;
+    margin-bottom: 6px;
+  }
+  .scene {
+    width: 140px;
+    height: 140px;
+    perspective: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .world {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    transform-style: preserve-3d;
+  }
+  .cube {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+  }
+  .face {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    opacity: 0.85;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: #fff;
+  }
+  .face.front  { background: #e94560; transform: rotateY(0deg) translateZ(30px); }
+  .face.back   { background: #e94560; transform: rotateY(180deg) translateZ(30px); }
+  .face.right  { background: #00d4ff; transform: rotateY(90deg) translateZ(30px); }
+  .face.left   { background: #00d4ff; transform: rotateY(-90deg) translateZ(30px); }
+  .face.top    { background: #ffd700; transform: rotateX(90deg) translateZ(30px); }
+  .face.bottom { background: #ffd700; transform: rotateX(-90deg) translateZ(30px); }
+
+  /* Axis lines inside the scene */
+  .axis {
+    position: absolute;
+    transform-style: preserve-3d;
+  }
+  .axis-line {
+    position: absolute;
+    height: 2px;
+    transform-origin: 0 50%;
+  }
+  .axis-x .axis-line { width: 50px; background: #ff4444; transform: rotateY(90deg) translateZ(1px); }
+  .axis-y .axis-line { width: 50px; background: #44ff44; transform: rotateZ(-90deg) translateZ(1px); }
+  .axis-z .axis-line { width: 50px; background: #4444ff; transform: rotateY(0deg) translateZ(1px); }
+
+  /* Animations */
+  @keyframes posX { 0%,100%{ transform: translateX(-25px); } 50%{ transform: translateX(25px); } }
+  @keyframes posY { 0%,100%{ transform: translateY(-25px); } 50%{ transform: translateY(25px); } }
+  @keyframes posZ { 0%,100%{ transform: translateZ(-25px); } 50%{ transform: translateZ(25px); } }
+  @keyframes rotX { 0%,100%{ transform: rotateX(-30deg); } 50%{ transform: rotateX(30deg); } }
+  @keyframes rotY { 0%,100%{ transform: rotateY(-30deg); } 50%{ transform: rotateY(30deg); } }
+  @keyframes rotZ { 0%,100%{ transform: rotateZ(-30deg); } 50%{ transform: rotateZ(30deg); } }
+
+  .anim-pos-x .cube { animation: posX 2.5s ease-in-out infinite; }
+  .anim-pos-y .cube { animation: posY 2.5s ease-in-out infinite; }
+  .anim-pos-z .cube { animation: posZ 2.5s ease-in-out infinite; }
+  .anim-rot-x .cube { animation: rotX 2.5s ease-in-out infinite; }
+  .anim-rot-y .cube { animation: rotY 2.5s ease-in-out infinite; }
+  .anim-rot-z .cube { animation: rotZ 2.5s ease-in-out infinite; }
+
+  /* Grid floor */
+  .floor {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background:
+      linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    transform: rotateX(75deg) translateZ(-40px);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>3D Space — 6 Degrees of Freedom</h1>
+
+<div class="grid">
+  <div class="cell">
+    <h3>Position X</h3>
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="world anim-pos-x">
+        <div class="cube">
+          <div class="face front">F</div>
+          <div class="face back">B</div>
+          <div class="face right">R</div>
+          <div class="face left">L</div>
+          <div class="face top">T</div>
+          <div class="face bottom">Bot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cell">
+    <h3>Position Y</h3>
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="world anim-pos-y">
+        <div class="cube">
+          <div class="face front">F</div>
+          <div class="face back">B</div>
+          <div class="face right">R</div>
+          <div class="face left">L</div>
+          <div class="face top">T</div>
+          <div class="face bottom">Bot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cell">
+    <h3>Position Z</h3>
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="world anim-pos-z">
+        <div class="cube">
+          <div class="face front">F</div>
+          <div class="face back">B</div>
+          <div class="face right">R</div>
+          <div class="face left">L</div>
+          <div class="face top">T</div>
+          <div class="face bottom">Bot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cell">
+    <h3>Rotation X (Roll)</h3>
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="world anim-rot-x">
+        <div class="cube">
+          <div class="face front">F</div>
+          <div class="face back">B</div>
+          <div class="face right">R</div>
+          <div class="face left">L</div>
+          <div class="face top">T</div>
+          <div class="face bottom">Bot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cell">
+    <h3>Rotation Y (Pitch)</h3>
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="world anim-rot-y">
+        <div class="cube">
+          <div class="face front">F</div>
+          <div class="face back">B</div>
+          <div class="face right">R</div>
+          <div class="face left">L</div>
+          <div class="face top">T</div>
+          <div class="face bottom">Bot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cell">
+    <h3>Rotation Z (Yaw)</h3>
+    <div class="scene">
+      <div class="floor"></div>
+      <div class="world anim-rot-z">
+        <div class="cube">
+          <div class="face front">F</div>
+          <div class="face back">B</div>
+          <div class="face right">R</div>
+          <div class="face left">L</div>
+          <div class="face top">T</div>
+          <div class="face bottom">Bot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
