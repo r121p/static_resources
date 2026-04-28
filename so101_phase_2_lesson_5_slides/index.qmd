@@ -270,3 +270,424 @@ Even when an analytical solution exists, engineers often **still choose iterativ
 Analytical IK is great for textbooks.
 Iterative IK is what runs on real robots.
 :::
+
+---
+
+## Demo: Pick and Place {.smaller-text}
+
+::: {.video-container}
+![Pick and Place](videos/pick_and_place.gif){height="500"}
+:::
+
+---
+
+## Use Case: Chess Robot {.smaller-text}
+
+Pick-and-place tasks like this are perfect for **position-only IK**.
+
+::: {.two-column}
+::: {.column}
+
+![Chess robot](imgs/chess_robot.jpeg){height="400"}
+
+:::
+
+::: {.column}
+
+The gripper always faces **straight down**.
+
+- Orientation is fixed (roll=0, pitch=−90°, yaw=0)
+- We only need to solve for **position** $(x, y, z)$
+- This makes IK much easier — even a 5-joint arm can do it reliably
+
+**Why this matters:**
+
+- Chess boards are flat
+- Pieces stand upright
+- No complex re-orientation needed
+:::
+:::
+
+---
+
+## Demo: Pick from High Place {.smaller-text}
+
+::: {.video-container}
+![Pick from High Place](videos/pick_from_high_place.gif){height="500"}
+:::
+
+---
+
+## Use Case: Shelves and Doors {.smaller-text}
+
+Picking from a high shelf or opening a door requires **more than position**.
+
+- The gripper must approach from a specific angle
+- You may need to tilt or rotate to grasp a handle
+- Sometimes you need to pull in a direction different from the approach
+
+These tasks push the arm toward its **orientation limits**.
+
+Locking joints or using iterative IK with orientation constraints becomes essential.
+
+---
+
+## Manipulation Area: Where Can the Arm Reach? {.smaller-text}
+
+The manipulation area shows all points the gripper can reach.
+
+::: {.two-column}
+::: {.column}
+
+**Position-only workspace**
+
+The arm can reach any point inside this 3-D volume when we do not care about orientation.
+
+![Position-only 3D](manipulation_area_plots/manipulation_posonly_3d.png){width="100%"}
+
+:::
+
+::: {.column}
+
+**Gripper-down workspace**
+
+When the gripper must face straight down (e.g. picking flat objects), the reachable volume shrinks.
+
+![Gripper-down 3D](manipulation_area_plots/manipulation_down_3d.png){width="100%"}
+
+:::
+:::
+
+---
+
+## Manipulation Area Summaries {.smaller-text}
+
+Side-by-side slices show how constraining orientation removes reachable space.
+
+::: {.two-column}
+::: {.column}
+
+![Position-only summary](manipulation_area_plots/manipulation_posonly_summary.png){width="100%"}
+
+:::
+
+::: {.column}
+
+![Gripper-down summary](manipulation_area_plots/manipulation_down_summary.png){width="100%"}
+
+:::
+:::
+
+---
+
+## Full Manipulation Area Image Gallery {.smaller-text}
+
+Click any link to view the full-resolution plot.
+
+**Position-only workspace:**
+[3-D view](manipulation_area_plots/manipulation_posonly_3d.png) ·
+[Summary](manipulation_area_plots/manipulation_posonly_summary.png) ·
+[z = −15](manipulation_area_plots/manipulation_posonly_z-15.png) ·
+[z = −10](manipulation_area_plots/manipulation_posonly_z-10.png) ·
+[z = −5](manipulation_area_plots/manipulation_posonly_z-5.png) ·
+[z = 0](manipulation_area_plots/manipulation_posonly_z0.png) ·
+[z = 5](manipulation_area_plots/manipulation_posonly_z5.png) ·
+[z = 10](manipulation_area_plots/manipulation_posonly_z10.png) ·
+[z = 15](manipulation_area_plots/manipulation_posonly_z15.png) ·
+[z = 20](manipulation_area_plots/manipulation_posonly_z20.png) ·
+[z = 25](manipulation_area_plots/manipulation_posonly_z25.png)
+
+**Gripper-down workspace:**
+[3-D view](manipulation_area_plots/manipulation_down_3d.png) ·
+[Summary](manipulation_area_plots/manipulation_down_summary.png) ·
+[z = −15](manipulation_area_plots/manipulation_down_z-15.png) ·
+[z = −12](manipulation_area_plots/manipulation_down_z-12.png) ·
+[z = −9](manipulation_area_plots/manipulation_down_z-9.png) ·
+[z = −6](manipulation_area_plots/manipulation_down_z-6.png) ·
+[z = −3](manipulation_area_plots/manipulation_down_z-3.png) ·
+[z = 0](manipulation_area_plots/manipulation_down_z0.png) ·
+[z = 3](manipulation_area_plots/manipulation_down_z3.png) ·
+[z = 6](manipulation_area_plots/manipulation_down_z6.png)
+
+---
+
+## Hardware Setup: USB Hub Chain {.smaller-text}
+
+Each group must wire their devices in this exact order:
+
+**Arms + Cameras → USB 2.0 hub → USB 3.0 hub → Server**
+
+::: {.two-column}
+::: {.column}
+
+**Rules:**
+
+- Connect arms and cameras **only** to the USB 2.0 hub
+- Connect the USB 2.0 hub **only** to the USB 3.0 hub
+- Connect the USB 3.0 hub **only** to the server
+- **Never** plug arms or cameras directly into the server or the 3.0 hub
+- The USB 2.0 hub needs an **external DC power supply**
+
+:::
+
+::: {.column}
+
+![USB 2.0 Hub](imgs/usb_1to7_hub.jpeg){width="90%"}
+
+:::
+:::
+
+::: {.callout-warning}
+Power the USB 2.0 hub with a **HK plug 220 V → DC converter**.
+If the hub is under-powered, arms and cameras will randomly disconnect.
+:::
+
+---
+
+## USB Setup: DO {.smaller-text}
+
+```{mermaid}
+flowchart LR
+    A[🤖 Arm 1] --> U2[USB 2.0 Hub<br/>Group X]
+    B[📷 Camera 1] --> U2
+    C[🤖 Arm 2] --> U2
+    D[📷 Camera 2] --> U2
+    U2O[USB 2.0 Hub<br/>Group Y] --> U3
+    U2 --> U3[USB 3.0 Hub]
+    U3 --> S[🖥️ Server]
+
+    style U2 fill:#c8e6c9,stroke:#2e7d32
+    style U2O fill:#c8e6c9,stroke:#2e7d32
+    style U3 fill:#fff9c4,stroke:#f9a825
+    style S fill:#bbdefb,stroke:#1565c0
+```
+
+**Correct chain:** All arms and cameras → USB 2.0 hub → USB 3.0 hub → Server
+
+---
+
+## USB Setup: DON'T {.smaller-text}
+
+```{mermaid}
+flowchart LR
+    A[🤖 Arm] --> S[🖥️ Server]
+    B[📷 Camera] --> U3[USB 3.0 Hub]
+    U3 --> S
+
+    style A fill:#ffcdd2,stroke:#c62828
+    style B fill:#ffcdd2,stroke:#c62828
+    style S fill:#ffcdd2,stroke:#c62828
+    style U3 fill:#ffcdd2,stroke:#c62828
+```
+
+**Never do this:**
+
+- Never plug arms or cameras directly into the server
+- Never plug arms or cameras directly into the USB 3.0 hub
+- Never skip the USB 2.0 hub
+
+---
+
+## Arm Assignment {.smaller-text}
+
+Each group receives **4 arms**.
+
+The **last 3 characters of the serial number** are written on each arm. Use these to identify which arm is yours.
+
+**Naming convention:**
+
+- `white_1` / `white_2` — white follower arms
+- `black_1` / `black_2` — black leader arms
+
+::: {.callout-note}
+Check `~/dev/` on the server — symlinks like `white_1 -> /dev/ttyACM0` are created automatically when the arm is plugged in.
+:::
+
+---
+
+## Group — Arm Mapping {.smaller-text}
+
+| Group | white_1 | white_2 | black_1 | black_2 |
+|-------|---------|---------|---------|---------|
+| g1 | `...088` | `...304` | `...906` | `...437` |
+| g2 | `...422` | `...740` | `...358` | `...451` |
+| g3 | `...444` | `...108` | `...856` | `...174` |
+| g4 | `...219` | `...682` | `...566` | `...849` |
+
+*(Last 3 digits of each arm's iSerial are shown.)*
+
+---
+
+## Connecting to the Server {.smaller-text}
+
+Recap from Lesson 2 — SSH into your group's shared Linux account:
+
+**From macOS / Linux Terminal:**
+```bash
+ssh username@ip_address
+```
+
+**From Windows Terminal / PowerShell:**
+```powershell
+ssh username@ip_address
+```
+
+**Example:**
+```bash
+ssh so101p2g1@192.168.1.100
+```
+
+::: {.callout-tip}
+If you set up SSH keys in Lesson 2, you can log in without a password.
+Otherwise use the password provided by your tutor.
+:::
+
+---
+
+## The robot Command {.smaller-text}
+
+After SSH-ing into the server, type `robot` to launch the menu:
+
+```bash
+so101p2g1@server:~$ robot
+
+╔══════════════════════════════════════════════════════════╗
+║          SO-100 Robot Arm & Camera Launcher              ║
+╚══════════════════════════════════════════════════════════╝
+
+1) arm_control_server.py
+2) camera_stream_server.py
+3) ik_example_control_arm.py
+4) check_dev_usage.sh
+5) arm_setup.sh --calibrate
+
+Pick an option (1-5, or q):
+```
+
+---
+
+## Feature 1: Arm Calibration {.smaller-text}
+
+**Always calibrate first!**
+
+Uncalibrated arms can jerk, overshoot, or hit mechanical limits.
+
+- Select option **5** from the `robot` menu
+- Choose the arm you want to calibrate (e.g. `white_1`)
+- Move each joint by hand to its neutral position when prompted
+- **You must be physically next to the robot** — do not run this remotely
+
+::: {.callout-warning}
+Calibrate **before** you try to move the arm with code or the web UI.
+:::
+
+---
+
+## Feature 2: Arm Control Server {.smaller-text}
+
+Select option **1** from the `robot` menu.
+
+A Flask web UI starts with sliders for:
+
+- Arm pose $(x, y, z, roll, pitch, yaw)$
+- Gripper opening (0–100)
+- Movement duration
+
+The terminal prints a URL with a secret token:
+
+```
+ * Arm control URL: http://192.168.1.100:5201/?token=AbC123XyZ...
+```
+
+**Copy that URL and paste it into your browser.**
+
+---
+
+## Feature 3: Camera Stream Server {.smaller-text}
+
+Select option **2** from the `robot` menu.
+
+Streams live video from all cameras in your group's `~/dev/` folder.
+
+The terminal prints a URL with a secret token:
+
+```
+ * Access with token: http://192.168.1.100:5201/?token=AbC123XyZ...
+```
+
+**Copy that URL and paste it into your browser.**
+
+Each group member can open the same link to view the cameras.
+
+> ⚠️ **Reminder:** You can only view cameras connected to your group's own USB hub.
+
+---
+
+## Feature 4: IK Example Demos {.smaller-text}
+
+Select option **3** from the `robot` menu.
+
+Runs pre-built pick-and-place examples using inverse kinematics.
+
+- Choose from several built-in movement patterns
+- Watch the arm move automatically
+- Use this as a starting point for your own code
+
+---
+
+## Feature 5: Check Device Usage {.smaller-text}
+
+Select option **4** from the `robot` menu.
+
+Shows which processes are currently using arms or cameras.
+
+Useful when you get a "device busy" error — check with your groupmates before killing any process!
+
+---
+
+## Opening the Web UI with the Token {.smaller-text}
+
+Both the **Arm Control Server** and **Camera Stream Server** require a token in the URL.
+
+**What the terminal prints:**
+
+```
+ * Arm control URL: http://192.168.1.100:5201/?token=AbC123XyZ...
+```
+
+**What you do:**
+
+1. **Select** the URL in the terminal
+2. **Ctrl+Click** (or copy-paste) to open it in your browser
+3. Share the link with your groupmates — they can all control the arm together
+
+::: {.callout-warning}
+### Important reminders
+
+- **Calibrate** the arm **before** trying to move it
+- The token is randomly generated each time you start the server
+- Without the token, the page will reject you
+:::
+
+---
+
+## Your Task: Vibe Code the IK Example {.smaller-text}
+
+Open the example file on the server:
+
+```bash
+~/IN097-phase2/ik_example_control_arm.py
+```
+
+It already contains working pick-and-place demos. **Modify it** so the arm performs **more actions** — be creative!
+
+**Ideas to try:**
+
+- Pick up from one location, show the object, then place at a third location
+- Add a "dance" sequence between pick and place
+- Change gripper timing (open earlier / close later)
+- Add intermediate waypoints for smoother motion
+
+::: {.callout-tip}
+Work together with your group. One person edits, everyone watches the arm move!
+:::

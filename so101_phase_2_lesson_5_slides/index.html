@@ -28,6 +28,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
   <link rel="stylesheet" href="styles.css">
@@ -394,6 +460,436 @@ Keep these in mind — we will compare them to the much larger systems used for 
 </div>
 <div class="callout-content">
 <p>Analytical IK is great for textbooks. Iterative IK is what runs on real robots.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="demo-pick-and-place" class="slide level2 smaller-text">
+<h2>Demo: Pick and Place</h2>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="videos/pick_and_place.gif" height="500"></p>
+<figcaption>Pick and Place</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="use-case-chess-robot" class="slide level2 smaller-text">
+<h2>Use Case: Chess Robot</h2>
+<p>Pick-and-place tasks like this are perfect for <strong>position-only IK</strong>.</p>
+<div class="two-column">
+<div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/chess_robot.jpeg" height="400"></p>
+<figcaption>Chess robot</figcaption>
+</figure>
+</div>
+</div><div class="column">
+<p>The gripper always faces <strong>straight down</strong>.</p>
+<ul>
+<li>Orientation is fixed (roll=0, pitch=−90°, yaw=0)</li>
+<li>We only need to solve for <strong>position</strong> <span class="math inline">\((x, y, z)\)</span></li>
+<li>This makes IK much easier — even a 5-joint arm can do it reliably</li>
+</ul>
+<p><strong>Why this matters:</strong></p>
+<ul>
+<li>Chess boards are flat</li>
+<li>Pieces stand upright</li>
+<li>No complex re-orientation needed</li>
+</ul>
+</div></div>
+</section>
+<section id="demo-pick-from-high-place" class="slide level2 smaller-text">
+<h2>Demo: Pick from High Place</h2>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="videos/pick_from_high_place.gif" height="500"></p>
+<figcaption>Pick from High Place</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="use-case-shelves-and-doors" class="slide level2 smaller-text">
+<h2>Use Case: Shelves and Doors</h2>
+<p>Picking from a high shelf or opening a door requires <strong>more than position</strong>.</p>
+<ul>
+<li>The gripper must approach from a specific angle</li>
+<li>You may need to tilt or rotate to grasp a handle</li>
+<li>Sometimes you need to pull in a direction different from the approach</li>
+</ul>
+<p>These tasks push the arm toward its <strong>orientation limits</strong>.</p>
+<p>Locking joints or using iterative IK with orientation constraints becomes essential.</p>
+</section>
+<section id="manipulation-area-where-can-the-arm-reach" class="slide level2 smaller-text">
+<h2>Manipulation Area: Where Can the Arm Reach?</h2>
+<p>The manipulation area shows all points the gripper can reach.</p>
+<div class="two-column">
+<div class="column">
+<p><strong>Position-only workspace</strong></p>
+<p>The arm can reach any point inside this 3-D volume when we do not care about orientation.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="manipulation_area_plots/manipulation_posonly_3d.png" style="width:100.0%"></p>
+<figcaption>Position-only 3D</figcaption>
+</figure>
+</div>
+</div><div class="column">
+<p><strong>Gripper-down workspace</strong></p>
+<p>When the gripper must face straight down (e.g.&nbsp;picking flat objects), the reachable volume shrinks.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="manipulation_area_plots/manipulation_down_3d.png" style="width:100.0%"></p>
+<figcaption>Gripper-down 3D</figcaption>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="manipulation-area-summaries" class="slide level2 smaller-text">
+<h2>Manipulation Area Summaries</h2>
+<p>Side-by-side slices show how constraining orientation removes reachable space.</p>
+<div class="two-column">
+<div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="manipulation_area_plots/manipulation_posonly_summary.png" style="width:100.0%"></p>
+<figcaption>Position-only summary</figcaption>
+</figure>
+</div>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="manipulation_area_plots/manipulation_down_summary.png" style="width:100.0%"></p>
+<figcaption>Gripper-down summary</figcaption>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="full-manipulation-area-image-gallery" class="slide level2 smaller-text">
+<h2>Full Manipulation Area Image Gallery</h2>
+<p>Click any link to view the full-resolution plot.</p>
+<p><strong>Position-only workspace:</strong> <a href="manipulation_area_plots/manipulation_posonly_3d.png">3-D view</a> · <a href="manipulation_area_plots/manipulation_posonly_summary.png">Summary</a> · <a href="manipulation_area_plots/manipulation_posonly_z-15.png">z = −15</a> · <a href="manipulation_area_plots/manipulation_posonly_z-10.png">z = −10</a> · <a href="manipulation_area_plots/manipulation_posonly_z-5.png">z = −5</a> · <a href="manipulation_area_plots/manipulation_posonly_z0.png">z = 0</a> · <a href="manipulation_area_plots/manipulation_posonly_z5.png">z = 5</a> · <a href="manipulation_area_plots/manipulation_posonly_z10.png">z = 10</a> · <a href="manipulation_area_plots/manipulation_posonly_z15.png">z = 15</a> · <a href="manipulation_area_plots/manipulation_posonly_z20.png">z = 20</a> · <a href="manipulation_area_plots/manipulation_posonly_z25.png">z = 25</a></p>
+<p><strong>Gripper-down workspace:</strong> <a href="manipulation_area_plots/manipulation_down_3d.png">3-D view</a> · <a href="manipulation_area_plots/manipulation_down_summary.png">Summary</a> · <a href="manipulation_area_plots/manipulation_down_z-15.png">z = −15</a> · <a href="manipulation_area_plots/manipulation_down_z-12.png">z = −12</a> · <a href="manipulation_area_plots/manipulation_down_z-9.png">z = −9</a> · <a href="manipulation_area_plots/manipulation_down_z-6.png">z = −6</a> · <a href="manipulation_area_plots/manipulation_down_z-3.png">z = −3</a> · <a href="manipulation_area_plots/manipulation_down_z0.png">z = 0</a> · <a href="manipulation_area_plots/manipulation_down_z3.png">z = 3</a> · <a href="manipulation_area_plots/manipulation_down_z6.png">z = 6</a></p>
+</section>
+<section id="hardware-setup-usb-hub-chain" class="slide level2 smaller-text">
+<h2>Hardware Setup: USB Hub Chain</h2>
+<p>Each group must wire their devices in this exact order:</p>
+<p><strong>Arms + Cameras → USB 2.0 hub → USB 3.0 hub → Server</strong></p>
+<div class="two-column">
+<div class="column">
+<p><strong>Rules:</strong></p>
+<ul>
+<li>Connect arms and cameras <strong>only</strong> to the USB 2.0 hub</li>
+<li>Connect the USB 2.0 hub <strong>only</strong> to the USB 3.0 hub</li>
+<li>Connect the USB 3.0 hub <strong>only</strong> to the server</li>
+<li><strong>Never</strong> plug arms or cameras directly into the server or the 3.0 hub</li>
+<li>The USB 2.0 hub needs an <strong>external DC power supply</strong></li>
+</ul>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/usb_1to7_hub.jpeg" style="width:90.0%"></p>
+<figcaption>USB 2.0 Hub</figcaption>
+</figure>
+</div>
+</div></div>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Power the USB 2.0 hub with a <strong>HK plug 220 V → DC converter</strong>. If the hub is under-powered, arms and cameras will randomly disconnect.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="usb-setup-do" class="slide level2 smaller-text">
+<h2>USB Setup: DO</h2>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[🤖 Arm 1] --&gt; U2[USB 2.0 Hub&lt;br/&gt;Group X]
+    B[📷 Camera 1] --&gt; U2
+    C[🤖 Arm 2] --&gt; U2
+    D[📷 Camera 2] --&gt; U2
+    U2O[USB 2.0 Hub&lt;br/&gt;Group Y] --&gt; U3
+    U2 --&gt; U3[USB 3.0 Hub]
+    U3 --&gt; S[🖥️ Server]
+
+    style U2 fill:#c8e6c9,stroke:#2e7d32
+    style U2O fill:#c8e6c9,stroke:#2e7d32
+    style U3 fill:#fff9c4,stroke:#f9a825
+    style S fill:#bbdefb,stroke:#1565c0
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Correct chain:</strong> All arms and cameras → USB 2.0 hub → USB 3.0 hub → Server</p>
+</section>
+<section id="usb-setup-dont" class="slide level2 smaller-text">
+<h2>USB Setup: DON’T</h2>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[🤖 Arm] --&gt; S[🖥️ Server]
+    B[📷 Camera] --&gt; U3[USB 3.0 Hub]
+    U3 --&gt; S
+
+    style A fill:#ffcdd2,stroke:#c62828
+    style B fill:#ffcdd2,stroke:#c62828
+    style S fill:#ffcdd2,stroke:#c62828
+    style U3 fill:#ffcdd2,stroke:#c62828
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Never do this:</strong></p>
+<ul>
+<li>Never plug arms or cameras directly into the server</li>
+<li>Never plug arms or cameras directly into the USB 3.0 hub</li>
+<li>Never skip the USB 2.0 hub</li>
+</ul>
+</section>
+<section id="arm-assignment" class="slide level2 smaller-text">
+<h2>Arm Assignment</h2>
+<p>Each group receives <strong>4 arms</strong>.</p>
+<p>The <strong>last 3 characters of the serial number</strong> are written on each arm. Use these to identify which arm is yours.</p>
+<p><strong>Naming convention:</strong></p>
+<ul>
+<li><code>white_1</code> / <code>white_2</code> — white follower arms</li>
+<li><code>black_1</code> / <code>black_2</code> — black leader arms</li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Check <code>~/dev/</code> on the server — symlinks like <code>white_1 -&gt; /dev/ttyACM0</code> are created automatically when the arm is plugged in.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="group-arm-mapping" class="slide level2 smaller-text">
+<h2>Group — Arm Mapping</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Group</th>
+<th>white_1</th>
+<th>white_2</th>
+<th>black_1</th>
+<th>black_2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>g1</td>
+<td><code>...088</code></td>
+<td><code>...304</code></td>
+<td><code>...906</code></td>
+<td><code>...437</code></td>
+</tr>
+<tr class="even">
+<td>g2</td>
+<td><code>...422</code></td>
+<td><code>...740</code></td>
+<td><code>...358</code></td>
+<td><code>...451</code></td>
+</tr>
+<tr class="odd">
+<td>g3</td>
+<td><code>...444</code></td>
+<td><code>...108</code></td>
+<td><code>...856</code></td>
+<td><code>...174</code></td>
+</tr>
+<tr class="even">
+<td>g4</td>
+<td><code>...219</code></td>
+<td><code>...682</code></td>
+<td><code>...566</code></td>
+<td><code>...849</code></td>
+</tr>
+</tbody>
+</table>
+<p><em>(Last 3 digits of each arm’s iSerial are shown.)</em></p>
+</section>
+<section id="connecting-to-the-server" class="slide level2 smaller-text">
+<h2>Connecting to the Server</h2>
+<p>Recap from Lesson 2 — SSH into your group’s shared Linux account:</p>
+<p><strong>From macOS / Linux Terminal:</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href=""></a><span class="fu">ssh</span> username@ip_address</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>From Windows Terminal / PowerShell:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource powershell number-lines code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href=""></a>ssh username@ip_address</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href=""></a><span class="fu">ssh</span> so101p2g1@192.168.1.100</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>If you set up SSH keys in Lesson 2, you can log in without a password. Otherwise use the password provided by your tutor.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-robot-command" class="slide level2 smaller-text">
+<h2>The robot Command</h2>
+<p>After SSH-ing into the server, type <code>robot</code> to launch the menu:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href=""></a><span class="ex">so101p2g1@server:~$</span> robot</span>
+<span id="cb4-2"><a href=""></a></span>
+<span id="cb4-3"><a href=""></a><span class="ex">╔══════════════════════════════════════════════════════════╗</span></span>
+<span id="cb4-4"><a href=""></a><span class="ex">║</span>          SO-100 Robot Arm <span class="kw">&amp;</span> <span class="ex">Camera</span> Launcher              ║</span>
+<span id="cb4-5"><a href=""></a><span class="ex">╚══════════════════════════════════════════════════════════╝</span></span>
+<span id="cb4-6"><a href=""></a></span>
+<span id="cb4-7"><a href=""></a><span class="ex">1</span><span class="er">)</span> <span class="ex">arm_control_server.py</span></span>
+<span id="cb4-8"><a href=""></a><span class="ex">2</span><span class="er">)</span> <span class="ex">camera_stream_server.py</span></span>
+<span id="cb4-9"><a href=""></a><span class="ex">3</span><span class="er">)</span> <span class="ex">ik_example_control_arm.py</span></span>
+<span id="cb4-10"><a href=""></a><span class="ex">4</span><span class="er">)</span> <span class="ex">check_dev_usage.sh</span></span>
+<span id="cb4-11"><a href=""></a><span class="ex">5</span><span class="er">)</span> <span class="ex">arm_setup.sh</span> <span class="at">--calibrate</span></span>
+<span id="cb4-12"><a href=""></a></span>
+<span id="cb4-13"><a href=""></a><span class="ex">Pick</span> an option <span class="er">(</span><span class="ex">1-5,</span> or q<span class="kw">)</span><span class="bu">:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="feature-1-arm-calibration" class="slide level2 smaller-text">
+<h2>Feature 1: Arm Calibration</h2>
+<p><strong>Always calibrate first!</strong></p>
+<p>Uncalibrated arms can jerk, overshoot, or hit mechanical limits.</p>
+<ul>
+<li>Select option <strong>5</strong> from the <code>robot</code> menu</li>
+<li>Choose the arm you want to calibrate (e.g.&nbsp;<code>white_1</code>)</li>
+<li>Move each joint by hand to its neutral position when prompted</li>
+<li><strong>You must be physically next to the robot</strong> — do not run this remotely</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Calibrate <strong>before</strong> you try to move the arm with code or the web UI.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="feature-2-arm-control-server" class="slide level2 smaller-text">
+<h2>Feature 2: Arm Control Server</h2>
+<p>Select option <strong>1</strong> from the <code>robot</code> menu.</p>
+<p>A Flask web UI starts with sliders for:</p>
+<ul>
+<li>Arm pose <span class="math inline">\((x, y, z, roll, pitch, yaw)\)</span></li>
+<li>Gripper opening (0–100)</li>
+<li>Movement duration</li>
+</ul>
+<p>The terminal prints a URL with a secret token:</p>
+<pre><code> * Arm control URL: http://192.168.1.100:5201/?token=AbC123XyZ...</code></pre>
+<p><strong>Copy that URL and paste it into your browser.</strong></p>
+</section>
+<section id="feature-3-camera-stream-server" class="slide level2 smaller-text">
+<h2>Feature 3: Camera Stream Server</h2>
+<p>Select option <strong>2</strong> from the <code>robot</code> menu.</p>
+<p>Streams live video from all cameras in your group’s <code>~/dev/</code> folder.</p>
+<p>The terminal prints a URL with a secret token:</p>
+<pre><code> * Access with token: http://192.168.1.100:5201/?token=AbC123XyZ...</code></pre>
+<p><strong>Copy that URL and paste it into your browser.</strong></p>
+<p>Each group member can open the same link to view the cameras.</p>
+<blockquote>
+<p>⚠️ <strong>Reminder:</strong> You can only view cameras connected to your group’s own USB hub.</p>
+</blockquote>
+</section>
+<section id="feature-4-ik-example-demos" class="slide level2 smaller-text">
+<h2>Feature 4: IK Example Demos</h2>
+<p>Select option <strong>3</strong> from the <code>robot</code> menu.</p>
+<p>Runs pre-built pick-and-place examples using inverse kinematics.</p>
+<ul>
+<li>Choose from several built-in movement patterns</li>
+<li>Watch the arm move automatically</li>
+<li>Use this as a starting point for your own code</li>
+</ul>
+</section>
+<section id="feature-5-check-device-usage" class="slide level2 smaller-text">
+<h2>Feature 5: Check Device Usage</h2>
+<p>Select option <strong>4</strong> from the <code>robot</code> menu.</p>
+<p>Shows which processes are currently using arms or cameras.</p>
+<p>Useful when you get a “device busy” error — check with your groupmates before killing any process!</p>
+</section>
+<section id="opening-the-web-ui-with-the-token" class="slide level2 smaller-text">
+<h2>Opening the Web UI with the Token</h2>
+<p>Both the <strong>Arm Control Server</strong> and <strong>Camera Stream Server</strong> require a token in the URL.</p>
+<p><strong>What the terminal prints:</strong></p>
+<pre><code> * Arm control URL: http://192.168.1.100:5201/?token=AbC123XyZ...</code></pre>
+<p><strong>What you do:</strong></p>
+<ol type="1">
+<li><strong>Select</strong> the URL in the terminal</li>
+<li><strong>Ctrl+Click</strong> (or copy-paste) to open it in your browser</li>
+<li>Share the link with your groupmates — they can all control the arm together</li>
+</ol>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important reminders</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li><strong>Calibrate</strong> the arm <strong>before</strong> trying to move it</li>
+<li>The token is randomly generated each time you start the server</li>
+<li>Without the token, the page will reject you</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="your-task-vibe-code-the-ik-example" class="slide level2 smaller-text">
+<h2>Your Task: Vibe Code the IK Example</h2>
+<p>Open the example file on the server:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href=""></a><span class="ex">~/IN097-phase2/ik_example_control_arm.py</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It already contains working pick-and-place demos. <strong>Modify it</strong> so the arm performs <strong>more actions</strong> — be creative!</p>
+<p><strong>Ideas to try:</strong></p>
+<ul>
+<li>Pick up from one location, show the object, then place at a third location</li>
+<li>Add a “dance” sequence between pick and place</li>
+<li>Change gripper timing (open earlier / close later)</li>
+<li>Add intermediate waypoints for smoother motion</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Work together with your group. One person edits, everyone watches the arm move!</p>
 </div>
 </div>
 </div>
