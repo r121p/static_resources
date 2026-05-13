@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320">
+  <!-- Background -->
+  <rect width="600" height="320" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">First Message to LLM</text>
+  
+  <!-- Input Box -->
+  <rect x="50" y="50" width="500" height="120" rx="8" fill="#e3f2fd" stroke="#2196f3" stroke-width="2"/>
+  <text x="70" y="75" font-size="12" font-weight="bold" fill="#1565c0">INPUT TO LLM:</text>
+  
+  <!-- System Prompt Section -->
+  <rect x="70" y="85" width="460" height="35" rx="4" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
+  <text x="80" y="105" font-size="11" fill="#0d47a1">📝 SYSTEM PROMPT: You are a robotic arm assistant...</text>
+  
+  <!-- User Message Section -->
+  <rect x="70" y="125" width="460" height="35" rx="4" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
+  <text x="80" y="145" font-size="11" fill="#1b5e20">👤 USER: "I love exercising!"</text>
+  
+  <!-- Arrow Down -->
+  <line x1="300" y1="175" x2="300" y2="200" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+    </marker>
+  </defs>
+  
+  <!-- LLM Box -->
+  <rect x="250" y="200" width="100" height="40" rx="20" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+  <text x="300" y="225" text-anchor="middle" font-size="12" font-weight="bold" fill="#f57f17">🤖 LLM</text>
+  
+  <!-- Arrow Down -->
+  <line x1="300" y1="245" x2="300" y2="270" stroke="#666" stroke-width="2" marker-end="url(#arrowhead2)"/>
+  <defs>
+    <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+    </marker>
+  </defs>
+  
+  <!-- Output Box -->
+  <rect x="50" y="275" width="500" height="35" rx="8" fill="#ffe0b2" stroke="#e65100" stroke-width="2"/>
+  <text x="70" y="298" font-size="11" fill="#bf360c">📤 OUTPUT: {"action": "yes", "message": "Great for your health!"}</text>
+</svg>

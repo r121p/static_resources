@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/quarto-contrib/videojs/video.min.js"></script>
+<link href="index_files/libs/quarto-contrib/videojs/video-js.css" rel="stylesheet"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.25">
+
+  <meta name="author" content="">
+  <title>SO101 Robotic Arm - Lesson 9</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="styles.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="index_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="index_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="index_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">SO101 Robotic Arm - Lesson 9</h1>
+  <p class="subtitle">LLM Robot Control via Tool Call</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="lesson-9-llm-robot-control-via-tool-call" class="slide level2">
+<h2>Lesson 9 — LLM Robot Control via Tool Call</h2>
+</section>
+<section id="what-you-will-learn" class="slide level2 smaller-text">
+<h2>What You Will Learn</h2>
+<p>By the end of this lesson you will understand:</p>
+<ul>
+<li><p><strong>What LLM Tool Call is</strong> — how Large Language Models can invoke external functions to control hardware and perform actions</p></li>
+<li><p><strong>What System Prompt is</strong> — the instructions that guide the LLM’s behavior and define how it should respond and use available tools</p></li>
+<li><p><strong>The Importance of Cache in Tool Call</strong> — why caching is critical for reducing latency, API costs, and improving response times in interactive robotics applications</p></li>
+</ul>
+</section>
+<section id="hardware-setup-usb-hub-chain" class="slide level2 tiny-text">
+<h2>Hardware Setup: USB Hub Chain</h2>
+<p><strong>New Setup Rules:</strong></p>
+<ul>
+<li><strong>2 USB 3.0 hubs</strong> — each shared by <strong>2 groups only</strong> (Hub A: Groups 1 &amp; 2, Hub B: Groups 3 &amp; 4)</li>
+<li>Each group connects to their assigned USB 3.0 hub via their USB 2.0 hub</li>
+<li><strong>Max 1 camera per USB 2.0 hub</strong> — to ensure sufficient USB bandwidth</li>
+<li>USB 2.0 hub needs <strong>external DC power supply</strong></li>
+</ul>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+flowchart LR
+    U2A[USB 2.0&lt;br/&gt;Group 1] --&gt; U3A[USB 3.0 Hub A]
+    U2B[USB 2.0&lt;br/&gt;Group 2] --&gt; U3A
+    U2C[USB 2.0&lt;br/&gt;Group 3] --&gt; U3B[USB 3.0 Hub B]
+    U2D[USB 2.0&lt;br/&gt;Group 4] --&gt; U3B
+    
+    U3A --&gt; S[Server]
+    U3B --&gt; S
+    
+    style U2A fill:#c8e6c9,stroke:#2e7d32
+    style U2B fill:#c8e6c9,stroke:#2e7d32
+    style U2C fill:#c8e6c9,stroke:#2e7d32
+    style U2D fill:#c8e6c9,stroke:#2e7d32
+    style U3A fill:#fff9c4,stroke:#f9a825
+    style U3B fill:#fff9c4,stroke:#f9a825
+    style S fill:#bbdefb,stroke:#1565c0
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="usb-setup-do" class="slide level2 tiny-text">
+<h2>USB Setup: DO</h2>
+<h3 id="correct-configuration">✅ Correct Configuration</h3>
+<p><strong>Checklist:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Arms and camera connected to USB 2.0 hub</label></li>
+<li><label><input type="checkbox">USB 2.0 hub powered with DC adapter</label></li>
+<li><label><input type="checkbox">USB 2.0 hub connected to USB 3.0 hub</label></li>
+<li><label><input type="checkbox">USB 3.0 hub connected to server</label></li>
+<li><label><input type="checkbox">Maximum 1 camera per USB 2.0 hub</label></li>
+</ul>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[🤖 Arms] --&gt; U2[USB 2.0 Hub]
+    C[📷 1 Camera max] --&gt; U2
+    U2 --&gt; U3[USB 3.0 Hub]
+    U3 --&gt; S[🖥️ Server]
+    
+    style U2 fill:#c8e6c9,stroke:#2e7d32
+    style U3 fill:#fff9c4,stroke:#f9a825
+    style S fill:#bbdefb,stroke:#1565c0
+    style A fill:#e8f5e9,stroke:#4caf50
+    style C fill:#e8f5e9,stroke:#4caf50
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="usb-setup-dont" class="slide level2 tiny-text">
+<h2>USB Setup: DON’T</h2>
+<h3 id="incorrect-configurations">❌ Incorrect Configurations</h3>
+<p><strong>Never do this:</strong></p>
+<ul>
+<li>Never plug arms or cameras directly into the server</li>
+<li>Never plug arms or cameras directly into the USB 3.0 hub</li>
+<li>Never connect more than 1 camera to a USB 2.0 hub</li>
+<li>Never skip the USB 2.0 hub</li>
+</ul>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A1[🤖 Arm] --&gt; S1[🖥️ Server]
+    C1[📷 Camera] --&gt; S1
+    
+    A2[🤖 Arm] --&gt; U3A[USB 3.0 Hub]
+    C2[📷 Camera] --&gt; U3A
+    U3A --&gt; S2[🖥️ Server]
+    
+    style A1 fill:#ffcdd2,stroke:#c62828
+    style C1 fill:#ffcdd2,stroke:#c62828
+    style S1 fill:#ffcdd2,stroke:#c62828
+    style A2 fill:#ffcdd2,stroke:#c62828
+    style C2 fill:#ffcdd2,stroke:#c62828
+    style U3A fill:#ffcdd2,stroke:#c62828
+    style S2 fill:#ffcdd2,stroke:#c62828
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="connecting-to-the-server" class="slide level2 tiny-text">
+<h2>Connecting to the Server</h2>
+<p>Recap from Lesson 2 — SSH into your group’s shared Linux account:</p>
+<p><strong>From macOS / Linux Terminal:</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href=""></a><span class="fu">ssh</span> username@ip_address</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>From Windows Terminal / PowerShell:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource powershell number-lines code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href=""></a>ssh username@ip_address</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href=""></a><span class="fu">ssh</span> so101p2g1@192.168.1.100</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>If you set up SSH keys in Lesson 2, you can log in without a password. Otherwise use the password provided by your tutor.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="quick-ssh-checklist" class="slide level2 tiny-text">
+<h2>Quick SSH Checklist</h2>
+<h3 id="before-you-start">Before You Start</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">Connected to course WiFi</label></li>
+<li><label><input type="checkbox">Know your group username (e.g., <code>so101p2g1</code>)</label></li>
+<li><label><input type="checkbox">Know the server IP address (from tutor)</label></li>
+<li><label><input type="checkbox">Terminal/Windows Terminal is open</label></li>
+<li><label><input type="checkbox">SSH command ready: <code>ssh username@ip_address</code></label></li>
+</ul>
+<h3 id="after-connecting">After Connecting</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">Successfully logged in (no password prompt if using SSH keys)</label></li>
+<li><label><input type="checkbox">Can see the command prompt: <code>so101p2g1@server:~$</code></label></li>
+<li><label><input type="checkbox">Ready to launch robot commands</label></li>
+</ul>
+</section>
+<section id="part-1-basic-robot-operations" class="slide level2">
+<h2>Part 1: Basic Robot Operations</h2>
+<p>Before diving into LLM control, let’s review the fundamental ways to control the robot.</p>
+</section>
+<section id="teleoperation" class="slide level2 tiny-text">
+<h2>1. Teleoperation</h2>
+<h3 id="demo-teleoperation-via-web-ui">Demo: Teleoperation via Web UI</h3>
+<p>Watch how to control the robot using the leader-follower teleoperation interface.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video1" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/01_teleoperation_web_ui.mp4"></video>
+</div>
+</section>
+<section id="teleoperation-try-it-yourself" class="slide level2 tiny-text">
+<h2>1. Teleoperation — Try It Yourself</h2>
+<h3 id="launch-the-teleoperation-server">Launch the Teleoperation Server</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href=""></a><span class="ex">robot2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then select option <strong>2) teleop_control_server.py</strong></p>
+<p>The server will start and display a URL. Open it in your browser to access the web UI.</p>
+<p><strong>In the web UI:</strong></p>
+<ul>
+<li>Select your leader arm (black) and follower arm (white)</li>
+<li>Click <strong>Connect</strong></li>
+<li>Click <strong>Start Teleop</strong></li>
+<li>Move the leader arm to control the follower</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Known Bug:</strong> After multiple connect/disconnect cycles, teleoperation may develop high latency.</p>
+<p><strong>Fix:</strong> If this happens, restart the web server (Ctrl+C to stop, then run <code>robot2</code> again).</p>
+</div>
+</div>
+</div>
+</section>
+<section id="record-and-playback-from-teleop" class="slide level2 tiny-text">
+<h2>2. Record and Playback from Teleop</h2>
+<h3 id="demo-recording-motion-during-teleoperation">Demo: Recording Motion During Teleoperation</h3>
+<p>Watch how to record a motion while teleoperating the robot, then play it back.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video2" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/02_record_teleopt_playback.mp4"></video>
+</div>
+</section>
+<section id="record-and-playback-from-teleop-try-it-yourself" class="slide level2 tiny-text">
+<h2>2. Record and Playback from Teleop — Try It Yourself</h2>
+<h3 id="using-the-web-ui">Using the Web UI</h3>
+<p>First launch with <code>robot2</code> → option <strong>2) teleop_control_server.py</strong></p>
+<p><strong>To record a motion:</strong></p>
+<ol type="1">
+<li>Connect your leader (black) and follower (white) arms</li>
+<li>Start teleoperation</li>
+<li>Click <strong>Start Recording</strong></li>
+<li>Move the leader arm to demonstrate the motion</li>
+<li>Click <strong>Stop Recording</strong></li>
+<li>Download the saved motion file</li>
+</ol>
+<p><strong>To playback a recorded motion:</strong></p>
+<ol type="1">
+<li>In the “Upload &amp; Replay Motion” section, select your recorded file</li>
+<li>Choose the arm (white) to play on</li>
+<li>Set playback speed (0.5x, 1.0x, 1.5x, 2.0x)</li>
+<li>Click <strong>Start Playback</strong></li>
+</ol>
+</section>
+<section id="record-by-hand-kinesthetic-teaching" class="slide level2 tiny-text">
+<h2>3. Record by Hand (Kinesthetic Teaching)</h2>
+<h3 id="demo-recording-by-moving-the-arm-by-hand">Demo: Recording by Moving the Arm by Hand</h3>
+<p>Watch how to record a motion by physically moving the arm by hand (with torque disabled).</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video3" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/03_move_arm_record_playback.mp4"></video>
+</div>
+</section>
+<section id="record-by-hand-try-it-yourself" class="slide level2 tiny-text">
+<h2>3. Record by Hand — Try It Yourself</h2>
+<h3 id="using-the-web-ui-1">Using the Web UI</h3>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Use this when:</strong> Teleoperation has calibration problems (joint angle offset between leader and follower)</p>
+</div>
+</div>
+</div>
+<p><strong>Steps:</strong></p>
+<ol type="1">
+<li>Launch: <code>robot2</code> → option <strong>2</strong></li>
+<li>In “Record by Hand” section, select a WHITE arm</li>
+<li>Click <strong>Connect</strong> (disables torque, arm becomes backdrivable)</li>
+<li>Physically move the arm by hand</li>
+<li>Click <strong>Start Recording</strong> → demonstrate motion → <strong>Stop Recording</strong></li>
+<li>Download the motion file</li>
+</ol>
+<p><strong>Playback:</strong> Use “Upload &amp; Replay Motion” section</p>
+</section>
+<section id="the-che-vuoi-gesture" class="slide level2 tiny-text">
+<h2>4. The “Che vuoi?” Gesture</h2>
+<h3 id="an-italian-hand-gesture">An Italian Hand Gesture</h3>
+<p>The “<a href="https://en.wikipedia.org/wiki/Che_vuoi%3F">Che vuoi?</a>” (“What do you want?”) is a famous Italian hand gesture used to express:</p>
+<ul>
+<li>Disbelief or exasperation</li>
+<li>“What are you talking about?”</li>
+<li>“What do you want from me?”</li>
+</ul>
+<div class="two-column">
+<div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/italy.jpg" style="width:80.0%"></p>
+<figcaption>Che vuoi gesture</figcaption>
+</figure>
+</div>
+</div><div class="column">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/italy.gif" style="width:80.0%"></p>
+<figcaption>Che vuoi gesture animation</figcaption>
+</figure>
+</div>
+</div></div>
+</section>
+<section id="robot-performing-che-vuoi" class="slide level2 tiny-text">
+<h2>4. Robot Performing “Che vuoi?”</h2>
+<h3 id="demo-italy-gesture-on-so-101-arm">Demo: Italy Gesture on SO-101 Arm</h3>
+<p>Watch the SO-101 robot arm perform the “Che vuoi?” gesture!</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video4" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/04_prerecorded_italy_action.mp4"></video>
+</div>
+</section>
+<section id="try-it-yourself-play-the-italy-motion" class="slide level2 tiny-text">
+<h2>4. Try It Yourself — Play the Italy Motion</h2>
+<h3 id="run-the-pre-recorded-action">Run the Pre-recorded Action</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href=""></a><span class="ex">robot2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then select option <strong>5) play_italy.py</strong></p>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Prompts you to select a WHITE arm</li>
+<li>Plays the “Che vuoi?” gesture motion</li>
+</ul>
+</section>
+<section id="summary-basic-operations" class="slide level2 tiny-text">
+<h2>Summary: Basic Operations</h2>
+<h3 id="quick-reference">Quick Reference</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 39%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>How to Launch</th>
+<th>What to Do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Teleoperation</td>
+<td><code>robot2</code> → <strong>option 2</strong></td>
+<td>Use web UI to connect arms and start teleop</td>
+</tr>
+<tr class="even">
+<td>Record from teleop</td>
+<td>In web UI</td>
+<td>Click Start/Stop Recording during teleop</td>
+</tr>
+<tr class="odd">
+<td>Record by hand</td>
+<td>In web UI</td>
+<td>Use “Record by Hand” section</td>
+</tr>
+<tr class="even">
+<td>Play Italy motion</td>
+<td><code>robot2</code> → <strong>option 5</strong></td>
+<td>Select arm and play</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Always remember to:</strong></p>
+<ul>
+<li>Use <code>robot2</code> command to launch the server</li>
+<li>Calibrate arms before first use</li>
+<li>Use WHITE arms for recording/playback</li>
+<li>Use BLACK arms as leaders for teleoperation</li>
+</ul>
+</section>
+<section id="behind-the-scenes-motion-replay-in-3-lines" class="slide level2 tiny-text">
+<h2>Behind the Scenes: Motion Replay in 3 Lines</h2>
+<h3 id="the-play_italy.py-script">The <code>play_italy.py</code> Script</h3>
+<p>Here’s how simple it is to replay a recorded motion:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="im">from</span> utils <span class="im">import</span> replay</span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a>arm <span class="op">=</span> replay.ArmReplay()</span>
+<span id="cb6-4"><a href=""></a>arm.play(<span class="st">"utils/example_actions/Italy.json"</span>, playback_speed<span class="op">=</span><span class="fl">1.0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>That’s it!</strong> Just 3 lines of Python to play a recorded motion.</p>
+<h3 id="run-it-manually">Run It Manually</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href=""></a><span class="bu">cd</span> ~/IN097-phase2b</span>
+<span id="cb7-2"><a href=""></a><span class="bu">source</span> phosphobot/.venv/bin/activate</span>
+<span id="cb7-3"><a href=""></a><span class="ex">python</span> play_italy.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="activity-create-your-own-motion-player" class="slide level2 tiny-text">
+<h2>Activity: Create Your Own Motion Player</h2>
+<h3 id="step-1-record-your-own-actions">Step 1: Record Your Own Actions</h3>
+<ol type="1">
+<li>Launch the web UI: <code>robot2</code> → option <strong>2</strong></li>
+<li>Use either:
+<ul>
+<li><strong>Teleoperation recording</strong> — Record while controlling the arm</li>
+<li><strong>Record by hand</strong> — Move the arm manually with torque off</li>
+</ul></li>
+<li>Download your recorded motion files (<code>.json</code>)</li>
+</ol>
+</section>
+<section id="activity-create-your-own-motion-player-1" class="slide level2 tiny-text">
+<h2>Activity: Create Your Own Motion Player</h2>
+<h3 id="step-2-upload-to-the-server">Step 2: Upload to the Server</h3>
+<p><strong>Option A: Using VSCode</strong></p>
+<ul>
+<li>Use VSCode’s remote SSH connection to your group account</li>
+<li>Drag and drop your <code>.json</code> files to <code>~/IN097-phase2b/recordings/</code></li>
+</ul>
+<p><strong>Option B: Using SCP</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href=""></a><span class="co"># From your local machine:</span></span>
+<span id="cb8-2"><a href=""></a><span class="fu">scp</span> my_motion.json username@server_ip:~/IN097-phase2b/recordings/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="activity-create-your-own-motion-player-2" class="slide level2 tiny-text">
+<h2>Activity: Create Your Own Motion Player</h2>
+<h3 id="step-3-write-a-script-with-branching">Step 3: Write a Script with Branching</h3>
+<p>Create a new file: <code>~/IN097-phase2b/play_my_motion.py</code></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href=""></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb9-2"><a href=""></a><span class="im">from</span> utils <span class="im">import</span> replay</span>
+<span id="cb9-3"><a href=""></a></span>
+<span id="cb9-4"><a href=""></a>arm <span class="op">=</span> replay.ArmReplay()</span>
+<span id="cb9-5"><a href=""></a></span>
+<span id="cb9-6"><a href=""></a><span class="co"># Ask user which motion to play</span></span>
+<span id="cb9-7"><a href=""></a><span class="bu">print</span>(<span class="st">"Choose a motion:"</span>)</span>
+<span id="cb9-8"><a href=""></a><span class="bu">print</span>(<span class="st">"1) Wave hello"</span>)</span>
+<span id="cb9-9"><a href=""></a><span class="bu">print</span>(<span class="st">"2) Pick up"</span>)</span>
+<span id="cb9-10"><a href=""></a><span class="bu">print</span>(<span class="st">"3) Italy gesture"</span>)</span>
+<span id="cb9-11"><a href=""></a></span>
+<span id="cb9-12"><a href=""></a>choice <span class="op">=</span> <span class="bu">input</span>(<span class="st">"Enter 1, 2, or 3: "</span>)</span>
+<span id="cb9-13"><a href=""></a></span>
+<span id="cb9-14"><a href=""></a><span class="cf">if</span> choice <span class="op">==</span> <span class="st">"1"</span>:</span>
+<span id="cb9-15"><a href=""></a>    arm.play(<span class="st">"recordings/wave_hello.json"</span>)</span>
+<span id="cb9-16"><a href=""></a><span class="cf">elif</span> choice <span class="op">==</span> <span class="st">"2"</span>:</span>
+<span id="cb9-17"><a href=""></a>    arm.play(<span class="st">"recordings/pick_up.json"</span>)</span>
+<span id="cb9-18"><a href=""></a><span class="cf">elif</span> choice <span class="op">==</span> <span class="st">"3"</span>:</span>
+<span id="cb9-19"><a href=""></a>    arm.play(<span class="st">"utils/example_actions/Italy.json"</span>)</span>
+<span id="cb9-20"><a href=""></a><span class="cf">else</span>:</span>
+<span id="cb9-21"><a href=""></a>    <span class="bu">print</span>(<span class="st">"Invalid choice!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="activity-create-your-own-motion-player-3" class="slide level2 tiny-text">
+<h2>Activity: Create Your Own Motion Player</h2>
+<h3 id="step-4-run-your-script">Step 4: Run Your Script</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href=""></a><span class="bu">cd</span> ~/IN097-phase2b</span>
+<span id="cb10-2"><a href=""></a><span class="bu">source</span> phosphobot/.venv/bin/activate</span>
+<span id="cb10-3"><a href=""></a><span class="ex">python</span> play_my_motion.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Challenge:</strong> Add more motions and menu options using additional <code>elif</code> statements!</p>
+</section>
+<section id="part-2-llm-tool-call-fundamentals" class="slide level2">
+<h2>Part 2: LLM Tool Call Fundamentals</h2>
+<p>Now that you can record and play motions programmatically, let’s explore how LLMs can control the robot.</p>
+</section>
+<section id="why-use-llm-for-action-selection" class="slide level2 tiny-text">
+<h2>Why Use LLM for Action Selection?</h2>
+<h3 id="limitations-of-traditional-input-matching">Limitations of Traditional Input Matching</h3>
+<p>The <code>input()</code> + <code>if/else</code> approach we just used has limitations:</p>
+<ul>
+<li><strong>Exact match required</strong> — User must type “1”, “2”, or “3” precisely</li>
+<li><strong>No flexibility</strong> — “Wave hello” and “wave” are treated as different inputs</li>
+<li><strong>No understanding</strong> — The program doesn’t understand what the user wants</li>
+<li><strong>Scalability issues</strong> — Adding 20 motions means 20 elif statements</li>
+</ul>
+<h3 id="llm-advantages">LLM Advantages</h3>
+<ul>
+<li><strong>Natural language understanding</strong> — Users can say “do the Italy thing” or “make the hand gesture”</li>
+<li><strong>Context awareness</strong> — LLM understands intent, not just keywords</li>
+<li><strong>Semantic matching</strong> — “Exercise is good” and “I love working out” both trigger “yes”</li>
+<li><strong>Extensible</strong> — Add new categories without rewriting code</li>
+</ul>
+</section>
+<section id="demo-llm-controlled-robot-arm" class="slide level2 tiny-text">
+<h2>Demo: LLM-Controlled Robot Arm</h2>
+<h3 id="watch-the-llm-control-the-robot">Watch the LLM Control the Robot</h3>
+<p>See how the LLM interprets natural language and triggers physical robot actions.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video5" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/05_control_arm_llm.mp4"></video>
+</div>
+</section>
+<section id="try-it-yourself-llm-arm-chat" class="slide level2 tiny-text">
+<h2>Try It Yourself: LLM Arm Chat</h2>
+<h3 id="launch-the-llm-chat-interface">Launch the LLM Chat Interface</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href=""></a><span class="ex">robot2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then select option <strong>6) llm_arm_chat.py</strong></p>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Prompts you to select a WHITE arm</li>
+<li>Starts a chat interface with the LLM</li>
+<li>Type messages and watch the robot react!</li>
+</ul>
+</section>
+<section id="how-it-works-llm_arm_chat.py" class="slide level2 tiny-text">
+<h2>How It Works: llm_arm_chat.py</h2>
+<h3 id="the-llms-behavior">The LLM’s Behavior</h3>
+<p>The script uses an LLM (z-ai/glm-4.7-flash via OpenRouter) to classify your messages:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>If you say…</th>
+<th>LLM Action</th>
+<th>Robot Does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“Exercise is healthy”</td>
+<td><code>yes</code></td>
+<td>Nods yes 👍</td>
+</tr>
+<tr class="even">
+<td>“I love brain rot videos”</td>
+<td><code>no</code></td>
+<td>Shakes no 👎</td>
+</tr>
+<tr class="odd">
+<td>“Pineapple pizza is the best”</td>
+<td><code>italy</code></td>
+<td>“Che vuoi?” gesture 🤌</td>
+</tr>
+<tr class="even">
+<td>“What’s the weather?”</td>
+<td><code>chat</code></td>
+<td>Just replies, no motion</td>
+</tr>
+</tbody>
+</table>
+<p>The LLM understands <strong>intent</strong>, not just keywords!</p>
+</section>
+<section id="what-is-tool-calling" class="slide level2 tiny-text">
+<h2>What is Tool Calling?</h2>
+<h3 id="the-problem-llms-can-only-generate-text">The Problem: LLMs Can Only Generate Text</h3>
+<p>LLMs are text generators. If an LLM says:</p>
+<blockquote>
+<p>“I want to nod my head”</p>
+</blockquote>
+<p>Is it:</p>
+<ul>
+<li>Just thinking out loud?</li>
+<li>Explaining what it will do?</li>
+<li><strong>Actually requesting a physical action?</strong></li>
+</ul>
+<p><strong>We can’t tell!</strong> Plain text is ambiguous.</p>
+</section>
+<section id="why-we-need-structured-tool-calls" class="slide level2 tiny-text">
+<h2>Why We Need Structured Tool Calls</h2>
+<h3 id="the-solution-special-format-json">The Solution: Special Format (JSON)</h3>
+<p>To distinguish between <strong>reasoning</strong> and <strong>actual commands</strong>, we use a structured format:</p>
+<p><strong>LLM Output:</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource json number-lines code-with-copy"><code class="sourceCode json"><span id="cb12-1"><a href=""></a><span class="fu">{</span><span class="dt">"action"</span><span class="fu">:</span> <span class="st">"yes"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Exercise is great for your health!"</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Traditional Code Parses It:</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href=""></a><span class="im">import</span> json</span>
+<span id="cb13-2"><a href=""></a></span>
+<span id="cb13-3"><a href=""></a><span class="co"># LLM returns: '{"action": "yes", "message": "Exercise is great!"}'</span></span>
+<span id="cb13-4"><a href=""></a>response <span class="op">=</span> json.loads(llm_output)</span>
+<span id="cb13-5"><a href=""></a></span>
+<span id="cb13-6"><a href=""></a><span class="cf">if</span> response[<span class="st">"action"</span>] <span class="op">==</span> <span class="st">"yes"</span>:</span>
+<span id="cb13-7"><a href=""></a>    robot.play(<span class="st">"YesYes.json"</span>)  <span class="co"># Actually move!</span></span>
+<span id="cb13-8"><a href=""></a><span class="bu">print</span>(response[<span class="st">"message"</span>])       <span class="co"># Just speak</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>The JSON format makes the intent clear!</strong></p>
+</section>
+<section id="what-is-tool-calling-1" class="slide level2 tiny-text">
+<h2>What is Tool Calling?</h2>
+<h3 id="the-concept">The Concept</h3>
+<p><strong>Tool Calling</strong> (also called Function Calling) allows LLMs to interact with the outside world by invoking functions.</p>
+<p>Instead of just generating text, the LLM can:</p>
+<ul>
+<li><strong>Decide</strong> which action to take</li>
+<li><strong>Output</strong> structured data (like JSON)</li>
+<li><strong>Trigger</strong> real-world events (robot movements!)</li>
+</ul>
+<h3 id="in-our-code-the-actions-dictionary">In Our Code: The ACTIONS Dictionary</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a>ACTIONS <span class="op">=</span> {</span>
+<span id="cb14-2"><a href=""></a>    <span class="st">"yes"</span>: <span class="st">"utils/example_actions/YesYes.json"</span>,</span>
+<span id="cb14-3"><a href=""></a>    <span class="st">"no"</span>: <span class="st">"utils/example_actions/NoNoNo.json"</span>,</span>
+<span id="cb14-4"><a href=""></a>    <span class="st">"italy"</span>: <span class="st">"utils/example_actions/Italy.json"</span>,</span>
+<span id="cb14-5"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The LLM returns an action name → The script looks it up → Robot plays the motion!</p>
+</section>
+<section id="what-is-a-system-prompt" class="slide level2 tiny-text">
+<h2>What is a System Prompt?</h2>
+<h3 id="the-concept-1">The Concept</h3>
+<p>A <strong>System Prompt</strong> is the “instructions” you give to the LLM before the conversation starts. It defines:</p>
+<ul>
+<li>What the LLM’s role is</li>
+<li>What actions it can take</li>
+<li>How it should respond</li>
+<li>Output format requirements</li>
+</ul>
+</section>
+<section id="first-message-what-goes-to-the-llm" class="slide level2 tiny-text">
+<h2>First Message: What Goes to the LLM</h2>
+<h3 id="initial-request">Initial Request</h3>
+
+<img data-src="imgs/llm_flow_1.svg" style="width:80.0%" class="r-stretch quarto-figure-center"><p class="caption">First message flow</p><p><strong>Note:</strong> The system prompt is always included first!</p>
+</section>
+<section id="second-message-building-context" class="slide level2 tiny-text">
+<h2>Second Message: Building Context</h2>
+<h3 id="conversation-history-accumulates">Conversation History Accumulates</h3>
+
+<img data-src="imgs/llm_flow_2.svg" style="width:80.0%" class="r-stretch quarto-figure-center"><p class="caption">Second message flow</p><p><strong>The LLM sees the entire conversation history!</strong></p>
+</section>
+<section id="third-message-full-conversation" class="slide level2 tiny-text">
+<h2>Third Message: Full Conversation</h2>
+<h3 id="context-keeps-growing">Context Keeps Growing</h3>
+
+<img data-src="imgs/llm_flow_3.svg" style="width:80.0%" class="r-stretch quarto-figure-center"><p class="caption">Third message flow</p></section>
+<section id="our-system_prompt-code" class="slide level2 tiny-text">
+<h2>Our SYSTEM_PROMPT Code</h2>
+<h3 id="the-actual-implementation">The Actual Implementation</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a>SYSTEM_PROMPT <span class="op">=</span> <span class="st">"""</span><span class="op">\</span></span>
+<span id="cb15-2"><a href=""></a><span class="st">You are a robotic arm assistant that classifies user statements...</span></span>
+<span id="cb15-3"><a href=""></a></span>
+<span id="cb15-4"><a href=""></a><span class="st">Available actions:</span></span>
+<span id="cb15-5"><a href=""></a><span class="st">- "yes":  The user says something good, positive, healthy...</span></span>
+<span id="cb15-6"><a href=""></a><span class="st">- "no":   The user says something bad, negative...</span></span>
+<span id="cb15-7"><a href=""></a><span class="st">- "italy": The user says something that insults Italy...</span></span>
+<span id="cb15-8"><a href=""></a><span class="st">- "chat": Normal conversation...</span></span>
+<span id="cb15-9"><a href=""></a></span>
+<span id="cb15-10"><a href=""></a><span class="st">You must respond ONLY in valid JSON format:</span></span>
+<span id="cb15-11"><a href=""></a><span class="st">{"action": "yes|no|italy|chat", "message": "Your response"}</span></span>
+<span id="cb15-12"><a href=""></a></span>
+<span id="cb15-13"><a href=""></a><span class="st">If the action is not "chat", the robot will physically perform</span></span>
+<span id="cb15-14"><a href=""></a><span class="st">the corresponding gesture after delivering your message.</span></span>
+<span id="cb15-15"><a href=""></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="system-prompt-key-elements" class="slide level2 tiny-text">
+<h2>System Prompt: Key Elements</h2>
+<h3 id="breaking-down-the-instructions">Breaking Down the Instructions</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Element</th>
+<th>Purpose</th>
+<th>Example from Our Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Role</strong></td>
+<td>Define who the LLM is</td>
+<td>“You are a robotic arm assistant”</td>
+</tr>
+<tr class="even">
+<td><strong>Available Tools</strong></td>
+<td>List possible actions</td>
+<td><code>yes</code>, <code>no</code>, <code>italy</code>, <code>chat</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Conditions</strong></td>
+<td>When to use each action</td>
+<td>“positive/healthy” → <code>yes</code></td>
+</tr>
+<tr class="even">
+<td><strong>Output Format</strong></td>
+<td>Structure of response</td>
+<td>JSON with <code>action</code> and <code>message</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Side Effects</strong></td>
+<td>What happens after</td>
+<td>“robot will physically perform…”</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The system prompt is like a contract</strong> — it tells the LLM exactly what to do and how to behave!</p>
+</section>
+<section id="how-it-all-works-together" class="slide level2 tiny-text">
+<h2>How It All Works Together</h2>
+<h3 id="the-flow">The Flow</h3>
+<pre><code>User: "I love exercising!"
+        ↓
+LLM reads SYSTEM_PROMPT (understands it should classify)
+        ↓
+LLM returns: {"action": "yes", "message": "That's great!"}
+        ↓
+Script looks up ACTIONS["yes"] → "utils/example_actions/YesYes.json"
+        ↓
+Robot plays the YesYes motion while saying "That's great!"</code></pre>
+<p><strong>Without tool calling:</strong> The LLM just replies “Exercise is good for you”</p>
+<p><strong>With tool calling:</strong> The LLM triggers a physical action + reply!</p>
+</section>
+<section id="why-caching-matters-understanding-tokens" class="slide level2 tiny-text">
+<h2>Why Caching Matters: Understanding Tokens</h2>
+<h3 id="what-is-a-token">What is a Token?</h3>
+<p>A <strong>token</strong> is the basic unit that LLMs process. It can be:</p>
+<ul>
+<li>A word (“hello”)</li>
+<li>Part of a word (“running” = “run” + “ning”)</li>
+<li>A single character (“a”, “!”)</li>
+<li>Or even whitespace</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>"I love robotics!" → ["I", " love", " robotics", "!"]
+       4 words           4 tokens</code></pre>
+<p><strong>Why it matters:</strong> LLM APIs charge <strong>per token</strong>, not per request!</p>
+</section>
+<section id="llm-api-pricing-model" class="slide level2 tiny-text">
+<h2>LLM API Pricing Model</h2>
+<h3 id="pay-per-token">Pay Per Token</h3>
+<p>LLM providers charge for:</p>
+<ul>
+<li><strong>Input tokens</strong> — Everything you send TO the LLM (system prompt + conversation history)</li>
+<li><strong>Output tokens</strong> — Everything the LLM sends back</li>
+</ul>
+<p><strong>GLM 5.1 Pricing Example:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Input</td>
+<td>$1.40 per million tokens</td>
+</tr>
+<tr class="even">
+<td>Output</td>
+<td>$4.40 per million tokens</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-problem-cumulative-cost" class="slide level2 tiny-text">
+<h2>The Problem: Cumulative Cost</h2>
+<h3 id="watch-how-context-grows-with-each-message">Watch How Context Grows With Each Message</h3>
+<div class="three-images">
+<p><img data-src="imgs/llm_flow_1.svg" style="width:32.0%" alt="First message"> <img data-src="imgs/llm_flow_2.svg" style="width:32.0%" alt="Second message"> <img data-src="imgs/llm_flow_3.svg" style="width:32.0%" alt="Third message"></p>
+</div>
+<p><strong>Input tokens grow rapidly:</strong></p>
+<ul>
+<li>Message 1: System (20k) + User (1k) = <strong>21k tokens</strong></li>
+<li>Message 2: + History (21k) + User (1k) = <strong>42k tokens</strong></li>
+<li>Message 3: + History (42k) + User (1k) = <strong>63k tokens</strong></li>
+</ul>
+<p><strong>The entire conversation history is sent every time!</strong></p>
+</section>
+<section id="what-is-caching" class="slide level2 tiny-text">
+<h2>What is Caching?</h2>
+<h3 id="the-problem-repeated-context">The Problem: Repeated Context</h3>
+<p>Every message sends the <strong>entire conversation history</strong> as input:</p>
+<ul>
+<li>Message 1: System (20k) + User (1k) = 21k tokens</li>
+<li>Message 2: System (20k) + User1 (1k) + Assistant1 (20k) + User2 (1k) = 42k tokens</li>
+<li>Message 3: Everything before + new messages = 63k tokens</li>
+</ul>
+<p><strong>We’re re-processing the same tokens over and over!</strong></p>
+</section>
+<section id="the-solution-prompt-caching" class="slide level2 tiny-text">
+<h2>The Solution: Prompt Caching</h2>
+<h3 id="what-is-caching-1">What is Caching?</h3>
+<p><strong>Caching</strong> stores previously processed tokens so you don’t pay full price to reprocess them.</p>
+<p><strong>How it works:</strong></p>
+<ul>
+<li><p>First request: Pay full price to process system prompt + context</p></li>
+<li><p>Subsequent requests: Pay <strong>cache read price</strong> ($0.26/M) for cached tokens</p></li>
+<li><p>Only pay full price for NEW tokens</p></li>
+</ul>
+<p><strong>GLM 5.1 Cache Pricing:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Input (no cache)</td>
+<td>$1.40/M tokens</td>
+</tr>
+<tr class="even">
+<td>Cache Read</td>
+<td><strong>$0.26/M tokens</strong> (81% cheaper!)</td>
+</tr>
+<tr class="odd">
+<td>Output</td>
+<td>$4.40/M tokens</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="caching-in-our-code" class="slide level2 tiny-text">
+<h2>Caching in Our Code</h2>
+<h3 id="cache-is-enabled-in-llm_arm_chat.py">Cache is Enabled in llm_arm_chat.py</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href=""></a>response <span class="op">=</span> client.chat.completions.create(</span>
+<span id="cb18-2"><a href=""></a>    model<span class="op">=</span>MODEL,</span>
+<span id="cb18-3"><a href=""></a>    messages<span class="op">=</span>messages,</span>
+<span id="cb18-4"><a href=""></a>    extra_headers<span class="op">=</span>{</span>
+<span id="cb18-5"><a href=""></a>        <span class="st">"X-OpenRouter-Cache"</span>: <span class="st">"true"</span>,  <span class="co"># ← Cache enabled!</span></span>
+<span id="cb18-6"><a href=""></a>    },</span>
+<span id="cb18-7"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>X-OpenRouter-Cache: true</code> header tells OpenRouter to cache the prompt and charge the cheaper cache read price for repeated context!</p>
+</section>
+<section id="cost-comparison-graph" class="slide level2 tiny-text">
+<h2>Cost Comparison Graph</h2>
+<h3 id="cache-vs-no-cache">Cache vs No Cache</h3>
+
+<img data-src="imgs/llm_cost_accumulation.svg" style="width:85.0%" class="r-stretch quarto-figure-center"><p class="caption">Cost comparison graph</p></section>
+<section id="cost-comparison-the-numbers" class="slide level2 tiny-text">
+<h2>Cost Comparison: The Numbers</h2>
+<h3 id="see-the-savings">See the Savings!</h3>
+<p><strong>Assumptions:</strong></p>
+<ul>
+<li><p>GLM 5.1 Pricing: Input $1.40/M, Cache Read $0.26/M, Output $4.40/M</p></li>
+<li><p>System Prompt: 20,000 tokens</p></li>
+<li><p>User Message: 1,000 tokens</p></li>
+<li><p>LLM Output: 20,000 tokens</p></li>
+</ul>
+<p><strong>After 10 messages:</strong></p>
+<ul>
+<li><p>No Cache: <strong>$2.50</strong></p></li>
+<li><p>With Cache: <strong>$1.19</strong></p></li>
+<li><p><strong>You save $1.31 (52%!)</strong></p></li>
+</ul>
+</section>
+<section id="the-solution-caching" class="slide level2 tiny-text">
+<h2>The Solution: Caching</h2>
+<h3 id="what-is-caching-2">What is Caching?</h3>
+<p><strong>Caching</strong> stores previous LLM responses to avoid redundant API calls.</p>
+<p><strong>Without caching:</strong></p>
+<ul>
+<li>Every message sends full conversation history</li>
+<li>Cost grows linearly (or worse!)</li>
+</ul>
+<p><strong>With caching:</strong></p>
+<ul>
+<li>Store frequent responses locally</li>
+<li>Reuse them without calling the API</li>
+<li>Save money and reduce latency!</li>
+</ul>
+</section>
+<section id="summary-key-takeaways" class="slide level2 tiny-text">
+<h2>Summary: Key Takeaways</h2>
+<h3 id="what-we-learned-about-caching">What We Learned About Caching</h3>
+<ul>
+<li>✅ <strong>Tokens</strong> are the billing unit for LLM APIs</li>
+<li>✅ <strong>Costs accumulate quadratically</strong> because conversation history is sent every time</li>
+<li>✅ <strong>Caching</strong> stores previously processed tokens at a cheaper rate ($0.26/M vs $1.40/M)</li>
+<li>✅ <strong>Benefits:</strong> Lower costs + faster responses</li>
+</ul>
+<h3 id="real-numbers-10-messages">Real Numbers (10 messages):</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Cost</th>
+<th>Savings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No Cache</td>
+<td>$2.50</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>With Cache</td>
+<td>$1.19</td>
+<td><strong>$1.31 (52%)</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="in-robot-control">In Robot Control:</h3>
+<p>Caching is crucial for real-time robot control where: - Similar commands are issued repeatedly - Low latency is essential - API costs should be minimized</p>
+</section>
+<section id="final-activity-improve-the-llm-robot-controller" class="slide level2 tiny-text">
+<h2>Final Activity: Improve the LLM Robot Controller</h2>
+<h3 id="modify-llm_arm_chat.py">Modify <code>llm_arm_chat.py</code></h3>
+<p>Now it’s your turn to customize the LLM robot controller! Here are three ways to improve it:</p>
+</section>
+<section id="option-1-add-your-own-actions" class="slide level2 tiny-text">
+<h2>Option 1: Add Your Own Actions</h2>
+<h3 id="record-and-upload-custom-motions">Record and Upload Custom Motions</h3>
+<p><strong>Steps:</strong></p>
+<ol type="1">
+<li><p>Record your own motion using the web UI (<code>robot2</code> → option 2)</p></li>
+<li><p>Download the <code>.json</code> file and upload to <code>~/IN097-phase2b/recordings/</code></p></li>
+<li><p>Add your action to the <code>ACTIONS</code> dictionary:</p></li>
+</ol>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href=""></a>ACTIONS <span class="op">=</span> {</span>
+<span id="cb19-2"><a href=""></a>    <span class="st">"yes"</span>: <span class="st">"utils/example_actions/YesYes.json"</span>,</span>
+<span id="cb19-3"><a href=""></a>    <span class="st">"no"</span>: <span class="st">"utils/example_actions/NoNoNo.json"</span>,</span>
+<span id="cb19-4"><a href=""></a>    <span class="st">"italy"</span>: <span class="st">"utils/example_actions/Italy.json"</span>,</span>
+<span id="cb19-5"><a href=""></a>    <span class="st">"wave"</span>: <span class="st">"recordings/my_wave.json"</span>,  <span class="co"># ← Your new action!</span></span>
+<span id="cb19-6"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="4" type="1">
+<li>Update the <code>SYSTEM_PROMPT</code> to describe when to use your action</li>
+</ol>
+</section>
+<section id="option-2-modify-the-system-prompt" class="slide level2 tiny-text">
+<h2>Option 2: Modify the System Prompt</h2>
+<h3 id="change-the-llms-behavior">Change the LLM’s Behavior</h3>
+<p>Edit the <code>SYSTEM_PROMPT</code> to:</p>
+<ul>
+<li><p>Change the robot’s personality (friendly, sarcastic, professional)</p></li>
+<li><p>Add new action categories</p></li>
+<li><p>Modify the classification criteria</p></li>
+<li><p>Change the response format</p></li>
+</ul>
+<p><strong>Example:</strong> Make the robot respond like a pirate:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href=""></a>SYSTEM_PROMPT <span class="op">=</span> <span class="st">"""</span><span class="op">\</span></span>
+<span id="cb20-2"><a href=""></a><span class="st">You are a pirate robot assistant. Respond with pirate slang!</span></span>
+<span id="cb20-3"><a href=""></a></span>
+<span id="cb20-4"><a href=""></a><span class="st">Available actions:</span></span>
+<span id="cb20-5"><a href=""></a><span class="st">- "aye": The user says something good</span></span>
+<span id="cb20-6"><a href=""></a><span class="st">- "nay": The user says something bad</span></span>
+<span id="cb20-7"><a href=""></a><span class="st">...</span></span>
+<span id="cb20-8"><a href=""></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="option-3-try-a-different-model" class="slide level2 tiny-text">
+<h2>Option 3: Try a Different Model</h2>
+<h3 id="upgrade-to-a-more-powerful-llm">Upgrade to a More Powerful LLM</h3>
+<p>Change the <code>MODEL</code> variable:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href=""></a><span class="co"># Current model (cheaper, faster)</span></span>
+<span id="cb21-2"><a href=""></a>MODEL <span class="op">=</span> <span class="st">"z-ai/glm-4.7-flash"</span></span>
+<span id="cb21-3"><a href=""></a></span>
+<span id="cb21-4"><a href=""></a><span class="co"># More powerful options (more expensive!)</span></span>
+<span id="cb21-5"><a href=""></a>MODEL <span class="op">=</span> <span class="st">"z-ai/glm-5.1"</span></span>
+<span id="cb21-6"><a href=""></a><span class="co"># Or</span></span>
+<span id="cb21-7"><a href=""></a>MODEL <span class="op">=</span> <span class="st">"moonshotai/kimi-k2.6"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>⚠️ Warning: Costs Money!</strong></p>
+<ul>
+<li>Each group has an OpenRouter API key</li>
+<li>Every API call costs real money</li>
+<li>More powerful models = higher cost per token</li>
+<li>Monitor your usage!</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="activity-guidelines" class="slide level2 tiny-text">
+<h2>Activity Guidelines</h2>
+<h3 id="tips-for-success">Tips for Success</h3>
+<ol type="1">
+<li><p><strong>Start small</strong> — Make one change at a time</p></li>
+<li><p><strong>Test frequently</strong> — Run <code>robot2</code> → option 6 to test</p></li>
+<li><p><strong>Save backups</strong> — Copy your file before making big changes:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href=""></a><span class="fu">cp</span> llm_arm_chat.py llm_arm_chat_backup.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Check costs</strong> — If using expensive models, limit your testing</p></li>
+<li><p><strong>Be creative!</strong> — The best projects have unique personalities</p></li>
+</ol>
+</section>
+<section id="running-your-modified-script" class="slide level2 tiny-text">
+<h2>Running Your Modified Script</h2>
+<h3 id="commands-to-test-your-changes">Commands to Test Your Changes</h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href=""></a><span class="co"># Navigate to the project directory</span></span>
+<span id="cb23-2"><a href=""></a><span class="bu">cd</span> ~/IN097-phase2b</span>
+<span id="cb23-3"><a href=""></a></span>
+<span id="cb23-4"><a href=""></a><span class="co"># Activate the virtual environment</span></span>
+<span id="cb23-5"><a href=""></a><span class="bu">source</span> phosphobot/.venv/bin/activate</span>
+<span id="cb23-6"><a href=""></a></span>
+<span id="cb23-7"><a href=""></a><span class="co"># Run your modified script</span></span>
+<span id="cb23-8"><a href=""></a><span class="ex">python</span> llm_arm_chat.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="recording-your-demo" class="slide level2 tiny-text">
+<h2>Recording Your Demo</h2>
+<h3 id="capture-your-robot-in-action">Capture Your Robot in Action</h3>
+<p><strong>To view the camera feed:</strong></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href=""></a><span class="ex">robot2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then select option <strong>3) camera_stream_server.py</strong></p>
+<p>This starts a camera streaming server so you can see what the robot sees!</p>
+<p><strong>To record your demo:</strong></p>
+<ul>
+<li><p>Use your computer’s screen capture/recording software</p></li>
+<li><p>Record the camera feed + your terminal/chat interface</p></li>
+<li><p>Show off your custom robot behaviors!</p></li>
+</ul>
+</section>
+<section id="show-and-tell" class="slide level2 tiny-text">
+<h2>Show and Tell</h2>
+<h3 id="share-your-creation">Share Your Creation!</h3>
+<p>At the end of the session:</p>
+<ul>
+<li><p>Demonstrate your modified robot controller</p></li>
+<li><p>Explain what you changed and why</p></li>
+<li><p>Share any interesting behaviors you discovered</p></li>
+</ul>
+<p><strong>Have fun building your AI robot! 🤖</strong></p>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    <script>videojs(video_shortcode_videojs_video1);</script>
+    <script>videojs(video_shortcode_videojs_video2);</script>
+    <script>videojs(video_shortcode_videojs_video3);</script>
+    <script>videojs(video_shortcode_videojs_video4);</script>
+    <script>videojs(video_shortcode_videojs_video5);</script>
+    
+
+</body></html>

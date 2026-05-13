@@ -1,0 +1,139 @@
+.video-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-container video,
+.video-container img {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.two-column {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.two-column .column {
+  flex: 1;
+}
+
+.two-column img,
+.two-column video {
+  max-width: 100%;
+  height: auto;
+}
+
+.smaller-text {
+  font-size: 0.75em !important;
+}
+
+.smaller-text ul {
+  font-size: 0.85em;
+}
+
+.tiny-text {
+  font-size: 0.6em !important;
+}
+
+.tiny-text ul {
+  font-size: 0.9em;
+}
+
+.tiny-text .MathJax {
+  font-size: 0.85em !important;
+}
+
+.reveal .slide-content .mermaid {
+  max-height: 400px !important;
+  overflow: hidden !important;
+}
+
+.reveal .slide-content .mermaid svg {
+  max-height: 400px !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+.reveal .slide-content .mermaid .node rect {
+  max-width: 100%;
+}
+
+.iframe-demo {
+  width: 100%;
+  height: 500px;
+  border: 2px solid #333;
+  border-radius: 8px;
+}
+
+/* Callout boxes */
+.callout-note {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.callout-warning {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.callout-tip {
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Table styling */
+.reveal table {
+  font-size: 0.7em;
+  width: 100%;
+}
+
+/* Three images side by side */
+.three-images {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.three-images img {
+  max-width: 32%;
+  height: auto;
+}
+
+.reveal table th,
+.reveal table td {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+}
+
+/* Code block styling */
+.reveal pre {
+  font-size: 0.65em;
+  background: #f5f5f5;
+  padding: 1em;
+  border-radius: 8px;
+}
+
+.reveal code {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  background: #f0f0f0;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+.reveal pre code {
+  background: transparent;
+  padding: 0;
+}

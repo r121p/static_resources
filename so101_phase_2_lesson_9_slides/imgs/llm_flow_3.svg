@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" width="600" height="520">
+  <!-- Background -->
+  <rect width="600" height="520" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">Third Message: Full Conversation</text>
+  
+  <!-- Input Box -->
+  <rect x="50" y="50" width="500" height="320" rx="8" fill="#f5f5f5" stroke="#9e9e9e" stroke-width="2"/>
+  <text x="70" y="75" font-size="12" font-weight="bold" fill="#616161">INPUT TO LLM (full conversation history):</text>
+  
+  <!-- System Prompt -->
+  <rect x="70" y="85" width="460" height="30" rx="4" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
+  <text x="80" y="105" font-size="10" fill="#0d47a1">📝 SYSTEM PROMPT (always first)</text>
+  
+  <!-- First Exchange -->
+  <rect x="70" y="120" width="460" height="30" rx="4" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
+  <text x="80" y="140" font-size="10" fill="#1b5e20">👤 USER: "I love exercising!"</text>
+  
+  <rect x="70" y="155" width="460" height="30" rx="4" fill="#ffe0b2" stroke="#e65100" stroke-width="1"/>
+  <text x="80" y="175" font-size="10" fill="#bf360c">🤖 ASSISTANT: {"action": "yes", ...}</text>
+  
+  <!-- Second Exchange -->
+  <rect x="70" y="190" width="460" height="30" rx="4" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
+  <text x="80" y="210" font-size="10" fill="#1b5e20">👤 USER: "Pineapple pizza is the best!"</text>
+  
+  <rect x="70" y="225" width="460" height="30" rx="4" fill="#ffcdd2" stroke="#c62828" stroke-width="1"/>
+  <text x="80" y="245" font-size="10" fill="#b71c1c">🤖 ASSISTANT: {"action": "italy", ...}</text>
+  
+  <!-- Third User Message -->
+  <rect x="70" y="260" width="460" height="30" rx="4" fill="#c8e6c9" stroke="#388e3c" stroke-width="1"/>
+  <text x="80" y="280" font-size="10" fill="#1b5e20">👤 USER: "Sorry, I'll eat traditional pasta"</text>
+  
+  <!-- Growing Label -->
+  <rect x="440" y="220" width="80" height="20" rx="4" fill="#fff" stroke="#666" stroke-width="1"/>
+  <text x="480" y="234" text-anchor="middle" font-size="9" fill="#666">← Growing!</text>
+  
+  <!-- Arrow Down -->
+  <line x1="300" y1="375" x2="300" y2="400" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+    </marker>
+  </defs>
+  
+  <!-- LLM Box -->
+  <rect x="250" y="400" width="100" height="40" rx="20" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+  <text x="300" y="425" text-anchor="middle" font-size="12" font-weight="bold" fill="#f57f17">🤖 LLM</text>
+  
+  <!-- Arrow Down -->
+  <line x1="300" y1="445" x2="300" y2="470" stroke="#666" stroke-width="2" marker-end="url(#arrowhead2)"/>
+  <defs>
+    <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+    </marker>
+  </defs>
+  
+  <!-- Output Box -->
+  <rect x="50" y="475" width="500" height="35" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+  <text x="70" y="498" font-size="11" fill="#4a148c">📤 OUTPUT: {"action": "chat", "message": "Much better!"}</text>
+</svg>
