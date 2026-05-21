@@ -1,0 +1,634 @@
+---
+title: "SO101 Robotic Arm - Lesson 10"
+subtitle: "Lens Distortion Correction, Homography & VLM Object Detection"
+author: ""
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    autoplay-video: true
+    video-controls: true
+css: styles.css
+---
+
+## Lesson Overview {.smaller-text}
+
+In this lesson, we will cover three key topics to build a **click-to-pick** pipeline:
+
+1. **Lens Distortion Correction** 📷
+   - Correcting camera lens distortions for accurate pixel coordinates
+
+2. **Homography Matrix** 🎯
+   - Transforming 2D camera coordinates into the 3D robot coordinate system
+
+3. **VLM Object Detection** 🧠
+   - Using Vision-Language Models to detect and localize objects from natural language instructions
+
+---
+
+## Demo: Click-to-Pick in Action
+
+::: {.video-container}
+{{< video videos/extracted/04_click_pick_place_short.mp4 autoplay=true controls=true loop=true height="500" >}}
+:::
+
+**In this lesson, you will learn how to build this pipeline yourself!**
+
+---
+
+## Pipeline: From Pixel to Robot Motion
+
+::: {.video-container}
+![Pipeline Flowchart](media/pipeline_flowchart.svg){height="600"}
+:::
+
+---
+
+## What is Camera Distortion? {.smaller-text}
+
+Camera lenses introduce geometric distortions that cause straight lines in the real world to appear curved in the image.
+
+::: {.video-container}
+![Camera Distortion Example](media/fish_eye_wide_city_distortion_angle_wide_angle_building_lens-596533.jpg){height="450"}
+:::
+
+**This affects the accuracy of pixel-to-world coordinate mapping!**
+
+---
+
+## Types of Distortion {.x-small}
+
+There are two main types of lens distortion:
+
+::: {.two-column}
+::: {.column}
+
+**1. Radial Distortion**
+
+- Caused by the lens shape
+- Points appear stretched or compressed radially from the optical center
+- Most significant distortion effect
+- **We will focus on correcting this!**
+
+:::
+
+::: {.column}
+
+**2. Tangential Distortion**
+
+- Caused by lens not being perfectly parallel to the image sensor
+- Much smaller effect in most setups
+- **We can ignore this for our use case**
+
+::: {.callout-note}
+We will explain later why tangential distortion can be safely ignored in our setup.
+:::
+
+:::
+:::
+
+::: {.video-container}
+![Types of Distortion](media/types_of_distorsions.webp){height="280"}
+:::
+
+---
+
+## Types of Radial Distortion {.smaller-text}
+
+Radial distortion comes in three common forms:
+
+::: {.two-column}
+::: {.column}
+
+**Barrel Distortion**
+
+- Straight lines bow outward
+- Common in wide-angle lenses
+
+![Barrel Distortion](media/Barrel_distortion.svg){width="300"}
+
+:::
+
+::: {.column}
+
+**Pincushion Distortion**
+
+- Straight lines bow inward
+- Common in telephoto lenses
+
+![Pincushion Distortion](media/Pincushion_distortion.svg){width="300"}
+
+:::
+:::
+
+**Mustache Distortion**
+
+- Combination of barrel and pincushion
+- Lines bow outward near center, inward near edges
+
+![Mustache Distortion](media/Mustache_distortion.svg){width="400"}
+
+---
+
+## Visualizing Radial Distortion Correction {.smaller-text}
+
+::: {.video-container}
+![Radial Distortion Visual](media/radial_distortion_visual.svg){height="500"}
+:::
+
+---
+
+## Radial Distortion Model {.x-small}
+
+We model radial distortion using a polynomial with coefficients **k₁, k₂, k₃, ...**
+
+Given a distorted normalized point $(x_d, y_d)$, we compute the radial distance:
+
+$$r^2 = x_d^2 + y_d^2$$
+
+The distortion correction factor is:
+
+$$r_{corr} = 1 + k_1 r^2 + k_2 r^4 + k_3 r^6 + \dots$$
+
+The undistorted coordinates are then:
+
+$$x_u = x_d \cdot r_{corr}$$
+$$y_u = y_d \cdot r_{corr}$$
+
+::: {.callout-note}
+For most lenses, using only **k₁** and **k₂** is sufficient. Higher-order terms (k₃, ...) are only needed for fisheye lenses.
+:::
+
+---
+
+## Finding Correction Parameters {.smaller-text}
+
+To find the distortion coefficients, we need a reference object with known straight lines.
+
+::: {.video-container}
+![Grid and Checkerboard](media/grid_and_checkerboard.svg){height="450"}
+:::
+
+A **checkerboard** or **grid pattern** is ideal because:
+
+- It has many straight lines at known angles
+- Easy to manufacture and print
+- Distortion is clearly visible on the edges
+
+---
+
+## Method 1: Manual Tuning {.smaller-text}
+
+The simplest approach is to manually adjust **k₁** and **k₂** until the camera feed looks correct.
+
+**How it works:**
+
+1. Place a checkerboard in front of the camera
+2. Display the live camera feed
+3. Adjust **k₁** and **k₂** sliders in real-time
+4. Stop when the curved lines appear straight
+
+::: {.callout-warning}
+This method is time-consuming and requires trial-and-error. It also depends on human judgment of "straightness."
+:::
+
+---
+
+## Demo: Manual Parameter Tuning
+
+::: {.video-container}
+{{< video videos/extracted/01_lens_distortion_correction.mp4 autoplay=true controls=true loop=true height="500" >}}
+:::
+
+**Watch how adjusting k₁ and k₂ straightens the curved lines.**
+
+---
+
+## Method 2: Algorithmic Calibration {.smaller-text}
+
+Modern computer vision can automatically calculate **k₁** and **k₂** from a single checkerboard image.
+
+::: {.two-column}
+::: {.column}
+
+**How it works:**
+
+1. Capture an image of the checkerboard
+2. Detect where the straight lines are
+   - They will appear **curved** before correction
+3. Find the parameters that make those lines look **most straight**
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+![Checkerboard Line Detection](media/checkerboard_line_detection.jpg){height="380"}
+:::
+
+:::
+:::
+
+---
+
+## How to Find Parameters Analytically? {.smaller-text}
+
+**Question:** The equations for radial distortion are non-linear. If the parameters are very difficult to calculate analytically, how should we find them?
+
+**Think back to previous lectures...**
+
+::: {.callout-tip}
+### Recall
+What approach do we use when we have:
+
+- A target outcome we want to achieve
+- Parameters that are hard to solve directly
+- A way to measure how "wrong" our current guess is
+:::
+
+---
+
+## Answer: Optimization! {.smaller-text}
+
+Just like tuning neural network weights or IK joint angles, we use an **optimization loop** to find the best k₁ and k₂.
+
+::: {.video-container}
+![Optimization Flowchart](media/optimization_flowchart.svg){height="520"}
+:::
+
+**The optimizer iteratively adjusts k₁ and k₂ to minimize the total line curvature.**
+
+---
+
+## Manual vs. Automatic Calibration {.smaller-text}
+
+| | Manual Tuning 🔧 | Automatic Calibration 🤖 |
+|---|---|---|
+| **Speed** | ⏱️ Slow (trial & error) | ⚡ Fast (seconds) |
+| **Accuracy** | 👁️ Depends on human eye | 📐 Mathematically precise |
+| **Setup** | ✅ No extra code needed | 💻 Requires calibration algorithm |
+| **Robustness** | ⚠️ Subjective | ✅ Reproducible results |
+
+**Why still keep manual tuning?**
+
+- 🚨 **Debugging:** When auto-calibration fails, manual tuning helps verify the camera works
+- 🔧 **Fine-tuning:** Small tweaks by eye can sometimes beat algorithmic results
+- 📦 **No dependencies:** Works anywhere without OpenCV or optimization libraries
+- 🧠 **Understanding:** Manual adjustment builds intuition for what k₁ and k₂ actually do
+
+::: {.callout-note}
+Best practice: Use **automatic calibration** first, then **manually fine-tune** if needed.
+:::
+
+---
+
+## Intro to Homography {.smaller-text}
+
+A **homography** is a transformation that maps points from one plane to another.
+
+In robotics vision, it lets us convert **2D pixel coordinates** from the camera into **2D coordinates on the robot's working table**.
+
+::: {.two-column}
+::: {.column}
+
+**Why we need it:**
+
+- The camera sees the world in 2D pixels
+- The robot lives in a 3D world
+- Homography bridges this gap for flat surfaces
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+![Homography Transformation](media/Homography-transl-bold.svg){height="350"}
+:::
+
+:::
+:::
+
+---
+
+## The Homography Matrix {.smaller-text}
+
+The homography is represented by a **3×3 matrix** $\mathbf{H}$:
+
+$$
+\mathbf{H} = \begin{bmatrix} h_{11} & h_{12} & h_{13} \\ h_{21} & h_{22} & h_{23} \\ h_{31} & h_{32} & h_{33} \end{bmatrix}
+$$
+
+Given a pixel $(u, v)$, we find its world position $(x, y)$ on the plane:
+
+$$
+\begin{bmatrix} x' \\ y' \\ w' \end{bmatrix} = \mathbf{H} \begin{bmatrix} u \\ v \\ 1 \end{bmatrix}
+$$
+
+$$x = \frac{x'}{w'}, \quad y = \frac{y'}{w'}$$
+
+**This maps any 2D camera point to a 2D point on the robot's table plane!**
+
+---
+
+## Limitation: Planar Mapping Only {.smaller-text}
+
+Homography can only map between **2D planes**. It does not give us true 3D depth.
+
+::: {.two-column}
+::: {.column}
+
+**What homography CAN do:**
+
+- Map any point on the **table surface** to camera pixels
+- Track objects lying **flat** on the workspace
+- Work perfectly for pick-and-place tasks
+
+:::
+
+::: {.column}
+
+**What it CANNOT do:**
+
+- Tell you the **height** of an object above the table
+- Work accurately for objects on **sloped** surfaces
+- Handle objects that are **stacked** or floating
+
+:::
+:::
+
+::: {.callout-note}
+For our SO101 robot, this is fine! We mostly care about where objects are on the **flat working table**.
+:::
+
+---
+
+## Finding H with 4 Known Points {.smaller-text}
+
+To compute $\mathbf{H}$, we need **4 known point pairs**:
+
+- 4 points on the **robot table** with known real-world $(x, y)$ coordinates
+- The same 4 points visible in the **camera image** at pixel $(u, v)$ coordinates
+
+::: {.video-container}
+![Homography Transformation](media/Homography-transl-bold.svg){height="320"}
+:::
+
+**The 4 points should not be collinear** — spread them to the corners of your workspace for best accuracy.
+
+---
+
+## Solving for the Homography Matrix {.x-small}
+
+Each point pair gives two linear equations. With 4 points (8 equations) and 8 unknowns (since $h_{33}=1$), we can solve $\mathbf{H}$.
+
+For one correspondence $(u, v) \leftrightarrow (x, y)$:
+
+$$
+x = \frac{h_{11}u + h_{12}v + h_{13}}{h_{31}u + h_{32}v + 1}
+$$
+
+$$
+y = \frac{h_{21}u + h_{22}v + h_{23}}{h_{31}u + h_{32}v + 1}
+$$
+
+Rearranging into linear form $Ah = 0$:
+
+$$
+\begin{bmatrix}
+-u & -v & -1 & 0 & 0 & 0 & xu & xv & x \\
+0 & 0 & 0 & -u & -v & -1 & yu & yv & y
+\end{bmatrix}
+\begin{bmatrix} h_{11} \\ h_{12} \\ h_{13} \\ h_{21} \\ h_{22} \\ h_{23} \\ h_{31} \\ h_{32} \\ h_{33} \end{bmatrix} = 0
+$$
+
+**Solution:** Take the SVD of $A$; the eigenvector for the smallest singular value is $\mathbf{H}$.
+
+---
+
+## Camera Angle Matters {.x-small}
+
+For the most accurate mapping, the camera should look **straight down** at the table (normal to the plane).
+
+**Why?** When the camera is tilted, perspective distortion stretches the image unevenly:
+
+- Points farther from the camera appear closer together
+- Small **pixel errors** get amplified into large **position errors**
+
+The error amplification factor grows with tilt angle $\theta$:
+
+$$
+\text{Position Error} \approx \frac{\Delta_{pixel}}{\cos(\theta)}
+$$
+
+::: {.two-column}
+::: {.column}
+
+At $\theta = 0°$ (normal): 1-pixel error stays **1 pixel**
+
+At $\theta = 60°$: 1-pixel error becomes **2× larger**
+
+The closer to normal, the smaller the amplification!
+
+::: {.callout-tip}
+**Tip:** Mount your camera as close to overhead as possible for the most stable homography.
+:::
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+![Error Amplification Graph](media/angle_error_graph.svg){height="320"}
+:::
+
+:::
+:::
+
+---
+
+## Demo: Homography Calibration
+
+::: {.video-container}
+{{< video videos/extracted/02_homography_calibration.mp4 autoplay=true controls=true loop=true height="500" >}}
+:::
+
+**Watch how 4 clicked points define the mapping from camera pixels to robot table coordinates.**
+
+---
+
+## Homography is Not Permanent! {.smaller-text}
+
+**Important:** If anything moves, $\mathbf{H}$ becomes invalid and must be recalculated.
+
+Recalibration is needed when:
+
+- 📷 **Camera position changes** — bumped, nudged, or remounted
+- 📐 **Table height changes** — different working surface or mat
+- 🔧 **Robot base moves** — the coordinate system shifts
+- 📦 **Camera lens swapped** — intrinsics change
+
+::: {.callout-warning}
+Always verify your homography before running autonomous pick-and-place!
+:::
+
+---
+
+## Why We Can Ignore Tangential Distortion {.smaller-text}
+
+Remember we said tangential distortion could be ignored? Here's why:
+
+**Tangential distortion** is caused by the lens not being perfectly parallel to the image sensor. It creates a small skew in the image.
+
+However, the **homography matrix** already captures the full perspective transformation between the camera plane and the robot's table plane — including any skew or misalignment.
+
+::: {.callout-note}
+### Key Insight
+
+The homography $\mathbf{H}$ is flexible enough to absorb both:
+
+- The intended perspective mapping (camera → table)
+- The unwanted tangential skew (lens tilt)
+
+So we only need to explicitly correct **radial distortion**; tangential effects get handled automatically when we compute $\mathbf{H}$.
+:::
+
+---
+
+## Demo: Click-to-Pick with VLM {.smaller-text}
+
+With distortion correction and homography in place, we can now click anywhere on the camera feed to pick or place objects.
+
+Alternatively, a **Vision-Language Model (VLM)** can automatically create a bounding box to decide where to pick.
+
+::: {.video-container}
+{{< video videos/extracted/03_click_pick_place_vlm_pick.mp4 autoplay=true controls=true loop=true height="480" >}}
+:::
+
+---
+
+## Demo: VLM Picks by Order {.smaller-text}
+
+VLMs understand **text instructions** and can select objects based on spatial relationships.
+
+::: {.video-container}
+{{< video videos/extracted/05_vlm_pick_according_to_order.mp4 autoplay=true controls=true loop=true height="450" >}}
+:::
+
+**Example:** "Pick up the **middle** box" — the VLM correctly identifies which object to grasp.
+
+---
+
+## Demo: VLM Picks by Color {.smaller-text}
+
+VLMs can also filter objects by **color** or other visual attributes described in natural language.
+
+::: {.video-container}
+{{< video videos/extracted/06_vlm_pick_according_to_color.mp4 autoplay=true controls=true loop=true height="500" >}}
+:::
+
+**Example:** "Pick up the **black** pen" — no need to train a separate color detector.
+
+---
+
+## Demo: VLM Specifies Grasp Point {.smaller-text}
+
+A major advantage of VLMs is the ability to target **specific parts** of an object.
+
+::: {.video-container}
+{{< video videos/extracted/07_vlm_specify_part_to_grab.mp4 autoplay=true controls=true loop=true height="500" >}}
+:::
+
+**Example:** "Pick up the screwdriver **by the handle**" — the VLM boxes only the handle region, letting the gripper grasp optimally.
+
+---
+
+## Why VLM is Replacing Traditional OD {.smaller-text}
+
+Traditional object detectors like **YOLO** can only output predefined classes and bounding boxes. **VLMs** understand context, text, and natural language.
+
+::: {.two-column}
+::: {.column}
+
+**What VLM can do that YOLO cannot:**
+
+- Understand text labels and warning signs in the scene
+- Follow instructions like "pick the leftmost cup"
+- Target specific parts of an object (handle, cap, etc.)
+- Work with unseen object classes without retraining
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+![YOLO vs VLM](media/Disloyal_man_with_his_girlfriend(yolo)_looking_at_another_girl(vlm).jpg){height="380"}
+:::
+
+:::
+:::
+
+---
+
+## Why Traditional Object Detection Still Matters {.smaller-text}
+
+Despite VLM's flexibility, traditional detectors like **YOLO** are still essential:
+
+| | YOLO / Traditional OD | VLM |
+|---|---|---|
+| **Speed** | ⚡ Real-time (30–100+ FPS) | 🐌 Slow (seconds per frame) |
+| **Cost** | ✅ Free, runs locally | 💰 API costs per request |
+| **Consistency** | ✅ Deterministic output | ⚠️ Can vary between calls |
+| **Internet** | ✅ Offline capable | 📶 Requires network |
+| **Setup** | ⚠️ Needs training data | ✅ Zero-shot capability |
+
+**Best practice:** Use **YOLO** for fast, reliable detection of known objects. Use **VLM** when you need flexibility, language understanding, or reasoning about unseen items.
+
+---
+
+## Demo: VLM Safety Failures {.smaller-text}
+
+VLMs are not perfect. They can miss obvious visual cues like warning signs.
+
+::: {.two-column}
+::: {.column}
+
+::: {.video-container}
+{{< video videos/extracted/08_vlm_knife_warning_1.mp4 autoplay=true controls=true loop=true height="280" >}}
+:::
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+{{< video videos/extracted/09_vlm_knife_warning_2.mp4 autoplay=true controls=true loop=true height="280" >}}
+:::
+
+:::
+:::
+
+**Even with a big warning sign, the VLM still wants to pick up the knife!**
+
+This shows the importance of **system prompts** and **safety guardrails**.
+
+---
+
+## 🛠️ Activity: Fix the VLM Prompt {.smaller-text}
+
+The VLM ignored the warning sign because its **system prompt** did not include safety instructions.
+
+**Your task:**
+
+1. Open the VLM system prompt in the robot control code
+2. Add a rule that tells the VLM to **never pick up objects with warning signs** near them
+3. Test your modified prompt with the knife scene
+
+::: {.callout-tip}
+### Example Prompt Addition
+
+> "If you see a warning sign near an object, do not pick it up. Prioritize safety over task completion."
+
+:::
+
+**Discussion:** What other safety rules should the robot follow?

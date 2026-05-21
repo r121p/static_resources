@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homography Perspective Demo</title>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #111; }
+    #canvas-container { width: 100vw; height: 100vh; }
+    #ui {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      color: #fff;
+      background: rgba(0,0,0,0.75);
+      padding: 16px 20px;
+      border-radius: 10px;
+      max-width: 340px;
+      pointer-events: none;
+      user-select: none;
+    }
+    #ui h2 { margin: 0 0 8px; font-size: 18px; }
+    #ui p { margin: 4px 0; font-size: 14px; line-height: 1.4; }
+    #ui .metric { font-weight: bold; color: #4fc3f7; }
+    #ui .note { color: #aaa; font-size: 12px; margin-top: 8px; }
+    #btn-container {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: auto;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #4fc3f7;
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    button:hover { background: #29b6f6; }
+    #state-label {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      color: #fff;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      pointer-events: none;
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="ui">
+    <h2>Homography Perspective Demo</h2>
+    <p id="instruction">Orbit to choose an angle, then <b>click on the plane</b> to place a projected cube.</p>
+    <p>Plane Distance: <span class="metric" id="plane-dist">--</span></p>
+    <p>Angular Distance: <span class="metric" id="angular-dist">--</span></p>
+    <p>Ratio (ang / plane): <span class="metric" id="ratio">--</span></p>
+    <p class="note">Lower ratio = less perspective distortion overhead</p>
+  </div>
+  <div id="state-label">Mode: Fixed Distance Orbit</div>
+  <div id="btn-container">
+    <button id="click-again" style="display:none;">Click Again from Another Angle</button>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const container = document.getElementById('canvas-container');
+    const planeDistEl = document.getElementById('plane-dist');
+    const angularDistEl = document.getElementById('angular-dist');
+    const ratioEl = document.getElementById('ratio');
+    const instructionEl = document.getElementById('instruction');
+    const stateLabel = document.getElementById('state-label');
+    const clickAgainBtn = document.getElementById('click-again');
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Lights
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 10, 5);
+    scene.add(dirLight);
+
+    // Plane
+    const planeGeo = new THREE.PlaneGeometry(40, 40);
+    const planeMat = new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.8, metalness: 0.1, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(planeGeo, planeMat);
+    plane.rotation.x = -Math.PI / 2;
+    scene.add(plane);
+
+    // Grid helper
+    const grid = new THREE.GridHelper(40, 40, 0x556677, 0x223344);
+    scene.add(grid);
+
+    // Original cube
+    const cubeSize = 1;
+    const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+    const cubeMat = new THREE.MeshStandardMaterial({ color: 0x4fc3f7 });
+    const originalCube = new THREE.Mesh(cubeGeo, cubeMat);
+    originalCube.position.set(0, cubeSize / 2, 0);
+    scene.add(originalCube);
+
+    // Projected cube (semi-transparent)
+    const projCubeMat = new THREE.MeshStandardMaterial({ color: 0xff9800, transparent: true, opacity: 0.5 });
+    const projectedCube = new THREE.Mesh(cubeGeo.clone(), projCubeMat);
+    projectedCube.visible = false;
+    scene.add(projectedCube);
+
+    // Line connecting cubes on plane
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xff9800, linewidth: 2 });
+    const lineGeo = new THREE.BufferGeometry();
+    const connectionLine = new THREE.Line(lineGeo, lineMat);
+    connectionLine.visible = false;
+    scene.add(connectionLine);
+
+    // Camera setup
+    const FIXED_DISTANCE = 10;
+    let state = 'fixed'; // 'fixed' or 'free'
+
+    function resetFixedCamera() {
+      state = 'fixed';
+      stateLabel.textContent = 'Mode: Fixed Distance Orbit';
+      clickAgainBtn.style.display = 'none';
+      instructionEl.innerHTML = '<b>Right-click / MMB drag</b> to rotate. <b>Left-click</b> on the plane to place a projected cube.';
+
+      controls.target.set(0, cubeSize / 2, 0);
+      controls.minDistance = FIXED_DISTANCE;
+      controls.maxDistance = FIXED_DISTANCE;
+      controls.enablePan = false;
+      controls.enableZoom = false;
+
+      // Reset camera to a standard orbit position at fixed distance looking at cube
+      camera.position.set(FIXED_DISTANCE * 0.6, FIXED_DISTANCE * 0.8, FIXED_DISTANCE * 0.6);
+      controls.update();
+    }
+
+    function enterFreeMode() {
+      state = 'free';
+      stateLabel.textContent = 'Mode: Free Camera (inspect the scene)';
+      clickAgainBtn.style.display = 'inline-block';
+      instructionEl.innerHTML = 'You can now freely move the camera to inspect the error. Click <b>"Click Again"</b> to try from another angle.';
+
+      controls.minDistance = 1;
+      controls.maxDistance = 50;
+      controls.enablePan = true;
+      controls.enableZoom = true;
+    }
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, cubeSize / 2, 0);
+    camera.position.set(FIXED_DISTANCE * 0.6, FIXED_DISTANCE * 0.8, FIXED_DISTANCE * 0.6);
+    // Right-click and middle-click rotate; left-click is reserved for placing cubes
+    controls.mouseButtons = {
+      LEFT: null,
+      MIDDLE: THREE.MOUSE.ROTATE,
+      RIGHT: THREE.MOUSE.ROTATE
+    };
+    resetFixedCamera();
+    controls.update();
+
+    // Raycaster
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function updateMetrics(camPos, p1, p2) {
+      // Plane distance (xz distance)
+      const dx = p1.x - p2.x;
+      const dz = p1.z - p2.z;
+      const planeDist = Math.sqrt(dx * dx + dz * dz);
+
+      // Angular distance from camera
+      const v1 = new THREE.Vector3().subVectors(p1, camPos).normalize();
+      const v2 = new THREE.Vector3().subVectors(p2, camPos).normalize();
+      const angularDist = Math.acos(THREE.MathUtils.clamp(v1.dot(v2), -1, 1));
+
+      planeDistEl.textContent = planeDist.toFixed(3) + ' units';
+      angularDistEl.textContent = (angularDist * 180 / Math.PI).toFixed(2) + '° (' + angularDist.toFixed(4) + ' rad)';
+
+      if (planeDist > 0.001) {
+        ratioEl.textContent = (angularDist / planeDist).toFixed(4) + ' rad/unit';
+      } else {
+        ratioEl.textContent = '0.0000 rad/unit';
+      }
+    }
+
+    function onPointerDown(event) {
+      if (state !== 'fixed') return;
+
+      // Only handle primary click
+      if (event.button !== 0) return;
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(plane);
+
+      if (intersects.length > 0) {
+        const point = intersects[0].point;
+        projectedCube.position.set(point.x, cubeSize / 2, point.z);
+        projectedCube.visible = true;
+
+        // Update connecting line
+        const positions = new Float32Array([
+          originalCube.position.x, originalCube.position.y, originalCube.position.z,
+          projectedCube.position.x, projectedCube.position.y, projectedCube.position.z,
+        ]);
+        lineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        connectionLine.visible = true;
+
+        // Store camera position at time of click
+        const clickCamPos = camera.position.clone();
+        updateMetrics(clickCamPos, originalCube.position, projectedCube.position);
+
+        enterFreeMode();
+      }
+    }
+
+    window.addEventListener('pointerdown', onPointerDown);
+    clickAgainBtn.addEventListener('click', () => {
+      projectedCube.visible = false;
+      connectionLine.visible = false;
+      planeDistEl.textContent = '--';
+      angularDistEl.textContent = '--';
+      ratioEl.textContent = '--';
+      resetFixedCamera();
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

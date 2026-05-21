@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/quarto-contrib/videojs/video.min.js"></script>
+<link href="index_files/libs/quarto-contrib/videojs/video-js.css" rel="stylesheet"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.25">
+
+  <meta name="author" content="">
+  <title>SO101 Robotic Arm - Lesson 10</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="styles.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">SO101 Robotic Arm - Lesson 10</h1>
+  <p class="subtitle">Lens Distortion Correction, Homography &amp; VLM Object Detection</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="lesson-overview" class="slide level2 smaller-text">
+<h2>Lesson Overview</h2>
+<p>In this lesson, we will cover three key topics to build a <strong>click-to-pick</strong> pipeline:</p>
+<ol type="1">
+<li><strong>Lens Distortion Correction</strong> 📷
+<ul>
+<li>Correcting camera lens distortions for accurate pixel coordinates</li>
+</ul></li>
+<li><strong>Homography Matrix</strong> 🎯
+<ul>
+<li>Transforming 2D camera coordinates into the 3D robot coordinate system</li>
+</ul></li>
+<li><strong>VLM Object Detection</strong> 🧠
+<ul>
+<li>Using Vision-Language Models to detect and localize objects from natural language instructions</li>
+</ul></li>
+</ol>
+</section>
+<section id="demo-click-to-pick-in-action" class="slide level2">
+<h2>Demo: Click-to-Pick in Action</h2>
+<div class="video-container">
+<video id="video_shortcode_videojs_video1" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/04_click_pick_place_short.mp4"></video>
+</div>
+<p><strong>In this lesson, you will learn how to build this pipeline yourself!</strong></p>
+</section>
+<section id="pipeline-from-pixel-to-robot-motion" class="slide level2">
+<h2>Pipeline: From Pixel to Robot Motion</h2>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/pipeline_flowchart.svg" height="600"></p>
+<figcaption>Pipeline Flowchart</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="what-is-camera-distortion" class="slide level2 smaller-text">
+<h2>What is Camera Distortion?</h2>
+<p>Camera lenses introduce geometric distortions that cause straight lines in the real world to appear curved in the image.</p>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/fish_eye_wide_city_distortion_angle_wide_angle_building_lens-596533.jpg" height="450"></p>
+<figcaption>Camera Distortion Example</figcaption>
+</figure>
+</div>
+</div>
+<p><strong>This affects the accuracy of pixel-to-world coordinate mapping!</strong></p>
+</section>
+<section id="types-of-distortion" class="slide level2 x-small">
+<h2>Types of Distortion</h2>
+<p>There are two main types of lens distortion:</p>
+<div class="two-column">
+<div class="column">
+<p><strong>1. Radial Distortion</strong></p>
+<ul>
+<li>Caused by the lens shape</li>
+<li>Points appear stretched or compressed radially from the optical center</li>
+<li>Most significant distortion effect</li>
+<li><strong>We will focus on correcting this!</strong></li>
+</ul>
+</div><div class="column">
+<p><strong>2. Tangential Distortion</strong></p>
+<ul>
+<li>Caused by lens not being perfectly parallel to the image sensor</li>
+<li>Much smaller effect in most setups</li>
+<li><strong>We can ignore this for our use case</strong></li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>We will explain later why tangential distortion can be safely ignored in our setup.</p>
+</div>
+</div>
+</div>
+</div></div>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/types_of_distorsions.webp" height="280"></p>
+<figcaption>Types of Distortion</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="types-of-radial-distortion" class="slide level2 smaller-text">
+<h2>Types of Radial Distortion</h2>
+<p>Radial distortion comes in three common forms:</p>
+<div class="two-column">
+<div class="column">
+<p><strong>Barrel Distortion</strong></p>
+<ul>
+<li>Straight lines bow outward</li>
+<li>Common in wide-angle lenses</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/Barrel_distortion.svg" width="300"></p>
+<figcaption>Barrel Distortion</figcaption>
+</figure>
+</div>
+</div><div class="column">
+<p><strong>Pincushion Distortion</strong></p>
+<ul>
+<li>Straight lines bow inward</li>
+<li>Common in telephoto lenses</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/Pincushion_distortion.svg" width="300"></p>
+<figcaption>Pincushion Distortion</figcaption>
+</figure>
+</div>
+</div></div>
+<p><strong>Mustache Distortion</strong></p>
+<ul>
+<li>Combination of barrel and pincushion</li>
+<li>Lines bow outward near center, inward near edges</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/Mustache_distortion.svg" width="400"></p>
+<figcaption>Mustache Distortion</figcaption>
+</figure>
+</div>
+</section>
+<section id="visualizing-radial-distortion-correction" class="slide level2 smaller-text">
+<h2>Visualizing Radial Distortion Correction</h2>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/radial_distortion_visual.svg" height="500"></p>
+<figcaption>Radial Distortion Visual</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="radial-distortion-model" class="slide level2 x-small">
+<h2>Radial Distortion Model</h2>
+<p>We model radial distortion using a polynomial with coefficients <strong>k₁, k₂, k₃, …</strong></p>
+<p>Given a distorted normalized point <span class="math inline">\((x_d, y_d)\)</span>, we compute the radial distance:</p>
+<p><span class="math display">\[r^2 = x_d^2 + y_d^2\]</span></p>
+<p>The distortion correction factor is:</p>
+<p><span class="math display">\[r_{corr} = 1 + k_1 r^2 + k_2 r^4 + k_3 r^6 + \dots\]</span></p>
+<p>The undistorted coordinates are then:</p>
+<p><span class="math display">\[x_u = x_d \cdot r_{corr}\]</span> <span class="math display">\[y_u = y_d \cdot r_{corr}\]</span></p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>For most lenses, using only <strong>k₁</strong> and <strong>k₂</strong> is sufficient. Higher-order terms (k₃, …) are only needed for fisheye lenses.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="finding-correction-parameters" class="slide level2 smaller-text">
+<h2>Finding Correction Parameters</h2>
+<p>To find the distortion coefficients, we need a reference object with known straight lines.</p>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/grid_and_checkerboard.svg" height="450"></p>
+<figcaption>Grid and Checkerboard</figcaption>
+</figure>
+</div>
+</div>
+<p>A <strong>checkerboard</strong> or <strong>grid pattern</strong> is ideal because:</p>
+<ul>
+<li>It has many straight lines at known angles</li>
+<li>Easy to manufacture and print</li>
+<li>Distortion is clearly visible on the edges</li>
+</ul>
+</section>
+<section id="method-1-manual-tuning" class="slide level2 smaller-text">
+<h2>Method 1: Manual Tuning</h2>
+<p>The simplest approach is to manually adjust <strong>k₁</strong> and <strong>k₂</strong> until the camera feed looks correct.</p>
+<p><strong>How it works:</strong></p>
+<ol type="1">
+<li>Place a checkerboard in front of the camera</li>
+<li>Display the live camera feed</li>
+<li>Adjust <strong>k₁</strong> and <strong>k₂</strong> sliders in real-time</li>
+<li>Stop when the curved lines appear straight</li>
+</ol>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>This method is time-consuming and requires trial-and-error. It also depends on human judgment of “straightness.”</p>
+</div>
+</div>
+</div>
+</section>
+<section id="demo-manual-parameter-tuning" class="slide level2">
+<h2>Demo: Manual Parameter Tuning</h2>
+<div class="video-container">
+<video id="video_shortcode_videojs_video2" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/01_lens_distortion_correction.mp4"></video>
+</div>
+<p><strong>Watch how adjusting k₁ and k₂ straightens the curved lines.</strong></p>
+</section>
+<section id="method-2-algorithmic-calibration" class="slide level2 smaller-text">
+<h2>Method 2: Algorithmic Calibration</h2>
+<p>Modern computer vision can automatically calculate <strong>k₁</strong> and <strong>k₂</strong> from a single checkerboard image.</p>
+<div class="two-column">
+<div class="column">
+<p><strong>How it works:</strong></p>
+<ol type="1">
+<li>Capture an image of the checkerboard</li>
+<li>Detect where the straight lines are
+<ul>
+<li>They will appear <strong>curved</strong> before correction</li>
+</ul></li>
+<li>Find the parameters that make those lines look <strong>most straight</strong></li>
+</ol>
+</div><div class="column">
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/checkerboard_line_detection.jpg" height="380"></p>
+<figcaption>Checkerboard Line Detection</figcaption>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="how-to-find-parameters-analytically" class="slide level2 smaller-text">
+<h2>How to Find Parameters Analytically?</h2>
+<p><strong>Question:</strong> The equations for radial distortion are non-linear. If the parameters are very difficult to calculate analytically, how should we find them?</p>
+<p><strong>Think back to previous lectures…</strong></p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Recall</strong></p>
+</div>
+<div class="callout-content">
+<p>What approach do we use when we have:</p>
+<ul>
+<li>A target outcome we want to achieve</li>
+<li>Parameters that are hard to solve directly</li>
+<li>A way to measure how “wrong” our current guess is</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="answer-optimization" class="slide level2 smaller-text">
+<h2>Answer: Optimization!</h2>
+<p>Just like tuning neural network weights or IK joint angles, we use an <strong>optimization loop</strong> to find the best k₁ and k₂.</p>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/optimization_flowchart.svg" height="520"></p>
+<figcaption>Optimization Flowchart</figcaption>
+</figure>
+</div>
+</div>
+<p><strong>The optimizer iteratively adjusts k₁ and k₂ to minimize the total line curvature.</strong></p>
+</section>
+<section id="manual-vs.-automatic-calibration" class="slide level2 smaller-text">
+<h2>Manual vs.&nbsp;Automatic Calibration</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Manual Tuning 🔧</th>
+<th>Automatic Calibration 🤖</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Speed</strong></td>
+<td>⏱️ Slow (trial &amp; error)</td>
+<td>⚡ Fast (seconds)</td>
+</tr>
+<tr class="even">
+<td><strong>Accuracy</strong></td>
+<td>👁️ Depends on human eye</td>
+<td>📐 Mathematically precise</td>
+</tr>
+<tr class="odd">
+<td><strong>Setup</strong></td>
+<td>✅ No extra code needed</td>
+<td>💻 Requires calibration algorithm</td>
+</tr>
+<tr class="even">
+<td><strong>Robustness</strong></td>
+<td>⚠️ Subjective</td>
+<td>✅ Reproducible results</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why still keep manual tuning?</strong></p>
+<ul>
+<li>🚨 <strong>Debugging:</strong> When auto-calibration fails, manual tuning helps verify the camera works</li>
+<li>🔧 <strong>Fine-tuning:</strong> Small tweaks by eye can sometimes beat algorithmic results</li>
+<li>📦 <strong>No dependencies:</strong> Works anywhere without OpenCV or optimization libraries</li>
+<li>🧠 <strong>Understanding:</strong> Manual adjustment builds intuition for what k₁ and k₂ actually do</li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Best practice: Use <strong>automatic calibration</strong> first, then <strong>manually fine-tune</strong> if needed.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="intro-to-homography" class="slide level2 smaller-text">
+<h2>Intro to Homography</h2>
+<p>A <strong>homography</strong> is a transformation that maps points from one plane to another.</p>
+<p>In robotics vision, it lets us convert <strong>2D pixel coordinates</strong> from the camera into <strong>2D coordinates on the robot’s working table</strong>.</p>
+<div class="two-column">
+<div class="column">
+<p><strong>Why we need it:</strong></p>
+<ul>
+<li>The camera sees the world in 2D pixels</li>
+<li>The robot lives in a 3D world</li>
+<li>Homography bridges this gap for flat surfaces</li>
+</ul>
+</div><div class="column">
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/Homography-transl-bold.svg" height="350"></p>
+<figcaption>Homography Transformation</figcaption>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="the-homography-matrix" class="slide level2 smaller-text">
+<h2>The Homography Matrix</h2>
+<p>The homography is represented by a <strong>3×3 matrix</strong> <span class="math inline">\(\mathbf{H}\)</span>:</p>
+<p><span class="math display">\[
+\mathbf{H} = \begin{bmatrix} h_{11} &amp; h_{12} &amp; h_{13} \\ h_{21} &amp; h_{22} &amp; h_{23} \\ h_{31} &amp; h_{32} &amp; h_{33} \end{bmatrix}
+\]</span></p>
+<p>Given a pixel <span class="math inline">\((u, v)\)</span>, we find its world position <span class="math inline">\((x, y)\)</span> on the plane:</p>
+<p><span class="math display">\[
+\begin{bmatrix} x' \\ y' \\ w' \end{bmatrix} = \mathbf{H} \begin{bmatrix} u \\ v \\ 1 \end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[x = \frac{x'}{w'}, \quad y = \frac{y'}{w'}\]</span></p>
+<p><strong>This maps any 2D camera point to a 2D point on the robot’s table plane!</strong></p>
+</section>
+<section id="limitation-planar-mapping-only" class="slide level2 smaller-text">
+<h2>Limitation: Planar Mapping Only</h2>
+<p>Homography can only map between <strong>2D planes</strong>. It does not give us true 3D depth.</p>
+<div class="two-column">
+<div class="column">
+<p><strong>What homography CAN do:</strong></p>
+<ul>
+<li>Map any point on the <strong>table surface</strong> to camera pixels</li>
+<li>Track objects lying <strong>flat</strong> on the workspace</li>
+<li>Work perfectly for pick-and-place tasks</li>
+</ul>
+</div><div class="column">
+<p><strong>What it CANNOT do:</strong></p>
+<ul>
+<li>Tell you the <strong>height</strong> of an object above the table</li>
+<li>Work accurately for objects on <strong>sloped</strong> surfaces</li>
+<li>Handle objects that are <strong>stacked</strong> or floating</li>
+</ul>
+</div></div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>For our SO101 robot, this is fine! We mostly care about where objects are on the <strong>flat working table</strong>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="finding-h-with-4-known-points" class="slide level2 smaller-text">
+<h2>Finding H with 4 Known Points</h2>
+<p>To compute <span class="math inline">\(\mathbf{H}\)</span>, we need <strong>4 known point pairs</strong>:</p>
+<ul>
+<li>4 points on the <strong>robot table</strong> with known real-world <span class="math inline">\((x, y)\)</span> coordinates</li>
+<li>The same 4 points visible in the <strong>camera image</strong> at pixel <span class="math inline">\((u, v)\)</span> coordinates</li>
+</ul>
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/Homography-transl-bold.svg" height="320"></p>
+<figcaption>Homography Transformation</figcaption>
+</figure>
+</div>
+</div>
+<p><strong>The 4 points should not be collinear</strong> — spread them to the corners of your workspace for best accuracy.</p>
+</section>
+<section id="solving-for-the-homography-matrix" class="slide level2 x-small">
+<h2>Solving for the Homography Matrix</h2>
+<p>Each point pair gives two linear equations. With 4 points (8 equations) and 8 unknowns (since <span class="math inline">\(h_{33}=1\)</span>), we can solve <span class="math inline">\(\mathbf{H}\)</span>.</p>
+<p>For one correspondence <span class="math inline">\((u, v) \leftrightarrow (x, y)\)</span>:</p>
+<p><span class="math display">\[
+x = \frac{h_{11}u + h_{12}v + h_{13}}{h_{31}u + h_{32}v + 1}
+\]</span></p>
+<p><span class="math display">\[
+y = \frac{h_{21}u + h_{22}v + h_{23}}{h_{31}u + h_{32}v + 1}
+\]</span></p>
+<p>Rearranging into linear form <span class="math inline">\(Ah = 0\)</span>:</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+-u &amp; -v &amp; -1 &amp; 0 &amp; 0 &amp; 0 &amp; xu &amp; xv &amp; x \\
+0 &amp; 0 &amp; 0 &amp; -u &amp; -v &amp; -1 &amp; yu &amp; yv &amp; y
+\end{bmatrix}
+\begin{bmatrix} h_{11} \\ h_{12} \\ h_{13} \\ h_{21} \\ h_{22} \\ h_{23} \\ h_{31} \\ h_{32} \\ h_{33} \end{bmatrix} = 0
+\]</span></p>
+<p><strong>Solution:</strong> Take the SVD of <span class="math inline">\(A\)</span>; the eigenvector for the smallest singular value is <span class="math inline">\(\mathbf{H}\)</span>.</p>
+</section>
+<section id="camera-angle-matters" class="slide level2 x-small">
+<h2>Camera Angle Matters</h2>
+<p>For the most accurate mapping, the camera should look <strong>straight down</strong> at the table (normal to the plane).</p>
+<p><strong>Why?</strong> When the camera is tilted, perspective distortion stretches the image unevenly:</p>
+<ul>
+<li>Points farther from the camera appear closer together</li>
+<li>Small <strong>pixel errors</strong> get amplified into large <strong>position errors</strong></li>
+</ul>
+<p>The error amplification factor grows with tilt angle <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display">\[
+\text{Position Error} \approx \frac{\Delta_{pixel}}{\cos(\theta)}
+\]</span></p>
+<div class="two-column">
+<div class="column">
+<p>At <span class="math inline">\(\theta = 0°\)</span> (normal): 1-pixel error stays <strong>1 pixel</strong></p>
+<p>At <span class="math inline">\(\theta = 60°\)</span>: 1-pixel error becomes <strong>2× larger</strong></p>
+<p>The closer to normal, the smaller the amplification!</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Tip:</strong> Mount your camera as close to overhead as possible for the most stable homography.</p>
+</div>
+</div>
+</div>
+</div><div class="column">
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/angle_error_graph.svg" height="320"></p>
+<figcaption>Error Amplification Graph</figcaption>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="demo-homography-calibration" class="slide level2">
+<h2>Demo: Homography Calibration</h2>
+<div class="video-container">
+<video id="video_shortcode_videojs_video3" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/02_homography_calibration.mp4"></video>
+</div>
+<p><strong>Watch how 4 clicked points define the mapping from camera pixels to robot table coordinates.</strong></p>
+</section>
+<section id="homography-is-not-permanent" class="slide level2 smaller-text">
+<h2>Homography is Not Permanent!</h2>
+<p><strong>Important:</strong> If anything moves, <span class="math inline">\(\mathbf{H}\)</span> becomes invalid and must be recalculated.</p>
+<p>Recalibration is needed when:</p>
+<ul>
+<li>📷 <strong>Camera position changes</strong> — bumped, nudged, or remounted</li>
+<li>📐 <strong>Table height changes</strong> — different working surface or mat</li>
+<li>🔧 <strong>Robot base moves</strong> — the coordinate system shifts</li>
+<li>📦 <strong>Camera lens swapped</strong> — intrinsics change</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Always verify your homography before running autonomous pick-and-place!</p>
+</div>
+</div>
+</div>
+</section>
+<section id="why-we-can-ignore-tangential-distortion" class="slide level2 smaller-text">
+<h2>Why We Can Ignore Tangential Distortion</h2>
+<p>Remember we said tangential distortion could be ignored? Here’s why:</p>
+<p><strong>Tangential distortion</strong> is caused by the lens not being perfectly parallel to the image sensor. It creates a small skew in the image.</p>
+<p>However, the <strong>homography matrix</strong> already captures the full perspective transformation between the camera plane and the robot’s table plane — including any skew or misalignment.</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Key Insight</strong></p>
+</div>
+<div class="callout-content">
+<p>The homography <span class="math inline">\(\mathbf{H}\)</span> is flexible enough to absorb both:</p>
+<ul>
+<li>The intended perspective mapping (camera → table)</li>
+<li>The unwanted tangential skew (lens tilt)</li>
+</ul>
+<p>So we only need to explicitly correct <strong>radial distortion</strong>; tangential effects get handled automatically when we compute <span class="math inline">\(\mathbf{H}\)</span>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="demo-click-to-pick-with-vlm" class="slide level2 smaller-text">
+<h2>Demo: Click-to-Pick with VLM</h2>
+<p>With distortion correction and homography in place, we can now click anywhere on the camera feed to pick or place objects.</p>
+<p>Alternatively, a <strong>Vision-Language Model (VLM)</strong> can automatically create a bounding box to decide where to pick.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video4" height="480" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/03_click_pick_place_vlm_pick.mp4"></video>
+</div>
+</section>
+<section id="demo-vlm-picks-by-order" class="slide level2 smaller-text">
+<h2>Demo: VLM Picks by Order</h2>
+<p>VLMs understand <strong>text instructions</strong> and can select objects based on spatial relationships.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video5" height="450" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/05_vlm_pick_according_to_order.mp4"></video>
+</div>
+<p><strong>Example:</strong> “Pick up the <strong>middle</strong> box” — the VLM correctly identifies which object to grasp.</p>
+</section>
+<section id="demo-vlm-picks-by-color" class="slide level2 smaller-text">
+<h2>Demo: VLM Picks by Color</h2>
+<p>VLMs can also filter objects by <strong>color</strong> or other visual attributes described in natural language.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video6" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/06_vlm_pick_according_to_color.mp4"></video>
+</div>
+<p><strong>Example:</strong> “Pick up the <strong>black</strong> pen” — no need to train a separate color detector.</p>
+</section>
+<section id="demo-vlm-specifies-grasp-point" class="slide level2 smaller-text">
+<h2>Demo: VLM Specifies Grasp Point</h2>
+<p>A major advantage of VLMs is the ability to target <strong>specific parts</strong> of an object.</p>
+<div class="video-container">
+<video id="video_shortcode_videojs_video7" height="500" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/07_vlm_specify_part_to_grab.mp4"></video>
+</div>
+<p><strong>Example:</strong> “Pick up the screwdriver <strong>by the handle</strong>” — the VLM boxes only the handle region, letting the gripper grasp optimally.</p>
+</section>
+<section id="why-vlm-is-replacing-traditional-od" class="slide level2 smaller-text">
+<h2>Why VLM is Replacing Traditional OD</h2>
+<p>Traditional object detectors like <strong>YOLO</strong> can only output predefined classes and bounding boxes. <strong>VLMs</strong> understand context, text, and natural language.</p>
+<div class="two-column">
+<div class="column">
+<p><strong>What VLM can do that YOLO cannot:</strong></p>
+<ul>
+<li>Understand text labels and warning signs in the scene</li>
+<li>Follow instructions like “pick the leftmost cup”</li>
+<li>Target specific parts of an object (handle, cap, etc.)</li>
+<li>Work with unseen object classes without retraining</li>
+</ul>
+</div><div class="column">
+<div class="video-container">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="media/Disloyal_man_with_his_girlfriend(yolo)_looking_at_another_girl(vlm).jpg" height="380"></p>
+<figcaption>YOLO vs VLM</figcaption>
+</figure>
+</div>
+</div>
+</div></div>
+</section>
+<section id="why-traditional-object-detection-still-matters" class="slide level2 smaller-text">
+<h2>Why Traditional Object Detection Still Matters</h2>
+<p>Despite VLM’s flexibility, traditional detectors like <strong>YOLO</strong> are still essential:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>YOLO / Traditional OD</th>
+<th>VLM</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Speed</strong></td>
+<td>⚡ Real-time (30–100+ FPS)</td>
+<td>🐌 Slow (seconds per frame)</td>
+</tr>
+<tr class="even">
+<td><strong>Cost</strong></td>
+<td>✅ Free, runs locally</td>
+<td>💰 API costs per request</td>
+</tr>
+<tr class="odd">
+<td><strong>Consistency</strong></td>
+<td>✅ Deterministic output</td>
+<td>⚠️ Can vary between calls</td>
+</tr>
+<tr class="even">
+<td><strong>Internet</strong></td>
+<td>✅ Offline capable</td>
+<td>📶 Requires network</td>
+</tr>
+<tr class="odd">
+<td><strong>Setup</strong></td>
+<td>⚠️ Needs training data</td>
+<td>✅ Zero-shot capability</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best practice:</strong> Use <strong>YOLO</strong> for fast, reliable detection of known objects. Use <strong>VLM</strong> when you need flexibility, language understanding, or reasoning about unseen items.</p>
+</section>
+<section id="demo-vlm-safety-failures" class="slide level2 smaller-text">
+<h2>Demo: VLM Safety Failures</h2>
+<p>VLMs are not perfect. They can miss obvious visual cues like warning signs.</p>
+<div class="two-column">
+<div class="column">
+<div class="video-container">
+<video id="video_shortcode_videojs_video8" height="280" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/08_vlm_knife_warning_1.mp4"></video>
+</div>
+</div><div class="column">
+<div class="video-container">
+<video id="video_shortcode_videojs_video9" height="280" class="video-js vjs-default-skin " controls="" preload="auto" data-setup="{}" title=""><source src="videos/extracted/09_vlm_knife_warning_2.mp4"></video>
+</div>
+</div></div>
+<p><strong>Even with a big warning sign, the VLM still wants to pick up the knife!</strong></p>
+<p>This shows the importance of <strong>system prompts</strong> and <strong>safety guardrails</strong>.</p>
+</section>
+<section id="activity-fix-the-vlm-prompt" class="slide level2 smaller-text">
+<h2>🛠️ Activity: Fix the VLM Prompt</h2>
+<p>The VLM ignored the warning sign because its <strong>system prompt</strong> did not include safety instructions.</p>
+<p><strong>Your task:</strong></p>
+<ol type="1">
+<li>Open the VLM system prompt in the robot control code</li>
+<li>Add a rule that tells the VLM to <strong>never pick up objects with warning signs</strong> near them</li>
+<li>Test your modified prompt with the knife scene</li>
+</ol>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Example Prompt Addition</strong></p>
+</div>
+<div class="callout-content">
+<blockquote>
+<p>“If you see a warning sign near an object, do not pick it up. Prioritize safety over task completion.”</p>
+</blockquote>
+</div>
+</div>
+</div>
+<p><strong>Discussion:</strong> What other safety rules should the robot follow?</p>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    <script>videojs(video_shortcode_videojs_video1);</script>
+    <script>videojs(video_shortcode_videojs_video2);</script>
+    <script>videojs(video_shortcode_videojs_video3);</script>
+    <script>videojs(video_shortcode_videojs_video4);</script>
+    <script>videojs(video_shortcode_videojs_video5);</script>
+    <script>videojs(video_shortcode_videojs_video6);</script>
+    <script>videojs(video_shortcode_videojs_video7);</script>
+    <script>videojs(video_shortcode_videojs_video8);</script>
+    <script>videojs(video_shortcode_videojs_video9);</script>
+    
+
+</body></html>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 600" width="100%" height="100%">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <rect width="700" height="600" fill="#fafafa" rx="12"/>
+
+  <!-- Title -->
+  <text x="350" y="40" text-anchor="middle" font-size="20" font-weight="bold" fill="#333">Optimization Loop for Finding k₁, k₂</text>
+
+  <!-- Box 1: Initialize parameters -->
+  <rect x="225" y="70" width="250" height="60" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="350" y="95" text-anchor="middle" font-size="15" font-weight="bold" fill="#1b5e20">1. Initialize Parameters</text>
+  <text x="350" y="115" text-anchor="middle" font-size="13" fill="#1b5e20">Guess k₁, k₂ values</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="130" x2="350" y2="160" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Box 2: Capture image -->
+  <rect x="225" y="170" width="250" height="60" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="2"/>
+  <text x="350" y="195" text-anchor="middle" font-size="15" font-weight="bold" fill="#0d47a1">2. Capture Checkerboard</text>
+  <text x="350" y="215" text-anchor="middle" font-size="13" fill="#0d47a1">Take photo with camera</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="230" x2="350" y2="260" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Box 3: Measure error -->
+  <rect x="225" y="270" width="250" height="60" rx="8" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+  <text x="350" y="295" text-anchor="middle" font-size="15" font-weight="bold" fill="#e65100">3. Measure Straightness</text>
+  <text x="350" y="315" text-anchor="middle" font-size="13" fill="#e65100">Calculate total line curvature</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="330" x2="350" y2="360" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Diamond: Is error small enough? -->
+  <polygon points="350,370 450,420 350,470 250,420" fill="#e1bee7" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="350" y="415" text-anchor="middle" font-size="14" font-weight="bold" fill="#4a148c">Is Loss</text>
+  <text x="350" y="432" text-anchor="middle" font-size="14" font-weight="bold" fill="#4a148c">Minimized?</text>
+
+  <!-- Yes branch -->
+  <line x1="450" y1="420" x2="550" y2="420" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="490" y="410" font-size="13" fill="#2e7d32" font-weight="bold">Yes</text>
+
+  <!-- Box 4: Output parameters -->
+  <rect x="560" y="390" width="120" height="60" rx="8" fill="#a5d6a7" stroke="#2e7d32" stroke-width="2"/>
+  <text x="620" y="415" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b5e20">Done!</text>
+  <text x="620" y="435" text-anchor="middle" font-size="12" fill="#1b5e20">k₁, k₂ found</text>
+
+  <!-- No branch -->
+  <line x1="250" y1="420" x2="150" y2="420" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="190" y="410" font-size="13" fill="#c62828" font-weight="bold">No</text>
+
+  <!-- Box 5: Update parameters -->
+  <rect x="30" y="390" width="120" height="60" rx="8" fill="#ffcdd2" stroke="#c62828" stroke-width="2"/>
+  <text x="90" y="415" text-anchor="middle" font-size="14" font-weight="bold" fill="#b71c1c">4. Update</text>
+  <text x="90" y="435" text-anchor="middle" font-size="12" fill="#b71c1c">k₁, k₂</text>
+
+  <!-- Arrow back up to step 2 -->
+  <path d="M90,390 L90,200 L225,200" fill="none" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Bottom note -->
+  <rect x="100" y="510" width="500" height="70" rx="8" fill="#f5f5f5" stroke="#ddd" stroke-width="1"/>
+  <text x="350" y="535" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">Key Idea: Iteratively adjust k₁ and k₂</text>
+  <text x="350" y="555" text-anchor="middle" font-size="13" fill="#555">until the checkerboard lines appear perfectly straight.</text>
+  <text x="350" y="572" text-anchor="middle" font-size="12" fill="#666">The optimizer (e.g. gradient descent) automatically finds the best values.</text>
+</svg>
