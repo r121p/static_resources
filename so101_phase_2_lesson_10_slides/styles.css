@@ -26,6 +26,22 @@
   height: auto;
 }
 
+.three-column {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.three-column .column {
+  flex: 1;
+}
+
+.three-column img,
+.three-column video {
+  max-width: 100%;
+  height: auto;
+}
+
 .smaller-text {
   font-size: 0.75em !important;
 }

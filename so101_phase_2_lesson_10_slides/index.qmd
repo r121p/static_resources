@@ -94,11 +94,11 @@ We will explain later why tangential distortion can be safely ignored in our set
 
 ---
 
-## Types of Radial Distortion {.smaller-text}
+## Types of Radial Distortion {.x-small}
 
 Radial distortion comes in three common forms:
 
-::: {.two-column}
+::: {.three-column}
 ::: {.column}
 
 **Barrel Distortion**
@@ -106,7 +106,7 @@ Radial distortion comes in three common forms:
 - Straight lines bow outward
 - Common in wide-angle lenses
 
-![Barrel Distortion](media/Barrel_distortion.svg){width="300"}
+![Barrel Distortion](media/Barrel_distortion.svg){width="220"}
 
 :::
 
@@ -117,17 +117,21 @@ Radial distortion comes in three common forms:
 - Straight lines bow inward
 - Common in telephoto lenses
 
-![Pincushion Distortion](media/Pincushion_distortion.svg){width="300"}
+![Pincushion Distortion](media/Pincushion_distortion.svg){width="220"}
 
 :::
-:::
+
+::: {.column}
 
 **Mustache Distortion**
 
 - Combination of barrel and pincushion
 - Lines bow outward near center, inward near edges
 
-![Mustache Distortion](media/Mustache_distortion.svg){width="400"}
+![Mustache Distortion](media/Mustache_distortion.svg){width="220"}
+
+:::
+:::
 
 ---
 
@@ -166,15 +170,25 @@ For most lenses, using only **k₁** and **k₂** is sufficient. Higher-order te
 
 To find the distortion coefficients, we need a reference object with known straight lines.
 
-::: {.video-container}
-![Grid and Checkerboard](media/grid_and_checkerboard.svg){height="450"}
-:::
+::: {.two-column}
+::: {.column}
 
 A **checkerboard** or **grid pattern** is ideal because:
 
 - It has many straight lines at known angles
 - Easy to manufacture and print
 - Distortion is clearly visible on the edges
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+![Grid and Checkerboard](media/grid_and_checkerboard.svg){height="350"}
+:::
+
+:::
+:::
 
 ---
 
@@ -202,6 +216,32 @@ This method is time-consuming and requires trial-and-error. It also depends on h
 :::
 
 **Watch how adjusting k₁ and k₂ straightens the curved lines.**
+
+---
+
+## Running the Lens Calibration Server {.x-small}
+
+To try this yourself, open a terminal and run:
+
+```bash
+robot3
+```
+
+Then select **option 9** — `lens_calibration_server.py`
+
+**Script workflow:**
+
+1. Choose mode: **Calibrate** or view with existing calibration
+2. Select your camera from the list
+3. Capture an image of the **grid paper**
+4. Click the **4 outer corners** (top-left, top-right, bottom-right, bottom-left)
+5. Enter the **grid size** (squares horizontal × vertical)
+6. Adjust **k₁** and **k₂** sliders until the overlaid grid looks straight
+7. **Download** the JSON calibration file
+
+::: {.callout-tip}
+Keep this JSON file safe — you'll need it for the homography and click-pick servers!
+:::
 
 ---
 
@@ -457,6 +497,32 @@ The closer to normal, the smaller the amplification!
 
 ---
 
+## Running the Homography Calibration Server {.x-small}
+
+To try this yourself, open a terminal and run:
+
+```bash
+robot3
+```
+
+Then select **option 10** — `homography_calibration_server.py`
+
+**Script workflow:**
+
+1. Select your **camera** and **white arm**
+2. For each of the **4 calibration points**:
+   - Arm moves to the point → place a **marker** under the gripper
+   - Camera captures an image → **click the marker**
+3. Server computes **H** and **H_inv**
+4. Live **overlay grid** appears for verification
+5. Adjust grid spacing, then **download the JSON**
+
+::: {.callout-tip}
+Have the lens calibration JSON ready first — this script uses the undistorted image!
+:::
+
+---
+
 ## Homography is Not Permanent! {.smaller-text}
 
 **Important:** If anything moves, $\mathbf{H}$ becomes invalid and must be recalculated.
@@ -507,6 +573,35 @@ Alternatively, a **Vision-Language Model (VLM)** can automatically create a boun
 
 ---
 
+## Running the Click-Pick Server {.x-small}
+
+To try this yourself, open a terminal and run:
+
+```bash
+robot3
+```
+
+Then select **option 11** — `click_pick_server.py`
+
+**Prerequisites:**
+
+- Lens calibration JSON (from option 9)
+- Homography calibration JSON (from option 10)
+
+**Script workflow:**
+
+1. Select your **camera** and **white arm**
+2. **Upload** the lens correction JSON and homography calibration JSON
+3. On the control page:
+   - **Click anywhere** → arm moves there to pick or drop
+   - **Type an instruction** → VLM creates a bounding box for the arm
+
+::: {.callout-note}
+Final pipeline: 📷 Camera → 🔧 Undistort → 🎯 Homography → ⚙️ IK → 🤖 Robot
+:::
+
+---
+
 ## Demo: VLM Picks by Order {.smaller-text}
 
 VLMs understand **text instructions** and can select objects based on spatial relationships.
@@ -535,11 +630,29 @@ VLMs can also filter objects by **color** or other visual attributes described i
 
 A major advantage of VLMs is the ability to target **specific parts** of an object.
 
+::: {.two-column}
+::: {.column}
+
 ::: {.video-container}
-{{< video videos/extracted/07_vlm_specify_part_to_grab.mp4 autoplay=true controls=true loop=true height="500" >}}
+{{< video videos/extracted/07a_vlm_pick_from_middle.mp4 autoplay=true controls=true loop=true height="300" >}}
 :::
 
-**Example:** "Pick up the screwdriver **by the handle**" — the VLM boxes only the handle region, letting the gripper grasp optimally.
+**"Pick from the middle"**
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+{{< video videos/extracted/07b_vlm_pick_from_handle.mp4 autoplay=true controls=true loop=true height="300" >}}
+:::
+
+**"Pick from the handle"**
+
+:::
+:::
+
+The VLM boxes only the requested region, letting the gripper grasp optimally.
 
 ---
 
@@ -620,9 +733,10 @@ The VLM ignored the warning sign because its **system prompt** did not include s
 
 **Your task:**
 
-1. Open the VLM system prompt in the robot control code
+1. Open the VLM system prompt in `~/IN097-phase2c/click_pick_server.py`
 2. Add a rule that tells the VLM to **never pick up objects with warning signs** near them
-3. Test your modified prompt with the knife scene
+3. **Restart** the click-pick server so the new prompt takes effect
+4. Test your modified prompt with the knife scene
 
 ::: {.callout-tip}
 ### Example Prompt Addition
@@ -632,3 +746,54 @@ The VLM ignored the warning sign because its **system prompt** did not include s
 :::
 
 **Discussion:** What other safety rules should the robot follow?
+
+---
+
+## Where to Edit the System Prompt {.x-small}
+
+Open `~/IN097-phase2c/click_pick_server.py` and find `_VLM_SYSTEM_PROMPT` (around line 84):
+
+```python
+_VLM_SYSTEM_PROMPT = """\
+You are a precise computer vision assistant. When given an image and an object to locate, you must return a JSON object with the bounding box coordinates.
+
+The bounding box must be in normalized coordinates (0.0 to 1.0), where:
+- 0.0,0.0 is the top-left corner
+- 1.0,1.0 is the bottom-right corner
+
+Respond ONLY in valid JSON format with no markdown formatting:
+{"bbox": [x_min, y_min, x_max, y_max]}
+
+If the object is not found, return: {"bbox": null}
+"""
+```
+
+Add your safety rule inside the prompt string before the closing `"""`.
+
+---
+
+## Lesson Summary {.x-small}
+
+Today you learned the full **click-to-pick pipeline** for the SO101 robot arm:
+
+### 1. Lens Distortion Correction 📷
+
+- Radial distortion curves straight lines
+- Corrected using $r_{corr} = 1 + k_1r^2 + k_2r^4 + \dots$
+- Found via manual tuning or automatic optimization with a checkerboard
+
+### 2. Homography Matrix 🎯
+
+- Maps 2D camera pixels to 2D robot table coordinates
+- Computed from 4 known point pairs
+- Absorbs tangential distortion automatically
+- Must be recalibrated if camera or table moves
+
+### 3. VLM Object Detection 🧠
+
+- Understands natural language instructions
+- Can pick by order, color, or specific parts
+- Faster to set up than traditional detectors, but slower and less consistent
+- System prompts are critical for safety
+
+**Final pipeline:** 📷 Camera → 🔧 Undistort → 🎯 Homography → ⚙️ IK → 🤖 Robot
