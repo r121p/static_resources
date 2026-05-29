@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Inverse Kinematics Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: #00d4ff;
+  }
+  p.instruction {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 1rem;
+  }
+  #canvas-container {
+    position: relative;
+    background: #16213e;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 10px;
+  }
+  canvas {
+    display: block;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: #0f3460;
+  }
+  #info {
+    margin-top: 1rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+  #info .stat {
+    background: #16213e;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    min-width: 120px;
+    text-align: center;
+  }
+  #info .stat span {
+    display: block;
+    font-size: 1.1rem;
+    color: #00d4ff;
+    font-weight: bold;
+  }
+  .legend {
+    margin-top: 0.8rem;
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<h1>2D Inverse Kinematics — 2 Joint, 2 Link Arm</h1>
+<p class="instruction">Drag the red target circle to move it. The arm follows using analytical IK.</p>
+
+<div id="canvas-container">
+  <canvas id="ikCanvas" width="700" height="500"></canvas>
+</div>
+
+<div id="info">
+  <div class="stat">θ₁ (Joint 1)<span id="theta1">0°</span></div>
+  <div class="stat">θ₂ (Joint 2)<span id="theta2">0°</span></div>
+  <div class="stat">End X<span id="endX">0</span></div>
+  <div class="stat">End Y<span id="endY">0</span></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:#e94560"></div> Target (draggable)</div>
+  <div class="legend-item"><div class="dot" style="background:#00d4ff"></div> Joints</div>
+  <div class="legend-item"><div class="dot" style="background:#ffd700"></div> Links</div>
+  <div class="legend-item"><div class="dot" style="background:rgba(255,255,255,0.1)"></div> Reachable workspace</div>
+</div>
+
+<script>
+const canvas = document.getElementById('ikCanvas');
+const ctx = canvas.getContext('2d');
+
+// Arm parameters
+const L1 = 150; // length of link 1
+const L2 = 120; // length of link 2
+
+// Canvas center (base position)
+let cx = canvas.width / 2;
+let cy = canvas.height / 2 + 50;
+
+// Target position (start at a reachable point)
+let targetX = cx + L1 + L2 - 50;
+let targetY = cy - 50;
+
+// Mouse / drag state
+let isDragging = false;
+let dragRadius = 15;
+
+function toCanvas(x, y) {
+  return { x: cx + x, y: cy - y };
+}
+
+function fromCanvas(x, y) {
+  return { x: x - cx, y: cy - y };
+}
+
+function solveIK(tx, ty) {
+  // Target relative to base
+  const x = tx - cx;
+  const y = cy - ty;
+
+  const d2 = x*x + y*y;
+  const d = Math.sqrt(d2);
+  const maxReach = L1 + L2;
+  const minReach = Math.abs(L1 - L2);
+
+  // If unreachable, clamp to workspace boundary
+  let wx = x, wy = y;
+  if (d > maxReach) {
+    const scale = maxReach / d;
+    wx = x * scale;
+    wy = y * scale;
+  } else if (d < minReach && d > 0) {
+    const scale = minReach / d;
+    wx = x * scale;
+    wy = y * scale;
+  }
+
+  const wd2 = wx*wx + wy*wy;
+  const wd = Math.sqrt(wd2);
+
+  // Law of cosines
+  const cosTheta2 = (wd2 - L1*L1 - L2*L2) / (2 * L1 * L2);
+  // Clamp for numerical safety
+  const clampedCos2 = Math.max(-1, Math.min(1, cosTheta2));
+  const theta2 = Math.acos(clampedCos2); // elbow up (positive)
+
+  const k1 = L1 + L2 * Math.cos(theta2);
+  const k2 = L2 * Math.sin(theta2);
+  const theta1 = Math.atan2(wy, wx) - Math.atan2(k2, k1);
+
+  return { theta1, theta2, reachable: d <= maxReach && d >= minReach };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw workspace circle (faint)
+  ctx.beginPath();
+  ctx.arc(cx, cy, L1 + L2, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, Math.abs(L1 - L2), 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.stroke();
+
+  // Solve IK
+  const sol = solveIK(targetX, targetY);
+
+  // Joint positions
+  const j1x = cx + L1 * Math.cos(sol.theta1);
+  const j1y = cy - L1 * Math.sin(sol.theta1);
+
+  const j2x = j1x + L2 * Math.cos(sol.theta1 + sol.theta2);
+  const j2y = j1y - L2 * Math.sin(sol.theta1 + sol.theta2);
+
+  // Draw base
+  ctx.beginPath();
+  ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#00d4ff';
+  ctx.fill();
+
+  // Draw link 1
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(j1x, j1y);
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Draw link 2
+  ctx.beginPath();
+  ctx.moveTo(j1x, j1y);
+  ctx.lineTo(j2x, j2y);
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Draw joint 1
+  ctx.beginPath();
+  ctx.arc(j1x, j1y, 7, 0, Math.PI * 2);
+  ctx.fillStyle = '#00d4ff';
+  ctx.fill();
+
+  // Draw end effector
+  ctx.beginPath();
+  ctx.arc(j2x, j2y, 6, 0, Math.PI * 2);
+  ctx.fillStyle = '#00ff88';
+  ctx.fill();
+
+  // Draw target
+  ctx.beginPath();
+  ctx.arc(targetX, targetY, dragRadius, 0, Math.PI * 2);
+  ctx.fillStyle = sol.reachable ? '#e94560' : '#ff5555';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw dashed line from base to target if unreachable
+  if (!sol.reachable) {
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(targetX, targetY);
+    ctx.strokeStyle = '#ff5555';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Update text
+  const t1Deg = (sol.theta1 * 180 / Math.PI).toFixed(1);
+  const t2Deg = (sol.theta2 * 180 / Math.PI).toFixed(1);
+  const endPos = fromCanvas(j2x, j2y);
+  document.getElementById('theta1').textContent = t1Deg + '°';
+  document.getElementById('theta2').textContent = t2Deg + '°';
+  document.getElementById('endX').textContent = endPos.x.toFixed(0);
+  document.getElementById('endY').textContent = endPos.y.toFixed(0);
+}
+
+function getMousePos(evt) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+
+function dist(x1, y1, x2, y2) {
+  return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
+}
+
+canvas.addEventListener('mousedown', (e) => {
+  const pos = getMousePos(e);
+  if (dist(pos.x, pos.y, targetX, targetY) < dragRadius + 10) {
+    isDragging = true;
+  }
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  const pos = getMousePos(e);
+  targetX = pos.x;
+  targetY = pos.y;
+  draw();
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+// Touch support
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  if (dist(x, y, targetX, targetY) < dragRadius + 20) {
+    isDragging = true;
+  }
+}, {passive: false});
+
+window.addEventListener('touchmove', (e) => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  targetX = touch.clientX - rect.left;
+  targetY = touch.clientY - rect.top;
+  draw();
+}, {passive: false});
+
+window.addEventListener('touchend', () => {
+  isDragging = false;
+});
+
+draw();
+</script>
+</body>
+</html>

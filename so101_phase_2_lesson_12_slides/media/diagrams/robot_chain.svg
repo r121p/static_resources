@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 140" width="900" height="140">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555" />
+    </marker>
+  </defs>
+
+  <!-- Boxes -->
+  <rect x="10" y="35" width="130" height="70" rx="8" fill="#ffccbc" stroke="#bf360c" stroke-width="2"/>
+  <text x="75" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#870000">Camera sees</text>
+  <text x="75" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#870000">object</text>
+
+  <rect x="155" y="35" width="130" height="70" rx="8" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+  <text x="220" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">VLM identifies</text>
+  <text x="220" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">target</text>
+
+  <rect x="300" y="35" width="130" height="70" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="365" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">IK calculates</text>
+  <text x="365" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">angles</text>
+
+  <rect x="445" y="35" width="130" height="70" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="2"/>
+  <text x="510" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#0d47a1">Motors move</text>
+  <text x="510" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#0d47a1">accurately</text>
+
+  <rect x="590" y="35" width="130" height="70" rx="8" fill="#d1c4e9" stroke="#4527a0" stroke-width="2"/>
+  <text x="655" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#311b92">Gripper grabs</text>
+  <text x="655" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#311b92">firmly</text>
+
+  <rect x="735" y="35" width="130" height="70" rx="8" fill="#b2dfdb" stroke="#00695c" stroke-width="2"/>
+  <text x="800" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#004d40">Object placed</text>
+  <text x="800" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#004d40">correctly</text>
+
+  <!-- Arrows -->
+  <line x1="140" y1="70" x2="155" y2="70" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="285" y1="70" x2="300" y2="70" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="430" y1="70" x2="445" y2="70" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="575" y1="70" x2="590" y2="70" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="720" y1="70" x2="735" y2="70" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Bottom label -->
+  <text x="450" y="125" text-anchor="middle" font-size="13" fill="#666" font-weight="bold">If any ONE step fails, the whole task fails.</text>
+</svg>

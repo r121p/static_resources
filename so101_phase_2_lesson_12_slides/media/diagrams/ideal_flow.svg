@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="900" height="220">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555" />
+    </marker>
+  </defs>
+
+  <!-- Boxes -->
+  <rect x="10" y="10" width="90" height="60" rx="8" fill="#fff9c4" stroke="#f57f17" stroke-width="2"/>
+  <text x="55" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">1. Ideation</text>
+  <text x="55" y="50" text-anchor="middle" font-size="16">💡</text>
+
+  <rect x="110" y="10" width="90" height="60" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="155" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">2. Research</text>
+  <text x="155" y="50" text-anchor="middle" font-size="16">📊</text>
+
+  <rect x="210" y="10" width="90" height="60" rx="8" fill="#bbdefb" stroke="#1565c0" stroke-width="2"/>
+  <text x="255" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d47a1">3. Prototype</text>
+  <text x="255" y="50" text-anchor="middle" font-size="16">🔧</text>
+
+  <rect x="310" y="10" width="90" height="60" rx="8" fill="#d1c4e9" stroke="#4527a0" stroke-width="2"/>
+  <text x="355" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#311b92">4. Develop</text>
+  <text x="355" y="50" text-anchor="middle" font-size="16">🛠️</text>
+
+  <rect x="410" y="10" width="90" height="60" rx="8" fill="#ffccbc" stroke="#bf360c" stroke-width="2"/>
+  <text x="455" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#870000">5. Testing</text>
+  <text x="455" y="50" text-anchor="middle" font-size="16">🧪</text>
+
+  <rect x="510" y="10" width="90" height="60" rx="8" fill="#b2dfdb" stroke="#00695c" stroke-width="2"/>
+  <text x="555" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#004d40">6. Launch</text>
+  <text x="555" y="50" text-anchor="middle" font-size="16">🚀</text>
+
+  <rect x="610" y="10" width="90" height="60" rx="8" fill="#ffe0b2" stroke="#e65100" stroke-width="2"/>
+  <text x="655" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">7. Growth</text>
+  <text x="655" y="50" text-anchor="middle" font-size="16">📈</text>
+
+  <rect x="710" y="10" width="90" height="60" rx="8" fill="#a5d6a7" stroke="#1b5e20" stroke-width="2"/>
+  <text x="755" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">8. Success</text>
+  <text x="755" y="50" text-anchor="middle" font-size="16">🏆</text>
+
+  <!-- Arrows -->
+  <line x1="100" y1="40" x2="110" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="200" y1="40" x2="210" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="300" y1="40" x2="310" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="400" y1="40" x2="410" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="500" y1="40" x2="510" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="600" y1="40" x2="610" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="700" y1="40" x2="710" y2="40" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Label -->
+  <text x="450" y="120" text-anchor="middle" font-size="14" fill="#666" font-style="italic">The ideal case: a smooth, linear journey</text>
+</svg>

@@ -1,0 +1,745 @@
+---
+title: "SO101 Robotic Arm - Lesson 12"
+subtitle: "From Idea to Business Success"
+author: ""
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    autoplay-video: true
+    video-controls: true
+css: styles.css
+---
+
+## Warm-Up Discussion #1 🥩 {.smaller-text}
+
+::: {style="display: flex; gap: 1rem; align-items: flex-start;"}
+::: {style="flex: 1;"}
+
+<img src="media/diagrams/nutrition_label.jpg" style="max-height: 300px; width: auto;" />
+
+:::
+
+::: {style="flex: 1;"}
+
+<img src="media/diagrams/nutrition_lablel_on_pack_of_meat.webp" style="max-height: 300px; width: auto;" />
+
+:::
+:::
+
+**Think & Discuss:**
+
+*Why does a food product with a nutrition label sell for a higher price than an identical counterpart without one — even if both contain the exact same nutrients?*
+
+Take 2 minutes to discuss with your group.
+
+---
+
+## Warm-Up Discussion #2 🤖 {.smaller-text}
+
+::: {.two-column}
+::: {.column}
+
+![Unitree Go2 Air](media/diagrams/go2.png){height="160"}
+
+**Go2 Air** — ~HK$12,000
+
+:::
+
+::: {.column}
+
+![Unitree Go2 Edu](media/diagrams/go2.png){height="160"}
+
+**Go2 Edu** — ~HK$100,000
+
+:::
+:::
+
+**Think & Discuss:**
+
+*Same hardware, vastly different prices. Why?*
+
+Take 2 minutes to discuss with your group.
+
+---
+
+## Lesson Objectives
+
+In this lesson, students will:
+
+1. **Understand the key stages** from an initial idea to business success
+2. **Map their own product journey** onto these stages
+3. **Identify where their robotic arm project currently stands**
+
+### Group Activity
+- Reflect on your project's current stage
+- Discuss what comes next for your use case
+
+---
+
+## The Journey: Idea to Business Success
+
+Every successful product follows a similar journey. Let's explore the **8 key stages** that transform a simple idea into a thriving business.
+
+---
+
+## Stage 1: Ideation 💡
+
+**"What if we could...?"**
+
+- Brainstorming potential problems to solve
+- Identifying opportunities in the market
+- Generating creative solutions
+- No idea is too wild at this stage!
+
+::: {.callout-note}
+**Example for robotics:** "What if a robot could sort recyclables automatically?"
+:::
+
+---
+
+## Stage 2: Market Research & Validation 📊 {.smaller-text}
+
+::: {.two-column}
+::: {.column}
+
+- Who are the potential customers?
+- What competitors already exist?
+- Is the problem painful enough that people will pay for a solution?
+- Conduct surveys, interviews, and market analysis
+
+::: {.callout-note}
+**Key Question:** Would anyone buy this?
+:::
+
+:::
+
+::: {.column}
+
+<a href="https://www.youtube.com/watch?v=lix-vr_AF38&t=340" target="_blank">
+<img src="media/diagrams/plasma_cannon.jpg" style="max-height: 260px; width: auto;" />
+</a>
+
+[https://www.youtube.com/watch?v=lix-vr_AF38&t=340](https://www.youtube.com/watch?v=lix-vr_AF38&t=340)
+
+:::
+:::
+
+---
+
+## Stage 3: Prototyping / MVP 🔧 {.smaller-text}
+
+::: {.two-column}
+::: {.column}
+
+**"Can we build a basic version?"**
+
+- **MVP = Minimum Viable Product**
+- Build the simplest version that demonstrates core functionality
+- Focus on proving the concept, not perfection
+- Iterate quickly based on early feedback
+
+::: {.callout-note}
+**In this course:** Your SO101 robotic arm setup IS the prototype!
+:::
+
+:::
+
+::: {.column}
+
+::: {.video-container}
+{{< video ../lesson_10_slides/videos/extracted/06_vlm_pick_according_to_color.mp4 autoplay=true controls=true loop=true height="260" >}}
+:::
+
+:::
+:::
+
+---
+
+## Prototype vs. MVP: What Did You Build? 🤔 {.smaller-text}
+
+::: {.smaller-text}
+
+| | **Prototype** 🔧 | **MVP** 🚀 |
+|---|---|---|
+| **Purpose** | Test if an idea *can* work | Test if people *want* it |
+| **Audience** | Internal team / yourself | Real customers / users |
+| **Scope** | One feature, rough edges OK | Core features only, but usable |
+| **Goal** | Learn technically | Learn if there's demand |
+| **Example** | Robot arm picks one color block once | Robot arm sorting station in a real classroom |
+
+:::
+
+### Think & Discuss
+
+**Looking at what you built last lesson — was it a *prototype* or an *MVP*?**
+
+Take 2 minutes to discuss with your group.
+
+---
+
+## Stage 4: Product Development 🛠️
+
+**"Let's make it reliable and usable."**
+
+- Refine the prototype based on testing
+- Improve robustness, accuracy, and user experience
+- Add features that matter to users
+- Document everything properly
+
+::: {.callout-note}
+**Focus shifts from "does it work?" to "does it work well?"
+:::
+
+---
+
+## Stage 5: Testing & Iteration 🧪
+
+**"Let's break it and fix it."**
+
+- Test in real-world conditions
+- Gather user feedback
+- Identify edge cases and failure modes
+- Repeat: Build → Test → Learn → Improve
+
+::: {.callout-note}
+**Robotics testing:** Does it handle different lighting? Object positions? Unexpected obstacles?
+:::
+
+---
+
+## Stage 6: Launch / Go-to-Market 🚀
+
+**"Time to show the world!"**
+
+- Prepare marketing and sales materials
+- Decide on pricing and business model
+- Choose launch channels (website, demo events, partnerships)
+- Support early customers closely
+
+::: {.callout-note}
+**First customers are your best teachers — listen to them!**
+:::
+
+---
+
+## Stage 7: Growth & Scaling 📈 {.smaller-text}
+
+::: {.two-column}
+::: {.column}
+
+**"How do we reach more people?"**
+
+- Expand production capacity
+- Enter new markets or customer segments
+- Build a team and delegate responsibilities
+- Invest in marketing and brand building
+
+::: {.callout-note}
+**Growth requires systems:** Standardized manufacturing, customer support, quality control
+:::
+
+:::
+
+::: {.column}
+
+![Stonks](media/diagrams/stonks.webp){height="260"}
+
+:::
+:::
+
+---
+
+## Stage 8: Business Success & Sustainability 🏆
+
+**"We've built something that lasts."**
+
+- Consistent revenue and profitability
+- Strong customer base and brand loyalty
+- Continuous innovation to stay competitive
+- Consider expansion, partnerships, or acquisition
+
+::: {.callout-note}
+**Success is not a destination — it's a continuous journey of improvement.**
+:::
+
+---
+
+## Summary: The 8 Stages
+
+::: {.video-container}
+![Ideal Product Development Flow](media/diagrams/ideal_flow.svg){width="900"}
+:::
+
+---
+
+## But Wait... Reality Is Messier! 😵‍💫
+
+::: {.video-container}
+![Realistic Product Development Flow](media/diagrams/realistic_flow.svg){width="900"}
+:::
+
+---
+
+## What's Behind the Mess? Technical Debt 🏚️ {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+One of the biggest causes of backtracking — especially during **Development** and **Growth** — is **technical debt**.
+
+> **Technical Debt:** The accumulated "cost" of choosing quick, easy solutions now instead of using a better approach that would take longer.
+
+Just like financial debt, it can be useful in the short term... but if you don't pay it back, the "interest" piles up and slows you down.
+
+::: {.callout-note}
+**The more you borrow, the harder it is to build new features or scale.**
+:::
+
+:::
+
+::: {.column}
+
+![Jay Jay the Jet Plane](media/diagrams/jay_jay_the_jet.jpg){height="280"}
+
+:::
+:::
+
+---
+
+## The 2 Kinds of Technical Debt {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+### 1. Intentional (Deliberate) 📋
+
+**You know you're taking a shortcut.**
+
+- Skipping tests to hit a deadline
+- Hard-coding values to ship faster
+- Copy-pasting code instead of refactoring
+- Choosing a simpler algorithm that won't scale
+
+::: {.callout-tip}
+**Acceptable IF:** You have a plan to fix it later.
+:::
+
+:::
+
+::: {.column}
+
+### 2. Unintentional (Accidental) 😬
+
+**You don't realize you're taking a shortcut.**
+
+- Poor design due to inexperience
+- Outdated libraries or frameworks
+- Code that "works" but is fragile
+- Lack of documentation that confuses future you
+
+::: {.callout-warning}
+**Harder to fix** because you didn't know it existed until it broke.
+:::
+
+:::
+:::
+
+---
+
+## A Warning Sign... 🎬
+
+::: {.video-container}
+{{< video media/boeing_staff_say_they_wont_fly_their_own_plane.mp4 autoplay=true controls=true loop=false height="400" >}}
+:::
+
+---
+
+## Example 1: Intentional Debt — Boeing 737 MAX 🛫 {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+### What Happened?
+
+Boeing added the **MCAS anti-stall system** to compete with the Airbus A320neo.
+
+**The shortcuts they knowingly took:**
+
+- Used data from **only one angle-of-attack sensor** (instead of two)
+- Didn't tell pilots MCAS existed to avoid costly retraining
+- Rushed certification to meet market deadlines
+
+**The "interest":** Two fatal crashes, the entire fleet grounded for 20 months, billions in losses, and massive reputational damage.
+
+::: {.callout-tip}
+They knew it was a shortcut. They just thought they could get away with it.
+:::
+
+:::
+
+::: {.column}
+
+![Boeing Meme](media/diagrams/boeing_meme.webp){height="300"}
+
+:::
+:::
+
+---
+
+## Example 2: Unintentional Debt — "Vibe Code" & AI Slop 🤖 {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+### What Happened?
+
+Developers use AI to generate code they don't fully understand.
+
+**How the debt piles up without anyone noticing:**
+
+- Copy-paste AI output without reviewing logic
+- Dependencies you don't understand break later
+- No one knows how the "magic" works when it fails
+- Fragile code that "vibes" right but falls apart in production
+
+::: {.callout-warning}
+**You can't debug what you don't understand.**
+:::
+
+:::
+
+::: {.column}
+
+![Gemini Uninstalls Itself](media/diagrams/gemini_uninstall_itself.jpg){height="300"}
+
+:::
+:::
+
+---
+
+## How Technical Debt Shows Up in Robotics 🤖 {.x-small}
+
+| **Intentional** | **Unintentional** |
+|---|---|
+| Hard-coding pixel coordinates instead of calibration | Calibration drifts over time, nobody documented how to recalibrate |
+| Skipping error handling to finish the demo faster | Code crashes in edge cases nobody tested |
+| Using a simple motion replay instead of IK | No comments explaining how the replay system works |
+| Quick wiring setup for the prototype | Wires break and nobody knows the circuit diagram |
+
+::: {.callout-note}
+**Every team has technical debt. The question is: are you managing it, or is it managing you?**
+:::
+
+---
+
+## Serial Reliability: The Hidden Killer 🔗 {.x-small}
+
+In robotics, your system is only as reliable as the **weakest link** in the chain.
+
+**Serial Reliability:** If your system has multiple components that must ALL work for the system to succeed, the overall reliability is the **product** of each component's reliability.
+
+> **Example:** If your robot has 5 components, each 90% reliable
+> Overall reliability = 0.9 × 0.9 × 0.9 × 0.9 × 0.9 = **59%**
+
+::: {.callout-warning}
+Even if every part seems "pretty good," the whole system can fail almost half the time.
+:::
+
+---
+
+## Your Robot's Chain of Dependencies 🤖 {.x-small}
+
+Every successful pick-and-place requires ALL of these to work:
+
+::: {.video-container}
+![Robot Chain of Dependencies](media/diagrams/robot_chain.svg){width="900"}
+:::
+
+**If any ONE step fails, the whole task fails.**
+
+---
+
+## Why Prototypes Fail in the Real World 😤 {.x-small}
+
+In your lab, everything works because:
+
+- Lighting is perfect
+- Objects are in known positions
+- No unexpected obstacles
+- The camera never fogs up
+- The network never drops
+
+**In the real world, you need to handle ALL of these:**
+
+- Variable lighting → adjust exposure dynamically
+- Objects moved slightly → better vision + IK error handling
+- Obstacles appear → collision detection
+- Hardware drifts → recalibration routines
+- Network latency → retry logic + timeouts
+
+::: {.callout-note}
+**This is why going from "it works once" to "it works 99% of the time" is 90% of the engineering effort.**
+:::
+
+---
+
+## Technical Debt + Serial Reliability = 💥 {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+**Technical Debt** makes each link weaker:
+
+- Hard-coded values break when conditions change
+- Missing error handling causes cascading failures
+- Undocumented systems take hours to debug
+
+:::
+
+::: {.column}
+
+**Serial Reliability** multiplies the pain:
+
+- If each step is 80% reliable, 5 steps = 33% success rate
+- One weak link drags the whole system down
+- You can't just "fix the bug" — you need to fix the CHAIN
+
+:::
+:::
+
+::: {.callout-warning}
+**The combination is deadly:** shortcuts in your code become full system failures when every component must work perfectly.
+:::
+
+---
+
+## The "It Works on My Computer" Syndrome ¯\\_(ツ)_/¯ {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+**The most dangerous phrase in engineering:**
+
+> *"It works on my computer."*
+
+```
+¯\_(ツ)_/¯
+```
+
+**Why it happens:**
+
+- Your setup is slightly different from the user's
+- Dependencies or versions differ
+- You tested in ideal conditions
+- You didn't account for real-world variability
+
+**The result:**
+
+- Code works for you, fails for customers
+- Hours of debugging "impossible" bugs
+- Frustrated users, lost trust
+
+:::
+
+::: {.column}
+
+**In robotics, this is even worse:**
+
+- Your arm moves perfectly at your desk
+- It fails on the customer's table
+- Lighting, surface, object positions all differ
+- You can't just "send a patch" — you need to redesign for robustness
+
+::: {.callout-warning}
+**"It works once" is not the same as "it works reliably."**
+:::
+
+:::
+:::
+
+---
+
+## Think & Discuss: What's Built Into Your System? 🤔 {.x-small}
+
+Look at the robotic system **provided to you** in this course and discuss:
+
+1. **What has already been built into the system to prevent "it works on my computer"?**
+
+2. **What is still left for YOU to handle?**
+
+
+3. **What would break first if you moved your setup to a different table or room?**
+
+Take 3 minutes to discuss.
+
+---
+
+## Activity: Identifying Limitations 🔍 {.x-small}
+
+All the theory we've covered is useless if you don't know what you're actually working with.
+
+**Why identify limitations?**
+
+- You can't fix what you don't know is broken
+- Every system has constraints — ignoring them leads to failed projects
+- Understanding limitations helps you design **realistic** solutions
+- What works in your head may not work on the hardware
+
+::: {.callout-note}
+**A good engineer knows their tools' limits just as well as their capabilities.**
+:::
+
+---
+
+## Limitation 1: Mechanical Accuracy 🎯 {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+Robot arms are **not perfectly accurate** mechanically. Even high-end industrial arms have tolerance.
+
+**Key concept: Repeatability vs. Accuracy**
+
+- **Accuracy:** How close to the *target* position
+- **Repeatability:** How close to the *same* position every time
+
+### Think & Discuss
+
+**How would you design a test to measure the repeatability of YOUR robot arm?**
+
+Take 2 minutes to discuss with your group.
+
+:::
+
+::: {.column}
+
+<a href="https://www.youtube.com/watch?v=_Lgy9wlFQRw" target="_blank">
+<img src="media/diagrams/robotic_arm_repeatablility_test_thumbnail.jpg" style="max-height: 220px; width: auto;" />
+</a>
+
+[https://www.youtube.com/watch?v=_Lgy9wlFQRw](https://www.youtube.com/watch?v=_Lgy9wlFQRw)
+
+:::
+:::
+
+---
+
+## Limitation 2: Three Separate Systems 🧩 {.x-small}
+
+In this course, you have learned **3 different control methods** — but they are implemented as **3 SEPARATE systems**:
+
+::: {.three-column}
+::: {.column}
+
+**Motion Replay** 🔄
+
+::: {.video-container}
+{{< video ../lesson_1_slides/media/Record_and_replay_converted.mp4 autoplay=true controls=true loop=true height="160" >}}
+:::
+
+:::
+
+::: {.column}
+
+**Inverse Kinematics** 🎯
+
+::: {.video-container}
+<iframe src="ik_demo.html" width="280" height="200" frameborder="0"></iframe>
+:::
+
+<a href="ik_demo.html" target="_blank">Open IK Demo in new tab ↗</a>
+
+:::
+
+::: {.column}
+
+**VLM Control** 🧠
+
+::: {.video-container}
+{{< video ../lesson_10_slides/videos/extracted/06_vlm_pick_according_to_color.mp4 autoplay=true controls=true loop=true height="160" >}}
+:::
+
+:::
+:::
+
+---
+
+## The Integration Trap 😵 {.x-small}
+
+::: {.two-column}
+::: {.column}
+
+**What students often think:**
+
+- "IK works ✅"
+- "Replay works ✅"
+- "VLM works ✅"
+- "So I can just combine all three! ✅"
+
+:::
+
+::: {.column}
+
+**The reality:**
+
+- Each system runs in its own script / server
+- They don't share state or coordinate
+- Combining them requires rewriting the architecture
+- What seems simple in your head is **not trivial in code**
+
+:::
+:::
+
+::: {.callout-warning}
+**This is a dangerous false confidence.** Seeing three features work independently does NOT mean they work together.
+:::
+
+---
+
+## Think & Discuss: Did You Notice? 🤔 {.x-small}
+
+1. **Did you notice this integration problem BEFORE I told you?**
+2. **Is this an example of technical debt?**
+
+   - Intentional or unintentional?
+   - What would it take to "pay it back"?
+3. **How would this limitation affect your proposed use case?**
+
+Take 3 minutes to discuss with your group.
+
+---
+
+## Your Task: Find & Test Limitations 🧪 {.x-small}
+
+Spend the rest of the lesson with your robot arm:
+
+1. **Brainstorm** potential limitations in the system
+   - Mechanical, software, integration, environmental...
+
+2. **Design a quick test** to confirm each limitation
+
+   - e.g., move to the same point 10 times and measure spread
+   - e.g., try combining two control methods in one script
+   - e.g., test under different lighting
+
+3. **Rate each limitation:**
+
+   - 🔴 **Critical** — blocks your use case entirely
+   - 🟡 **Moderate** — affects performance but workaround possible
+   - 🟢 **Minor** — annoying but manageable
+
+4. **Document your findings** — you will present these later!
+
+---
+
+## Wrap-Up: Know Your Limits, Plan Your Path 🗺️ {.x-small}
+
+Today you learned:
+
+- The **8 stages** from idea to business success — and how messy the real journey is
+- **Technical debt** — both intentional and unintentional — and how it destroys projects
+- **Serial reliability** — why a chain of "pretty good" components creates a failing system
+- The **"it works on my computer" syndrome** — and why real-world testing matters
+
