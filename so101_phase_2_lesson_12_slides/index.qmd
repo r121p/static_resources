@@ -149,7 +149,7 @@ Every successful product follows a similar journey. Let's explore the **8 key st
 ::: {.column}
 
 ::: {.video-container}
-{{< video ../lesson_10_slides/videos/extracted/06_vlm_pick_according_to_color.mp4 autoplay=true controls=true loop=true height="260" >}}
+{{< video media/videos/vlm_pick_color.mp4 autoplay=true controls=true loop=true height="260" >}}
 :::
 
 :::
@@ -636,7 +636,7 @@ In this course, you have learned **3 different control methods** — but they ar
 **Motion Replay** 🔄
 
 ::: {.video-container}
-{{< video ../lesson_1_slides/media/Record_and_replay_converted.mp4 autoplay=true controls=true loop=true height="160" >}}
+{{< video media/videos/record_replay.mp4 autoplay=true controls=true loop=true height="160" >}}
 :::
 
 :::
@@ -658,7 +658,7 @@ In this course, you have learned **3 different control methods** — but they ar
 **VLM Control** 🧠
 
 ::: {.video-container}
-{{< video ../lesson_10_slides/videos/extracted/06_vlm_pick_according_to_color.mp4 autoplay=true controls=true loop=true height="160" >}}
+{{< video media/videos/vlm_pick_color.mp4 autoplay=true controls=true loop=true height="160" >}}
 :::
 
 :::
