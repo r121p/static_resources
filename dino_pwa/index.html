@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#202124" />
+  <meta name="description" content="A 3D offline-ready endless runner inspired by the classic Chrome dinosaur game." />
+  <title>3D Dino Run</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="./icons/icon-512.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+    <div id="ui">
+      <div id="score-board">
+        <span id="score">00000</span>
+        <span id="high-score">HI 00000</span>
+      </div>
+      <div id="message" class="visible">
+        <h1>3D DINO RUN</h1>
+        <p>Tap / Space / ↑ to jump</p>
+        <p>↓ to duck</p>
+        <button id="start-btn">START</button>
+      </div>
+      <div id="game-over" class="hidden">
+        <h2>GAME OVER</h2>
+        <button id="restart-btn">RESTART</button>
+      </div>
+    </div>
+  </div>
+  <script src="./libs/three.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
