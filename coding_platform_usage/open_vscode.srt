@@ -1,0 +1,7 @@
+1
+00:00:00,000 --> 00:00:08,000
+Launch the browser-based VS Code workspace
+
+2
+00:00:15,000 --> 00:00:18,000
+Open the live website preview panel

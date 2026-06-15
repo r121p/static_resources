@@ -1,0 +1,8 @@
+/* Custom styles for the usage guide */
+
+video {
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 100%;
+  height: auto;
+}

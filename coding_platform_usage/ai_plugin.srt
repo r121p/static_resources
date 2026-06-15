@@ -1,0 +1,15 @@
+1
+00:00:01,000 --> 00:00:05,000
+Click the Zebra Zoo Code AI plugin icon
+
+2
+00:00:05,000 --> 00:00:09,000
+Import settings from the default location
+
+3
+00:00:16,000 --> 00:00:32,000
+Configure your OpenRouter API key
+
+4
+00:00:37,000 --> 00:00:53,000
+Ask the AI to edit your site
