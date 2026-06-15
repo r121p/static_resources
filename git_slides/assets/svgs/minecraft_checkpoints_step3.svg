@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 320" width="1050" height="320">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#546e7a" />
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1050" height="320" fill="#f5f7fa" rx="12" />
+
+  <!-- Title -->
+  <text x="525" y="30" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#263238">
+    Step 3: Continue from the Checkpoint
+  </text>
+
+  <!-- Ground -->
+  <rect x="0" y="260" width="1050" height="60" fill="#8d6e63" rx="12" />
+  <rect x="0" y="260" width="1050" height="20" fill="#66bb6a" rx="12" />
+
+  <!-- Timeline line -->
+  <line x1="90" y1="130" x2="960" y2="130" stroke="#90a4ae" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Node 1: Spawn -->
+  <circle cx="90" cy="130" r="22" fill="#66bb6a" filter="url(#shadow)" />
+  <text x="90" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#263238">Spawn</text>
+  <text x="90" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">New world</text>
+  <g transform="translate(100, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 1 -->
+  <line x1="112" y1="130" x2="158" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 2: Punch tree -->
+  <circle cx="180" cy="130" r="22" fill="#8d6e63" filter="url(#shadow)" />
+  <text x="180" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff">🌳</text>
+  <text x="180" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Punch tree</text>
+  <g transform="translate(190, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 2 -->
+  <line x1="202" y1="130" x2="248" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 3: Iron -->
+  <circle cx="270" cy="130" r="22" fill="#78909c" filter="url(#shadow)" />
+  <text x="270" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff">⚙️</text>
+  <text x="270" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Get iron</text>
+  <g transform="translate(280, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 3 -->
+  <line x1="292" y1="130" x2="338" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 4: Diamond -->
+  <circle cx="360" cy="130" r="22" fill="#26c6da" filter="url(#shadow)" />
+  <text x="360" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff">💎</text>
+  <text x="360" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Get diamond</text>
+  <g transform="translate(370, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 4 -->
+  <line x1="382" y1="130" x2="458" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 5: Diamond armor -->
+  <circle cx="480" cy="130" r="22" fill="#26c6da" filter="url(#shadow)" />
+  <text x="480" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff">🛡️</text>
+  <text x="480" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Diamond armor</text>
+  <g transform="translate(490, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 5 -->
+  <line x1="502" y1="130" x2="578" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 6: Enchant -->
+  <circle cx="600" cy="130" r="22" fill="#ab47bc" filter="url(#shadow)" />
+  <text x="600" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff">✨</text>
+  <text x="600" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Enchant gear</text>
+  <g transform="translate(610, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 6 -->
+  <line x1="622" y1="130" x2="698" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 7: Ender Dragon -->
+  <circle cx="720" cy="130" r="22" fill="#7e57c2" filter="url(#shadow)" />
+  <text x="720" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#ffffff">🐉</text>
+  <text x="720" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Ender Dragon</text>
+  <g transform="translate(730, 90)">
+    <rect x="0" y="0" width="20" height="24" rx="3" fill="#1976d2" stroke="#0d47a1" stroke-width="1.5" />
+    <rect x="4" y="4" width="8" height="8" fill="#ffffff" />
+    <rect x="4" y="15" width="12" height="5" fill="#ffffff" />
+  </g>
+
+  <!-- Arrow 7 -->
+  <line x1="742" y1="130" x2="818" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 8: Victory -->
+  <circle cx="840" cy="130" r="22" fill="#ffd54f" filter="url(#shadow)" />
+  <text x="840" y="137" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#263238">🏆</text>
+  <text x="840" y="185" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">Victory!</text>
+
+  <!-- Caption -->
+  <rect x="325" y="270" width="400" height="36" rx="18" fill="#1976d2" />
+  <text x="525" y="294" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Progress continues without repeating the early grind</text>
+</svg>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cherry-Pick Demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      position: relative;
+    }
+    .demo-wrapper {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 6px;
+    }
+    .demo-scaler {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+    }
+    .demo {
+      width: 1500px;
+      height: 700px;
+      position: relative;
+      padding: 20px;
+    }
+    .panel {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 260px;
+    }
+    .image-box {
+      width: 260px;
+      height: 173px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      background: #fff;
+    }
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .label {
+      margin-top: 10px;
+      color: #263238;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .hash {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: #546e7a;
+      font-size: 0.7rem;
+      margin-top: 3px;
+    }
+    .panel.main-base { left: 20px; top: 30%; transform: translateY(-50%); }
+    .panel.main-pond { left: 660px; top: 30%; transform: translateY(-50%); }
+    .panel.result { right: 20px; top: 30%; transform: translateY(-50%); }
+    .panel.branch-tower { left: 660px; top: 70%; transform: translateY(-50%); }
+    .panel.branch-ship { left: 1040px; top: 70%; transform: translateY(-50%); }
+
+    .pick-lines {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-wrapper">
+    <div class="demo-scaler">
+      <div class="demo">
+        <svg class="pick-lines" viewBox="0 0 1500 700" preserveAspectRatio="none">
+          <!-- branch line: down from main at left of pond, then right to ship -->
+          <line x1="620" y1="210" x2="620" y2="490" stroke="#66bb6a" stroke-width="4" />
+          <line x1="620" y1="490" x2="1040" y2="490" stroke="#66bb6a" stroke-width="4" />
+          <!-- main line: merge base -> pond -> result -->
+          <line x1="150" y1="210" x2="660" y2="210" stroke="#ff7043" stroke-width="4" />
+          <line x1="660" y1="210" x2="1220" y2="210" stroke="#ff7043" stroke-width="4" />
+          <!-- dotted rectangles around the two "Add ship on ocean" commits -->
+          <rect x="1025" y="370" width="290" height="241" rx="10" fill="none" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="8,5" />
+          <rect x="1205" y="90" width="290" height="241" rx="10" fill="none" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="8,5" />
+          <!-- cherry-pick arrow from branch ship to main result -->
+          <path d="M 1170 370 L 1350 331" fill="none" stroke="#7b1fa2" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrowhead)" />
+          <!-- branch labels -->
+          <text x="300" y="205" fill="#ff7043" font-size="24" font-weight="700">main</text>
+          <text x="300" y="550" fill="#66bb6a" font-size="24" font-weight="700">tower-and-ship</text>
+          <!-- arrowheads -->
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#7b1fa2" />
+            </marker>
+          </defs>
+          <polygon points="1220,210 1210,202 1210,218" fill="#ff7043" />
+          <polygon points="1040,490 1030,482 1030,498" fill="#66bb6a" />
+        </svg>
+
+        <div class="panel main-base">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_46130e9ca85101b5c0f8abaf88784956244f5ad6.svg" alt="Merge branch opposite-house">
+          </div>
+          <div class="label">Merge branch 'opposite-house'</div>
+          <div class="hash">46130e9 — Merge branch 'opposite-house'</div>
+        </div>
+
+        <div class="panel main-pond">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_d1cd048e9361a805625f282975c863b98e674920.svg" alt="Add pond">
+          </div>
+          <div class="label">Add pond</div>
+          <div class="hash">d1cd048 — Add pond</div>
+        </div>
+
+        <div class="panel branch-tower">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_e739dfdd610d06bd51564ed1cdfd41533284b435.svg" alt="Add antenna tower">
+          </div>
+          <div class="label">Add antenna tower</div>
+          <div class="hash">e739dfd — Add antenna tower</div>
+        </div>
+
+        <div class="panel branch-ship">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_b5580acca82971e38dc86cf02b9eca54033f51c6.svg" alt="Add ship on ocean">
+          </div>
+          <div class="label">Add ship on ocean</div>
+          <div class="hash">b5580ac — Add ship on ocean</div>
+        </div>
+
+        <div class="panel result">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_280e899b7248cf2b56fa9b06b77ff486962daf87.svg" alt="Main after cherry-pick">
+          </div>
+          <div class="label">main after cherry-pick</div>
+          <div class="hash">280e899 — Add ship on ocean</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function fitDemo() {
+        const wrapper = document.querySelector('.demo-wrapper');
+        const scaler = document.querySelector('.demo-scaler');
+        const demo = document.querySelector('.demo');
+        if (!wrapper || !scaler || !demo) return;
+
+        const availableWidth = wrapper.clientWidth - 20;
+        const availableHeight = wrapper.clientHeight - 20;
+        const designWidth = demo.clientWidth;
+        const designHeight = demo.clientHeight;
+        const scale = Math.min(1, availableWidth / designWidth, availableHeight / designHeight);
+
+        scaler.style.width = designWidth + 'px';
+        scaler.style.height = designHeight + 'px';
+        scaler.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+      }
+
+      window.addEventListener('load', fitDemo);
+      window.addEventListener('resize', fitDemo);
+      fitDemo();
+    })();
+  </script>
+</body>
+</html>
