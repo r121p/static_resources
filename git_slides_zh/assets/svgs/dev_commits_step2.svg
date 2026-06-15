@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="900" height="320">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#546e7a" />
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="320" fill="#f5f7fa" rx="12" />
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#263238">
+    步驟 2：檢出（Checkout）最後一個良好的提交
+  </text>
+
+  <!-- Timeline line -->
+  <line x1="90" y1="130" x2="810" y2="130" stroke="#90a4ae" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Node 1: Start -->
+  <circle cx="90" cy="130" r="18" fill="#ff7043" filter="url(#shadow)" />
+  <text x="90" y="135" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">C1</text>
+  <text x="90" y="175" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">開始</text>
+  <text x="90" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#546e7a">初始化 repo</text>
+
+  <!-- Arrow 1 -->
+  <line x1="108" y1="130" x2="162" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 2: Login -->
+  <circle cx="180" cy="130" r="18" fill="#ff7043" filter="url(#shadow)" />
+  <text x="180" y="135" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">C2</text>
+  <text x="180" y="175" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">登入</text>
+  <text x="180" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#546e7a">提交（commit）</text>
+
+  <!-- Arrow 2 -->
+  <line x1="198" y1="130" x2="252" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 3: Payment -->
+  <circle cx="270" cy="130" r="18" fill="#ff7043" filter="url(#shadow)" />
+  <text x="270" y="135" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">C3</text>
+  <text x="270" y="175" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#37474f">付款</text>
+  <text x="270" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#546e7a">提交（commit）</text>
+
+  <!-- Arrow 3 -->
+  <line x1="288" y1="130" x2="342" y2="130" stroke="#546e7a" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Node 4: Email (highlighted as current commit) -->
+  <circle cx="360" cy="130" r="22" fill="#ff7043" filter="url(#shadow)" />
+  <circle cx="360" cy="130" r="26" fill="none" stroke="#ff7043" stroke-width="3" stroke-dasharray="6,4" />
+  <text x="360" y="135" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">C4</text>
+  <text x="360" y="175" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#ff7043">電郵</text>
+  <text x="360" y="190" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#ff7043">HEAD 在這裡</text>
+
+  <!-- Caption -->
+  <rect x="250" y="270" width="400" height="36" rx="18" fill="#263238" />
+  <text x="450" y="294" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#ffffff">你的工作目錄（working directory）已回到 C4</text>
+</svg>

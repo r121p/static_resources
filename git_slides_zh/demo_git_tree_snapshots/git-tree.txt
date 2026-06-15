@@ -1,0 +1,26 @@
+*   dfbc161 (HEAD -> main, origin/merge-manual-resolve, origin/main, merge-manual-resolve) Manually resolve merge: office building with surrounding car park
+|\  
+| | * 734406d (origin/merge-reject-incoming, merge-reject-incoming) Merge branch 'car-park-road' into merge-reject-incoming
+| |/| 
+|/|/  
+| | * 25eba09 (origin/merge-accept-incoming, merge-accept-incoming) Merge branch 'car-park-road' into merge-accept-incoming
+| |/| 
+|/|/  
+| * fa941eb (origin/car-park-road, car-park-road) Replace construction site with car park and add road on right side
+* | 6c20659 Replace construction site with multi-story office building
+* | 1afe5c0 Add bridge across river near the sea
+|/  
+* f005d8a Replace right-bank trees with construction site, keep tree closest to blue house
+* 280e899 Add ship on the ocean
+* d1cd048 Add pond in front of blue house
+| * b5580ac (origin/tower-and-ship, tower-and-ship) Add ship on the ocean
+| * e739dfd Add antenna tower on rightmost mountain peak
+|/  
+*   46130e9 Merge branch 'opposite-house'
+|\  
+| * 3ae98c9 Add house on opposite side of river from red tree
+* | 8d1987f Add house behind red tree near river
+|/  
+* c024132 Add red-leaved tree to landscape
+* 96884ec Add house to landscape scene
+* 4b49ff3 Add landscape SVG with mountain, river, and ocean scene

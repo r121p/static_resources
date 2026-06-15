@@ -1,0 +1,166 @@
+/* Custom styles for the Git presentation */
+
+/* Logo in the top-right corner of the screen */
+.reveal::before {
+  content: '';
+  position: fixed;
+  top: 6px;
+  right: 100px;
+  width: 210px;
+  height: 210px;
+  background-image: url('assets/logo.webp');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* Make slide titles a bit larger and tighter */
+.reveal h1 {
+  font-size: 2.2em;
+  margin-bottom: 0.3em;
+}
+
+.reveal h2 {
+  font-size: 1.7em;
+  margin-bottom: 0.4em;
+}
+
+.reveal h3 {
+  font-size: 1.3em;
+  margin-bottom: 0.3em;
+}
+
+/* Center images and SVGs by default */
+.reveal img,
+.reveal svg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  max-height: 55vh;
+  height: auto;
+}
+
+/* Landscape snapshots should not get too tall */
+.reveal .landscape-svg {
+  max-height: 45vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Larger landscape snapshots for policy slides */
+.reveal .landscape-svg-large {
+  max-height: 55vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Timeline SVGs can be a bit taller */
+.reveal .timeline-svg {
+  max-height: 50vh;
+}
+
+/* Caption / callout boxes under diagrams */
+.reveal .caption {
+  margin-top: 0.6em;
+  font-size: 0.85em;
+  color: #37474f;
+  text-align: center;
+}
+
+/* Two-column layout helper */
+.reveal .columns {
+  display: flex;
+  gap: 1.5em;
+  align-items: center;
+  justify-content: center;
+}
+
+.reveal .column {
+  flex: 1;
+  min-width: 0;
+}
+
+.reveal .column img,
+.reveal .column svg {
+  max-height: 45vh;
+}
+
+/* Mermaid git graphs */
+.reveal .mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+.reveal .mermaid svg {
+  max-height: 50vh;
+}
+
+/* Larger mermaid diagrams for concept slides */
+.reveal .mermaid-large .mermaid svg {
+  max-height: 90vh;
+}
+
+/* Code blocks */
+.reveal pre {
+  font-size: 0.55em;
+  border-radius: 8px;
+}
+
+.reveal code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+/* Highlight callout */
+.reveal .callout {
+  background: #e3f2fd;
+  border-left: 5px solid #1976d2;
+  padding: 0.6em 1em;
+  border-radius: 4px;
+  margin: 0.8em 0;
+  font-size: 0.85em;
+  text-align: left;
+}
+
+.reveal .callout-warning {
+  background: #fff3e0;
+  border-left-color: #f57c00;
+}
+
+.reveal .callout-danger {
+  background: #ffebee;
+  border-left-color: #d32f2f;
+}
+
+/* Smaller paragraph text on busy slides */
+.reveal .small-text {
+  font-size: 0.75em;
+}
+
+/* Responsive iframe wrapper for embedded HTML timelines */
+.reveal .slide-iframe-wrapper {
+  width: 100%;
+  height: 600px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.reveal .slide-iframe-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.reveal .iframe-link {
+  display: block;
+  margin-top: 0.5em;
+  font-size: 0.75em;
+  text-align: center;
+}

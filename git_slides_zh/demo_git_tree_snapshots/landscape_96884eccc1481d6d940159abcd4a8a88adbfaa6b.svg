@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <!-- Sky gradient -->
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5c9dff"/>
+      <stop offset="60%" stop-color="#b3e0ff"/>
+      <stop offset="100%" stop-color="#d9f2ff"/>
+    </linearGradient>
+
+    <!-- Ocean gradient -->
+    <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e88e5"/>
+      <stop offset="100%" stop-color="#0d47a1"/>
+    </linearGradient>
+
+    <!-- River gradient -->
+    <linearGradient id="riverGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4fc3f7"/>
+      <stop offset="100%" stop-color="#0277bd"/>
+    </linearGradient>
+
+    <!-- Mountain gradient -->
+    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#78909c"/>
+      <stop offset="100%" stop-color="#455a64"/>
+    </linearGradient>
+
+    <!-- Snow cap gradient -->
+    <linearGradient id="snowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cfd8dc"/>
+    </linearGradient>
+
+    <!-- Land gradient -->
+    <linearGradient id="landGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8bc34a"/>
+      <stop offset="100%" stop-color="#558b2f"/>
+    </linearGradient>
+
+    <!-- Hill gradient -->
+    <linearGradient id="hillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#9ccc65"/>
+      <stop offset="100%" stop-color="#689f38"/>
+    </linearGradient>
+
+    <!-- Cloud blur -->
+    <filter id="cloudBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1200" height="800" fill="url(#skyGradient)"/>
+
+  <!-- Sun -->
+  <circle cx="1020" cy="100" r="50" fill="#ffca28" opacity="0.95"/>
+  <circle cx="1020" cy="100" r="70" fill="#ffca28" opacity="0.2"/>
+
+  <!-- Distant clouds -->
+  <g fill="#ffffff" opacity="0.75" filter="url(#cloudBlur)">
+    <ellipse cx="180" cy="120" rx="70" ry="22"/>
+    <ellipse cx="240" cy="135" rx="55" ry="20"/>
+    <ellipse cx="120" cy="135" rx="50" ry="18"/>
+
+    <ellipse cx="620" cy="90" rx="80" ry="24"/>
+    <ellipse cx="690" cy="108" rx="60" ry="20"/>
+    <ellipse cx="550" cy="108" rx="55" ry="18"/>
+  </g>
+
+  <!-- Distant mountain range (sits on middle ground) -->
+  <path d="M -50,420 L 200,180 L 380,420 L 520,260 L 720,420 L 900,300 L 1100,420 L 1250,420 L 1250,500 L -50,500 Z" fill="url(#mountainGradient)"/>
+
+  <!-- Snow caps aligned with mountain slopes -->
+  <!-- Left peak snow -->
+  <path d="M 200,180 L 127,250 L 253,250 Z" fill="url(#snowGradient)"/>
+  <!-- Middle peak snow -->
+  <path d="M 520,260 L 476,310 L 583,310 Z" fill="url(#snowGradient)"/>
+  <!-- Right peak snow -->
+  <path d="M 900,300 L 840,340 L 967,340 Z" fill="url(#snowGradient)"/>
+
+  <!-- Middle ground hills -->
+  <path d="M 0,420 Q 300,380 600,420 Q 900,460 1200,420 L 1200,800 L 0,800 Z" fill="url(#hillGradient)"/>
+
+  <!-- River flowing from mountain base down to ocean -->
+  <!-- Upper river -->
+  <path d="M 500,420 Q 470,470 440,510 Q 410,550 415,590 Q 420,630 430,650 L 530,650 Q 520,630 515,590 Q 510,550 540,510 Q 570,470 600,420 Z" fill="url(#riverGradient)"/>
+
+  <!-- River mouth: widens smoothly into the ocean -->
+  <path d="M 430,650 Q 390,670 360,700 Q 330,730 350,760 Q 380,790 430,800 L 530,800 Q 580,790 610,760 Q 640,730 600,700 Q 570,670 530,650 Z" fill="url(#riverGradient)"/>
+
+  <!-- Left bank land -->
+  <path d="M 0,0 L 0,800 L 430,800 Q 380,790 350,760 Q 330,730 360,700 Q 390,670 430,650 Q 420,630 415,590 Q 410,550 440,510 Q 470,470 500,420 Q 450,420 400,440 Q 350,460 300,460 Q 200,460 100,440 L 0,420 L 0,0 Z" fill="url(#landGradient)"/>
+
+  <!-- Right bank land -->
+  <path d="M 1200,0 L 1200,800 L 530,800 Q 580,790 610,760 Q 640,730 600,700 Q 570,670 530,650 Q 520,630 515,590 Q 510,550 540,510 Q 570,470 600,420 Q 650,420 700,440 Q 750,460 850,460 Q 950,460 1050,440 L 1200,420 L 1200,0 Z" fill="url(#landGradient)"/>
+
+  <!-- House on the right side of the planes -->
+  <g transform="translate(1080, 480)">
+    <!-- House body -->
+    <rect x="10" y="30" width="70" height="55" fill="#fff8e1" stroke="#5d4037" stroke-width="2"/>
+    <!-- Roof -->
+    <polygon points="-5,32 45,-5 95,32" fill="#c62828" stroke="#5d4037" stroke-width="2"/>
+    <!-- Door -->
+    <rect x="38" y="55" width="16" height="30" fill="#8d6e63" stroke="#5d4037" stroke-width="1.5"/>
+    <circle cx="50" cy="72" r="2" fill="#ffd54f"/>
+    <!-- Window -->
+    <rect x="20" y="45" width="14" height="14" fill="#b3e5fc" stroke="#5d4037" stroke-width="1.5"/>
+    <line x1="27" y1="45" x2="27" y2="59" stroke="#5d4037" stroke-width="1"/>
+    <line x1="20" y1="52" x2="34" y2="52" stroke="#5d4037" stroke-width="1"/>
+    <!-- Chimney -->
+    <rect x="60" y="5" width="10" height="22" fill="#795548" stroke="#5d4037" stroke-width="1.5"/>
+    <!-- Smoke -->
+    <circle cx="65" cy="-2" r="4" fill="#eceff1" opacity="0.6"/>
+    <circle cx="70" cy="-10" r="5" fill="#eceff1" opacity="0.5"/>
+    <circle cx="75" cy="-20" r="6" fill="#eceff1" opacity="0.4"/>
+  </g>
+
+  <!-- Ocean at bottom (closest to viewer) -->
+  <path d="M 0,650 Q 400,630 800,660 Q 1000,675 1200,650 L 1200,800 L 0,800 Z" fill="url(#oceanGradient)"/>
+
+  <!-- Trees on left bank -->
+  <g fill="#33691e">
+    <polygon points="120,600 150,520 180,600"/>
+    <polygon points="180,620 215,530 250,620"/>
+    <polygon points="250,600 285,530 320,600"/>
+    <polygon points="80,640 110,570 140,640"/>
+    <polygon points="220,560 250,480 280,560"/>
+  </g>
+
+  <!-- Trees on right bank -->
+  <g fill="#33691e">
+    <polygon points="850,580 880,500 910,580"/>
+    <polygon points="920,600 955,510 990,600"/>
+    <polygon points="780,620 815,540 850,620"/>
+    <polygon points="1000,640 1035,560 1070,640"/>
+    <polygon points="680,560 710,490 740,560"/>
+  </g>
+
+  <!-- Water highlights -->
+  <g fill="#ffffff" opacity="0.25">
+    <ellipse cx="470" cy="560" rx="30" ry="4"/>
+    <ellipse cx="460" cy="620" rx="25" ry="3"/>
+    <ellipse cx="480" cy="720" rx="45" ry="5"/>
+    <ellipse cx="700" cy="700" rx="60" ry="5"/>
+    <ellipse cx="950" cy="720" rx="50" ry="4"/>
+  </g>
+
+  <!-- Birds in far sky -->
+  <g fill="none" stroke="#37474f" stroke-width="2" stroke-linecap="round">
+    <path d="M 800,200 Q 810,190 820,200"/>
+    <path d="M 820,200 Q 830,190 840,200"/>
+    <path d="M 880,170 Q 888,162 896,170"/>
+    <path d="M 896,170 Q 904,162 912,170"/>
+  </g>
+</svg>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>線性 Git 歷史</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .timeline-wrapper {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 6px;
+    }
+    .timeline-scaler {
+      transform-origin: center center;
+    }
+    .timeline {
+      position: relative;
+      width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 180px 10px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      right: 20px;
+      height: 3px;
+      background: #90a4ae;
+      transform: translateY(-50%);
+      border-radius: 2px;
+      z-index: 0;
+    }
+    .commit {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 20%;
+    }
+    .commit:nth-child(odd) .snapshot {
+      order: -1;
+      bottom: 100px;
+    }
+    .commit:nth-child(even) .snapshot {
+      top: 100px;
+    }
+    .node {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #ff7043;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.75rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+      flex-shrink: 0;
+    }
+    .label {
+      margin-top: 8px;
+      text-align: center;
+      color: #263238;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1.3;
+      max-width: 130px;
+    }
+    .hash {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: #546e7a;
+      font-size: 0.65rem;
+      margin-top: 3px;
+    }
+    .snapshot {
+      position: absolute;
+      width: 260px;
+      height: 173px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      background: #fff;
+    }
+    .snapshot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      width: calc(25% - 48px);
+      height: 2px;
+      background: #546e7a;
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="timeline-wrapper">
+    <div class="timeline-scaler">
+      <div class="timeline">
+    <!-- Commit 1 -->
+    <div class="commit">
+      <div class="node">C1</div>
+      <div class="label">Add landscape SVG</div>
+      <div class="hash">4b49ff3</div>
+      <div class="snapshot">
+        <img src="../../demo_git_tree_snapshots/landscape_4b49ff39283f2f66a1f2841c1f3e2c84cfe63e61.svg" alt="基礎風景">
+      </div>
+    </div>
+
+    <!-- Commit 2 -->
+    <div class="commit">
+      <div class="node">C2</div>
+      <div class="label">Add house</div>
+      <div class="hash">96884ec</div>
+      <div class="snapshot">
+        <img src="../../demo_git_tree_snapshots/landscape_96884eccc1481d6d940159abcd4a8a88adbfaa6b.svg" alt="已新增房子">
+      </div>
+    </div>
+
+    <!-- Commit 3 -->
+    <div class="commit">
+      <div class="node">C3</div>
+      <div class="label">Add red tree</div>
+      <div class="hash">c024132</div>
+      <div class="snapshot">
+        <img src="../../demo_git_tree_snapshots/landscape_c024132e89ba0ee01a870791eb1cfa2947db8102.svg" alt="已新增紅樹">
+      </div>
+    </div>
+
+    <!-- Commit 4 -->
+    <div class="commit">
+      <div class="node">C4</div>
+      <div class="label">House behind red tree</div>
+      <div class="hash">8d1987f</div>
+      <div class="snapshot">
+        <img src="../../demo_git_tree_snapshots/landscape_8d1987f582638fc1d22507997b8a6857af806565.svg" alt="紅樹後方的房子">
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    function fitTimeline() {
+      const wrapper = document.querySelector('.timeline-wrapper');
+      const scaler = document.querySelector('.timeline-scaler');
+      const timeline = document.querySelector('.timeline');
+      if (!wrapper || !scaler || !timeline) return;
+
+      const availableWidth = wrapper.clientWidth - 20;
+      const availableHeight = wrapper.clientHeight - 20;
+      const designWidth = timeline.clientWidth;
+      const designHeight = timeline.clientHeight;
+      const scale = Math.min(1, availableWidth / designWidth, availableHeight / designHeight);
+
+      scaler.style.transform = 'scale(' + scale + ')';
+      scaler.style.width = designWidth + 'px';
+      scaler.style.height = designHeight + 'px';
+      wrapper.style.height = (designHeight * scale + 20) + 'px';
+    }
+
+    window.addEventListener('load', fitTimeline);
+    window.addEventListener('resize', fitTimeline);
+    fitTimeline();
+  })();
+</script>
+</body>
+</html>

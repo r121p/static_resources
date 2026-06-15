@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分支示範</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      position: relative;
+    }
+    .demo-wrapper {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 6px;
+    }
+    .demo-scaler {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+    }
+    .demo {
+      width: 900px;
+      height: 700px;
+      position: relative;
+      padding: 20px;
+    }
+    .panel {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 280px;
+    }
+    .image-box {
+      width: 280px;
+      height: 187px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      background: #fff;
+    }
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .label {
+      margin-top: 10px;
+      color: #263238;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .hash {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: #546e7a;
+      font-size: 0.7rem;
+      margin-top: 3px;
+    }
+    .panel.base { left: 20px; top: 30%; transform: translateY(-50%); }
+    .panel.main { right: 20px; top: 30%; transform: translateY(-50%); }
+    .panel.branch { right: 20px; top: 70%; transform: translateY(-50%); }
+
+    .branch-lines {
+      position: absolute;
+      left: 300px;
+      top: 0;
+      right: 300px;
+      bottom: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-wrapper">
+    <div class="demo-scaler">
+      <div class="demo">
+        <svg class="branch-lines" viewBox="0 0 300 700" preserveAspectRatio="none">
+          <!-- horizontal from base center to branch split -->
+          <line x1="0" y1="210" x2="150" y2="210" stroke="#ff7043" stroke-width="4" />
+          <!-- continue to main -->
+          <line x1="150" y1="210" x2="300" y2="210" stroke="#ff7043" stroke-width="4" />
+          <!-- branch right then down to opposite-house -->
+          <line x1="150" y1="210" x2="200" y2="210" stroke="#42a5f5" stroke-width="4" />
+          <line x1="200" y1="210" x2="200" y2="490" stroke="#42a5f5" stroke-width="4" />
+          <line x1="200" y1="490" x2="300" y2="490" stroke="#42a5f5" stroke-width="4" />
+          <!-- branch labels at left -->
+          <text x="10" y="240" fill="#ff7043" font-size="26" font-weight="700">main</text>
+          <text x="10" y="520" fill="#42a5f5" font-size="26" font-weight="700">opposite-house</text>
+          <!-- arrowheads -->
+          <polygon points="300,210 290,202 290,218" fill="#ff7043" />
+          <polygon points="300,490 290,482 290,498" fill="#42a5f5" />
+        </svg>
+
+        <div class="panel base">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_c024132e89ba0ee01a870791eb1cfa2947db8102.svg" alt="已新增紅樹">
+          </div>
+          <div class="label">分支點</div>
+          <div class="hash">c024132 — Add red tree</div>
+        </div>
+
+        <div class="panel main">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_8d1987f582638fc1d22507997b8a6857af806565.svg" alt="紅樹後方的房子">
+          </div>
+          <div class="label">main</div>
+          <div class="hash">8d1987f — House behind red tree</div>
+        </div>
+
+        <div class="panel branch">
+          <div class="image-box">
+            <img src="../../demo_git_tree_snapshots/landscape_3ae98c9a9603ed81ed5ad09b0dec9e7918976cda.svg" alt="對岸的房子">
+          </div>
+          <div class="label">opposite-house 分支</div>
+          <div class="hash">3ae98c9 — House opposite river</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      function fitDemo() {
+        const wrapper = document.querySelector('.demo-wrapper');
+        const scaler = document.querySelector('.demo-scaler');
+        const demo = document.querySelector('.demo');
+        if (!wrapper || !scaler || !demo) return;
+
+        const availableWidth = wrapper.clientWidth - 20;
+        const availableHeight = wrapper.clientHeight - 20;
+        const designWidth = demo.clientWidth;
+        const designHeight = demo.clientHeight;
+        const scale = Math.min(1, availableWidth / designWidth, availableHeight / designHeight);
+
+        scaler.style.width = designWidth + 'px';
+        scaler.style.height = designHeight + 'px';
+        scaler.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+      }
+
+      window.addEventListener('load', fitDemo);
+      window.addEventListener('resize', fitDemo);
+      fitDemo();
+    })();
+  </script>
+</body>
+</html>
