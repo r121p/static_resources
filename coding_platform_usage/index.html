@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -57,6 +92,13 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#open-your-workspace-and-live-preview" id="toc-open-your-workspace-and-live-preview" class="nav-link" data-scroll-target="#open-your-workspace-and-live-preview">2. Open your workspace and live preview</a></li>
   <li><a href="#edit-html-and-see-changes-live" id="toc-edit-html-and-see-changes-live" class="nav-link" data-scroll-target="#edit-html-and-see-changes-live">3. Edit HTML and see changes live</a></li>
   <li><a href="#use-the-zebra-zoo-code-ai-plugin" id="toc-use-the-zebra-zoo-code-ai-plugin" class="nav-link" data-scroll-target="#use-the-zebra-zoo-code-ai-plugin">4. Use the Zebra Zoo Code AI plugin</a></li>
+  <li><a href="#publish-your-site-to-github-pages" id="toc-publish-your-site-to-github-pages" class="nav-link" data-scroll-target="#publish-your-site-to-github-pages">5. Publish your site to GitHub Pages</a>
+  <ul class="collapse">
+  <li><a href="#step-1-open-the-vs-code-top-bar" id="toc-step-1-open-the-vs-code-top-bar" class="nav-link" data-scroll-target="#step-1-open-the-vs-code-top-bar">Step 1 — Open the VS Code: top bar</a></li>
+  <li><a href="#step-2-create-a-new-terminal" id="toc-step-2-create-a-new-terminal" class="nav-link" data-scroll-target="#step-2-create-a-new-terminal">Step 2 — Create a new terminal</a></li>
+  <li><a href="#step-3-choose-bash" id="toc-step-3-choose-bash" class="nav-link" data-scroll-target="#step-3-choose-bash">Step 3 — Choose Bash</a></li>
+  <li><a href="#step-4-run-the-publish-script" id="toc-step-4-run-the-publish-script" class="nav-link" data-scroll-target="#step-4-run-the-publish-script">Step 4 — Run the publish script</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#tips-and-reminders" id="toc-tips-and-reminders" class="nav-link" data-scroll-target="#tips-and-reminders">Tips and reminders</a></li>
   </ul>
@@ -220,6 +262,66 @@ Watch your spending
 </ul>
 <hr>
 </video></section>
+<section id="publish-your-site-to-github-pages" class="level2">
+<h2 class="anchored" data-anchor-id="publish-your-site-to-github-pages">5. Publish your site to GitHub Pages</h2>
+<p>When you are ready to share your site, use the built-in publish script to push it to GitHub Pages.</p>
+<section id="step-1-open-the-vs-code-top-bar" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-open-the-vs-code-top-bar">Step 1 — Open the VS Code: top bar</h3>
+<p>Click the VS Code: top bar to bring up the command palette.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imgs/step1.png" class="img-fluid figure-img"></p>
+<figcaption>Go to the VS Code: top bar</figcaption>
+</figure>
+</div>
+</section>
+<section id="step-2-create-a-new-terminal" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-create-a-new-terminal">Step 2 — Create a new terminal</h3>
+<p>Type the command <code>&gt;Create New Terminal (with Profile)</code> and select it to create a new terminal.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imgs/step2.png" class="img-fluid figure-img"></p>
+<figcaption>Create a new terminal with profile</figcaption>
+</figure>
+</div>
+</section>
+<section id="step-3-choose-bash" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-choose-bash">Step 3 — Choose Bash</h3>
+<p>When asked which terminal profile to use, choose <strong>Bash</strong>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imgs/step3.png" class="img-fluid figure-img"></p>
+<figcaption>Choose Bash as the terminal profile</figcaption>
+</figure>
+</div>
+</section>
+<section id="step-4-run-the-publish-script" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-run-the-publish-script">Step 4 — Run the publish script</h3>
+<p>In the terminal, run:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/publish_to_pages.py</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Follow the on-screen instructions to push your site to GitHub Pages.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imgs/step4.png" class="img-fluid figure-img"></p>
+<figcaption>Run the publish script</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+GitHub login
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The script will ask you to log in to your GitHub account. Make sure you use the account where you want the Pages site hosted.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
 </section>
 <section id="tips-and-reminders" class="level1">
 <h1>Tips and reminders</h1>

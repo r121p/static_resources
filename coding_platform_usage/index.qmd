@@ -123,6 +123,47 @@ Every prompt and every word the AI processes costs money. Keep requests clear an
 
 ---
 
+## 5. Publish your site to GitHub Pages
+
+When you are ready to share your site, use the built-in publish script to push it to GitHub Pages.
+
+### Step 1 — Open the VS Code: top bar
+
+Click the VS Code: top bar to bring up the command palette.
+
+![Go to the VS Code: top bar](imgs/step1.png){fig-align="center"}
+
+### Step 2 — Create a new terminal
+
+Type the command `>Create New Terminal (with Profile)` and select it to create a new terminal.
+
+![Create a new terminal with profile](imgs/step2.png){fig-align="center"}
+
+### Step 3 — Choose Bash
+
+When asked which terminal profile to use, choose **Bash**.
+
+![Choose Bash as the terminal profile](imgs/step3.png){fig-align="center"}
+
+### Step 4 — Run the publish script
+
+In the terminal, run:
+
+```bash
+~/publish_to_pages.py
+```
+
+Follow the on-screen instructions to push your site to GitHub Pages.
+
+![Run the publish script](imgs/step4.png){fig-align="center"}
+
+:::{.callout-note}
+## GitHub login
+The script will ask you to log in to your GitHub account. Make sure you use the account where you want the Pages site hosted.
+:::
+
+---
+
 # Tips and reminders
 
 - Keep your OpenRouter API key private; do not share it or commit it to your project repository.
