@@ -1,0 +1,20 @@
+.reveal .slides section {
+  font-size: 0.82em;
+}
+
+.reveal h2 {
+  font-size: 1.4em;
+}
+
+.reveal h1 {
+  font-size: 1.8em;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.95em;
+}
+
+.reveal blockquote {
+  font-size: 0.95em;
+}

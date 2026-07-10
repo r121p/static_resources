@@ -1,0 +1,180 @@
+---
+title: "Robot Arm for Elderly Care: Course Roadmap"
+subtitle: "Briefing for Lesson 4 — 11 July (Saturday AM)"
+author: "SO101 Robot Arm Team"
+format:
+  revealjs:
+    theme: simple
+    css: slides.css
+    slide-number: true
+    transition: slide
+---
+
+## Roadmap overview
+
+| Lesson | Date | Focus |
+|:------:|:-----|:------|
+| **4** | 11 Jul (Sat AM) | Plan your use case |
+| **5** | 11 Jul (Sat PM) | Fusion 360 training + first prints |
+| **6** | 18 Jul (Fri PM) | Install prints + tune your system |
+| **7** | 21 Jul (Mon AM) | First demo at the elderly center |
+| **8** | 28 Jul (Mon AM) | Refine and demo again at the center |
+| **9** | 30 Jul (Wed AM) | Final presentation to judges |
+
+## What this course is about
+
+- You will use a **robot arm** to help **elderly people** at an **elderly center**.
+- Each group gets the same starter setup:
+  - Robot arm mounted on a table
+  - Top-down camera pointing at the table
+  - A VLM (vision-language model) that plans, finds objects, and does **pick-and-place**
+- Your job is to create a **custom use case** by:
+  - Tuning the VLM **system prompt**, or
+  - Modifying the underlying code (for advanced groups)
+
+## Starter hardware / software
+
+| Component | What it does |
+|-----------|--------------|
+| Robot arm on table | Physically picks and places objects |
+| Top-down camera | Sees the workspace |
+| VLM planner | Looks at the image and decides what to do |
+| System prompt | Tells the VLM *how* to behave |
+| Code base | Lets advanced groups change control logic |
+
+::: {.callout-note}
+You don’t need to build the arm — you will **adapt** it to your idea.
+:::
+
+## Lesson 4 — Today, 11 July (Sat AM)
+
+**Goal: Decide what your group will do at the elderly center.**
+
+- Discuss with your group mates.
+- Brainstorm a real use case that helps elderly people.
+- Think about:
+  - What object will the arm move?
+  - Why does it help the elderly?
+  - Will you need a custom gripper / tray / mount?
+
+::: {.callout-important}
+You need a concrete plan before the next lesson.
+:::
+
+## Lesson 5 — 11 July (Sat PM)
+
+**Topic: 3D CAD with Fusion 360**
+
+- Learn how to design custom parts.
+- At the **start** of the lesson, each group gets **3 minutes** to pitch their idea to the 3D-print instructor.
+  - This helps the instructor teach what is useful for your design.
+- Design and **submit STL files** before the lesson ends.
+- Prints will be ready at the next lesson.
+
+::: {.callout-warning}
+Late submissions = no prints for Lesson 6.
+:::
+
+## Lesson 6 — 18 July (Fri PM)
+
+**Goal: Build, install, and tune your first prototype.**
+
+- Receive your 3D prints.
+- Install them on the robot arm.
+- Tune the VLM system prompt for your use case.
+- Advanced groups: modify code if needed.
+- Improve the 3D model and **submit the updated STL files** before the lesson ends.
+
+## Props & testing reminder
+
+From **Lesson 6 (18 July) onwards**, bring props your use case needs so you can test in class.
+
+Examples:
+
+- Plastic forks, spoons, chopsticks
+- Paper plates, bowls, or cups
+- Small containers, game pieces, or soft objects
+
+::: {.callout-note}
+Test early — the next session after Lesson 6 is at the elderly center.
+:::
+
+## Lesson 7 — 21 July (Mon AM)
+
+**Venue: Elderly center**
+
+- Start with a **short demo** of each group in front of the elderly.
+- For the rest of the day:
+  - Watch how the elderly react.
+  - Collect **live feedback**.
+  - Modify your system prompt, code, or hardware based on what you learn.
+
+## Lesson 8 — 28 July (Mon AM)
+
+**Venue: Elderly center**
+
+- Continue improving your setup.
+- Fix problems found last week.
+- Polish the interaction for the elderly.
+- At the end of the lesson, each group does **another demo** showing the improvements.
+
+## Lesson 9 — 30 July (Wed AM)
+
+**Venue: Classroom**
+
+- Final conclusion lesson.
+- Each group presents to **judges**:
+  - Your system and use case
+  - What you learnt
+  - Your overall experience
+
+::: {.callout-note}
+This is your chance to show the whole journey, not just the final demo.
+:::
+
+## Timeline at a glance
+
+| Lesson | Date | What happens | Deliverable |
+|:------:|:-----|:-------------|:------------|
+| 4 | 11 Jul AM | Plan your use case | Group plan |
+| 5 | 11 Jul PM | Fusion 360 training + pitch | STL files |
+| 6 | 18 Jul PM | Install prints + tune system | Updated STL files |
+| 7 | 21 Jul AM | Demo + live feedback at center | Field notes |
+| 8 | 28 Jul AM | Refine + second demo at center | Improved system |
+| 9 | 30 Jul AM | Final presentation to judges | Slide deck + demo |
+
+: { .timeline-table }
+
+## What makes a good use case?
+
+- **Helpful**: solves a real problem for elderly people.
+- **Simple**: can be done with pick-and-place and one or two custom parts.
+- **Safe**: no sharp or heavy parts near the user.
+- **Testable**: you can demo it clearly in 3 minutes.
+
+Examples to get you thinking:
+
+- Sorting pills or snacks into cups
+- Handing a water bottle or remote control
+- Moving game pieces for a simple tabletop activity
+
+## Your deliverables
+
+1. **Lesson 4** — Group plan (idea + rough hardware needs).
+2. **Lesson 5** — STL files for first 3D print.
+3. **Lesson 6** — Updated STL files after testing.
+4. **Lesson 7 & 8** — Working demos and feedback notes.
+5. **Lesson 9** — Final presentation.
+
+## Key mindset
+
+- Iterate fast: design → print → test → improve.
+- Listen to the elderly — they are your real users.
+- Ask instructors for help early.
+- Have fun and be creative!
+
+## Questions?
+
+Discuss with your group now and start drafting your use case.
+
+**Next step:** Prepare a 3-minute pitch for the 3D-print instructor at the next lesson.
